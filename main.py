@@ -2,13 +2,15 @@
 import sys, pygame
 
 from commons import *
+from Level   import *
 
 class Main:
-	def __init__(self, width = 600, height = 480):
+	def __init__(self, width = 496, height = 496):
 		pygame.init()
-		self.width = width
+		self.width  = width
 		self.height = height
 		self.screen = pygame.display.set_mode((width, height))
+		self.level  = Level(self.screen)
 		pygame.display.set_caption('Our awesome tower defense game with waves and shit')
 
 	def main_loop(self):
@@ -34,6 +36,7 @@ class Main:
 		self.screen.fill((0,0,0))
 		ui = get_common().get_ui()
 		self.screen.blit(ui.draw_panel_border(100, 100), (100, 100))
+		self.level.render()
 		pygame.display.flip()
 
 if __name__ == '__main__':
