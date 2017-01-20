@@ -30,6 +30,9 @@ class Main:
 		pygame.quit()
 		sys.exit()
 
+	def change_view(self, view):
+		self.current_view = view(self.screen)
+
 	def handle_ev(self, event):
 		self.current_view.handle_ev(event)
 

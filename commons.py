@@ -2,11 +2,9 @@ import pygame
 from Bass4Py.Bass4Py import *
 
 from ui import *
+from options import *
 
-BGM_MAX_VOL = 0.20
-BGM_FADE_DURATION = 2
-
-class commons:
+class Commons:
 	def __init__(self):
 		pass
 
@@ -14,6 +12,8 @@ class commons:
 		self.main = main
 		self.font = pygame.font.Font('assets/font/KenPixel.ttf', 14)
 		self.ui = UI()
+		self.options = Options()
+		self.options.save()
 		self.bass = BASS('bass.dll', True)
 		self.bass.Init()
 
@@ -25,10 +25,12 @@ class commons:
 		return self.bass
 	def get_main(self):
 		return self.main
+	def get_options(self):
+		return self.options
 
 instance = None
 def get_common():
 	global instance
 	if instance == None:
-		instance = commons()
+		instance = Commons()
 	return instance

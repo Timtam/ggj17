@@ -1,28 +1,33 @@
 import pygame
 
 from commons import *
-from button import *
+from controls import *
+from options_screen import *
 
 class MainMenu:
 	def __init__(self, screen):
 		self.screen = screen
-		self.buttons = []
-		self.buttons.append(Button('Neues Spiel', (self.screen.get_width() - 190) / 2, 300, self.new_game_button_clicked))
-		self.buttons.append(Button('Beenden', (self.screen.get_width() - 190) / 2, 350, self.exit_button_clicked))
+		self.controls = []
+		self.controls.append(ButtonControl((self.screen.get_width() - 190) / 2, 300, 'Neues Spiel', self.new_game_clicked))
+		self.controls.append(ButtonControl((self.screen.get_width() - 190) / 2, 350, 'Optionen', self.options_clicked))
+		self.controls.append(ButtonControl((self.screen.get_width() - 190) / 2, 400, 'Beenden', self.exit_clicked))
 
-	def new_game_button_clicked(self):
+	def new_game_clicked(self):
 		pass
 
-	def exit_button_clicked(self):
+	def options_clicked(self):
+		get_common().get_main().change_view(OptionsScreen)
+
+	def exit_clicked(self):
 		get_common().get_main().stop()
 
 	def handle_ev(self, event):
 		pass
 
 	def update(self):
-		for button in self.buttons:
-			button.update()
+		for control in self.controls:
+			control.update()
 
 	def render(self):
-		for button in self.buttons:
-			button.draw(self.screen)
+		for control in self.controls:
+			control.draw(self.screen)
