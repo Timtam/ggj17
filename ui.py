@@ -7,6 +7,8 @@ class UI:
 		# load panel sprites
 		self.panel_border = []
 		self.panel_full = []
+		self.button_down = []
+		self.button_up = []
 		for x in range(0,3):
 			borders = []
 			full = []
@@ -19,6 +21,12 @@ class UI:
 				full.append(f)
 			self.panel_border.append(borders)
 			self.panel_full.append(full)
+			up = pygame.Surface((16, 16), pygame.SRCALPHA)
+			up.blit(sprite_sheet, (0, 0), pygame.Rect(18 * (color_off + x), 18 * 1, 16, 16))
+			self.button_up.append(pygame.transform.scale(up, (32, 32)))
+			down = pygame.Surface((16, 16), pygame.SRCALPHA)
+			down.blit(sprite_sheet, (0, 0), pygame.Rect(18 * (color_off + 3 + x), 18 * 1, 16, 16))
+			self.button_down.append(pygame.transform.scale(down, (32, 32)))
 
 	def draw_panel_full(self, width, height):
 		return self.draw_panel(width, height, self.panel_full)
@@ -38,4 +46,15 @@ class UI:
 		surface.blit(pygame.transform.scale(sprites[2][1], (16, height - 32)), (width - 16, 16))
 		#middle
 		surface.blit(pygame.transform.scale(sprites[1][1], (width - 32, height - 32)), (16, 16))
+		return surface
+
+	def draw_button(self, width, state):
+		if state == 0:
+			sprites = self.button_up
+		else:
+			sprites = self.button_down
+		surface = pygame.Surface((width, 32), pygame.SRCALPHA)
+		surface.blit(sprites[0], (0,0))
+		surface.blit(sprites[2], (width - 32, 0))
+		surface.blit(pygame.transform.scale(sprites[1], (width - 64, 32)), (32, 0))
 		return surface
