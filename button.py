@@ -9,9 +9,10 @@ class Button:
 		self.left = left
 		self.state = 0
 		self.enabled = True
-		self.height = 50
+		self.height = 32
 		self.width = 190
 		self.callback = callback
+		self.text = text
 
 	def update(self):
 		if not self.enabled: return
@@ -29,3 +30,9 @@ class Button:
 	def draw(self, screen):
 		surface = self.ui.draw_button(self.width, self.state)
 		screen.blit(surface, (self.left, self.top))
+		font = get_common().get_font()
+		tw, th = font.size(self.text)
+		ts = font.render(self.text, 0, (0, 0, 0))
+		if self.state == 1:
+			th -= 8
+		screen.blit(ts, (self.left + (self.width - tw) / 2, self.top + (self.height - th) / 2))

@@ -3,19 +3,19 @@ import sys, pygame
 
 from commons import *
 from button import *
+from main_menu import *
 
 class Main:
-	def __init__(self, width = 600, height = 480):
-		pygame.init()
-		get_common().get_bass().Init()
+	def __init__(self, width = 1280, height = 720):
+		get_common().load(self)
 		self.width = width
 		self.height = height
 		self.screen = pygame.display.set_mode((width, height))
-		self.button = Button('test', 250, 100, self.button_clicked)
+		self.current_view = MainMenu(self.screen)
 		pygame.display.set_caption('Our awesome tower defense game with waves and shit')
 
 	def button_clicked(self):
-		print("test")
+		pass
 
 	def main_loop(self):
 		while True:
@@ -31,18 +31,17 @@ class Main:
 		sys.exit()
 
 	def handle_ev(self, event):
-		pass
+		self.current_view.handle_ev(event)
 
 	def update(self):
-		self.button.update()
+		self.current_view.update()
 
 	def render(self):
 		self.screen.fill((0,0,0))
-		ui = get_common().get_ui()
-		self.screen.blit(ui.draw_panel_border(100, 100), (100, 100))
-		self.button.draw(self.screen)
+		self.current_view.render()
 		pygame.display.flip()
 
 if __name__ == '__main__':
+	pygame.init()
 	main = Main()
 	main.main_loop()
