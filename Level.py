@@ -21,6 +21,10 @@ class Level:
 		for field in self.level:
 			self.grid[field[0]][field[1]] = Field(1)
 	
+
+	def leave(self):
+		pass
+
 	def render(self):
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
