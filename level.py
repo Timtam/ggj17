@@ -49,7 +49,7 @@ class Level:
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
 				tmpsprite = self.grid[i][j].render()
-				self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
+				self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
 		for control in self.controls:
 			control.draw(self.screen)
 

@@ -7,7 +7,7 @@ import platform
 
 class Commons:
 	def __init__(self):
-		pass
+		self.image_cache = {}
 
 	def load(self, main):
 		self.main = main
@@ -32,6 +32,13 @@ class Commons:
 		return self.main
 	def get_options(self):
 		return self.options
+	def get_image(self, filename):
+		if filename in self.image_cache:
+			return self.image_cache[filename]
+		else:
+			asset = pygame.image.load(filename)
+			self.image_cache[filename] = asset
+			return asset
 
 instance = None
 def get_common():

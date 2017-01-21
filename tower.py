@@ -1,6 +1,8 @@
 import pygame
 import math
 
+from commons import *
+
 # some constants
 # effect types can be combined (e.g. to deal damage and stop enemies)
 EFFECT_TYPE_NONE=0x0 # no effect at all
@@ -71,9 +73,9 @@ class Tower:
 	def run(self,fields,x,y):
 		valid_targets = self.find_target_fields(fields,x,y)
 		valid_targets=self.filter_target_fields(valid_targets, fields)
-		
+
 	def setSprite(self, path):
-		self.Sprite = pygame.image.load(path)
-		
+		self.Sprite = get_common().get_image(path)
+
 	def render(self):
 		return self.Sprite
