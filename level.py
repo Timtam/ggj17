@@ -71,6 +71,9 @@ class Level:
 		self.paused = False
 		self.was_paused = False
 		self.pause_start_time = None
+		self.pause_panel = PanelControl((self.screen.get_width() - 400) / 2, (self.screen.get_height() - 400) / 2, 400, 400)
+		self.pause_panel.add_child_control(TextControl(0, 0, 'Paused'), center = True)
+		self.pause_dim = pygame.transform.scale(get_common().get_image('assets/ui/dim.png'), self.screen.get_size())
 
 		self.start_wave(1)
 
@@ -122,9 +125,12 @@ class Level:
 		self.screen.blit(self.enemy_icon, (self.field_x + 157, 17))
 		self.screen.blit(self.time_icon, (self.field_x + 307, 17))
 		self.screen.blit(self.health_icon, (self.field_x + 437, 17))
+		if self.paused:
+			self.screen.blit(self.pause_dim, (0, 0))
+			self.pause_panel.draw(self.screen)
 
 	def handle_ev(self, event):
-		if event.type == pygame.MOUSEBUTTONUP and not self.tower_select.enabled:
+		if event.type == pygame.MOUSEBUTTONUP and not self.tower_select.enabled and not self.paused:
 			pos = pygame.mouse.get_pos()
 			i = (pos[0] - self.field_x) / self.spriteSize
 			j = (pos[1] - self.field_y) / self.spriteSize
@@ -183,3 +189,5 @@ class Level:
 			self.health_text_control.set_text(str(self.current_lives))
 		for control in self.controls:
 			control.update()
+		if self.paused:
+			self.pause_panel.update()
