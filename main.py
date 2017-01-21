@@ -1,5 +1,5 @@
 #/usr/bin/env python2
-import sys, pygame
+import sys, time, pygame
 
 from commons   import *
 from level     import *
@@ -41,6 +41,7 @@ class Main:
 				self.handle_ev(event)
 			self.update()
 			self.render()
+			time.sleep(0.01)
 
 	def stop(self):
 		pygame.quit()

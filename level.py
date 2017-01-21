@@ -3,6 +3,7 @@ import tower
 from towers import water_tower
 import pygame
 from controls import *
+from commons import *
 
 class Level:
 	def __init__(self, screen):
@@ -20,6 +21,8 @@ class Level:
 		self.field_x     = (self.screen.get_width() - self.spriteSize * self.gridsize) / 2
 		self.field_y     = 64
 		self.controls    = []
+		self.gold        = 300
+		self.gold_surface = get_common().get_image('assets/ui/temp_gold.png')
 
 		for i in range(self.gridsize):
 			self.grid.append([])
@@ -32,6 +35,8 @@ class Level:
 		panel_width = self.gridsize * self.spriteSize
 		panel = PanelControl((self.screen.get_width() - panel_width) / 2, 0, panel_width, self.field_y)
 		self.controls.append(panel)
+		self.gold_text_control = TextControl(50, 23, '0')
+		panel.add_child_control(self.gold_text_control)
 		self.tower_select = TowerSelectControl(0,0)
 		self.controls.append(self.tower_select)
 
@@ -46,6 +51,7 @@ class Level:
 				self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
 		for control in self.controls:
 			control.draw(self.screen)
+		self.screen.blit(self.gold_surface, (self.field_x + 17, 17))
 
 	def handle_ev(self, event):
 		if event.type == pygame.MOUSEBUTTONUP and not self.tower_select.enabled:
@@ -69,5 +75,6 @@ class Level:
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
 				self.grid[i][j].update(self)
+		self.gold_text_control.set_text(str(self.gold))
 		for control in self.controls:
 			control.update()
