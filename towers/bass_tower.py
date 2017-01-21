@@ -8,4 +8,7 @@ class BassTower(tower.Tower):
 		self.Speed=3 # in seconds
 		self.setSprite('assets/level/towers/soundtower.png')
 		self.Cost=90
+		self.name = "SOUND TOWER"
+		self.description = "As loud as Cannibal Corpse!"
+		self.effect_desc = "Deals [damage] AoE damage"
 		self.init()

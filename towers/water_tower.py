@@ -8,4 +8,7 @@ class WaterTower(tower.Tower):
 		self.Speed=12
 		self.setSprite('assets/level/towers/watertower.png')
 		self.Cost=140
+		self.name = "TSUNAMI TOWER"
+		self.description = "Sends out Haitis Nightmare!"
+		self.effect_desc = "Stuns a coupls of enemies in a line for [stun]s"
 		self.init()
