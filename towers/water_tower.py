@@ -4,7 +4,7 @@ class WaterTower(tower.Tower):
 	Cost=140
 	name = "TSUNAMI TOWER"
 	description = "Sends out Haitis Nightmare!"
-	effect_desc = "Stuns a coupls of enemies in a line for [stun]s"
+	effect_desc = ("Stuns a couple of enemies in a line for ", "[stun]", "s")
 	def __init__(self):
 		tower.Tower.__init__(self)
 		self.EffectValue=0.3 # in seconds

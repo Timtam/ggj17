@@ -41,7 +41,7 @@ class Level:
 		self.controls.append(panel)
 		self.gold_text_control = TextControl(50, 23, '0')
 		panel.add_child_control(self.gold_text_control)
-		self.tower_select = TowerSelectControl(0,0)
+		self.tower_select = TowerSelectControl(0, 0, self)
 		self.controls.append(self.tower_select)
 
 
@@ -64,7 +64,7 @@ class Level:
 			j = (pos[1] - self.field_y) / self.spriteSize
 			if not ( i < 0 or i > (self.gridsize - 1) or j < 0 or j > (self.gridsize - 1) ):
 				field = self.grid[i][j]
-				if field.getType() == 0:
+				if field.getType() == 0 and field.tower == None:
 					self.tower_select.rect.centerx = i * self.spriteSize + self.field_x + self.spriteSize / 2
 					self.tower_select.rect.centery = j * self.spriteSize + self.field_y + self.spriteSize / 2
 					self.tower_select.enable()
@@ -72,7 +72,9 @@ class Level:
 		if self.tower_select.enabled and self.tower_select.selected_tower != None:
 			self.tower_select.enabled = False
 			i, j = self.new_tower_coord
-			self.grid[i][j].setTower(self.tower_select.selected_tower)
+			tower = self.tower_select.selected_tower
+			tower.init()
+			self.grid[i][j].setTower(tower)
 
 
 	def update(self):

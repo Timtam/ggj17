@@ -4,7 +4,7 @@ class BassTower(tower.Tower):
 	Cost=90
 	name = "SOUND TOWER"
 	description = "As loud as Cannibal Corpse!"
-	effect_desc = "Deals [damage] AoE damage"
+	effect_desc = ("Deals ", "[damage]", " AoE damage")
 	def __init__(self):
 		tower.Tower.__init__(self)
 		self.EffectType=tower.EFFECT_TYPE_DAMAGE|tower.EFFECT_TYPE_CIRCLE
