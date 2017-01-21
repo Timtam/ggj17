@@ -44,7 +44,7 @@ class Commons:
 	def get_sound(self, filename, music=False):
 		if filename in self.sound_cache:
 			return self.sound_cache[filename]
-		channel = self.bass.StreamCreateFile(False, filename, 0, 0, self.bass.BASS_SAMPLE_LOOP if music==True else 0).Channel
+		channel = self.bass.StreamCreateFile(False, filename, 0, 0, BASS_SAMPLE_LOOP if music==True else 0).Channel
 		self.sound_cache[filename] = channel
 		return channel
 
