@@ -2,7 +2,6 @@ import pygame
 
 from commons import *
 from controls import *
-from options_screen import *
 
 class MainMenu:
 	def __init__(self, screen):
@@ -16,7 +15,7 @@ class MainMenu:
 		pass
 
 	def options_clicked(self):
-		get_common().get_main().change_view(OptionsScreen)
+		get_common().get_main().change_view('OptionsScreen')
 
 	def exit_clicked(self):
 		get_common().get_main().stop()

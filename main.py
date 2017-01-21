@@ -3,7 +3,8 @@ import sys, pygame
 
 from commons   import *
 from Level     import *
-from main_menu import *
+from main_menu import MainMenu
+from options_screen import OptionsScreen
 
 class Main:
 	def __init__(self, width = 1280, height = 720):
@@ -11,7 +12,12 @@ class Main:
 		self.width  = width
 		self.height = height
 		self.screen = pygame.display.set_mode((width, height))
-		self.current_view = MainMenu(self.screen)
+		self.views = {
+			'MainMenu': MainMenu,
+			'OptionsScreen': OptionsScreen,
+			'Level': Level,
+		}
+		self.change_view('MainMenu')
 		#self.current_view = Level(self.screen)
 		pygame.display.set_caption('Our awesome tower defense game with waves and shit')
 
@@ -32,7 +38,7 @@ class Main:
 		sys.exit()
 
 	def change_view(self, view):
-		self.current_view = view(self.screen)
+		self.current_view = self.views[view](self.screen)
 
 	def handle_ev(self, event):
 		self.current_view.handle_ev(event)

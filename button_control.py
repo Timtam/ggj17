@@ -14,9 +14,8 @@ class ButtonControl(Control):
 		self.text = TextControl(0, 0, text)
 		self.add_child_control(self.text, center = True)
 
-	def update(self):
+	def _update(self):
 		if not self.enabled: return
-		super(ButtonControl, self).update()
 		lmb, mmb, rmb = pygame.mouse.get_pressed()
 		if self.state == 1 and not lmb:
 			self.state = 0

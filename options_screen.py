@@ -13,9 +13,10 @@ class OptionsScreen:
 		panel.add_child_control(ButtonControl(180, 300, 'Speichern', self.save_clicked, 150))
 
 	def cancel_clicked(self):
-		pass
+		get_common().get_main().change_view('MainMenu')
 	def save_clicked(self):
-		pass
+		options = get_common().get_options()
+		get_common().get_main().change_view('MainMenu')
 
 	def handle_ev(self, event):
 		pass
