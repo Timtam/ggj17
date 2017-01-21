@@ -28,6 +28,4 @@ class ButtonControl(Control):
 				self.state = 1
 				self.surface = self.ui.draw_button(self.rect.width, self.state)
 				self.text.rect.top += 4
-				channel = get_common().get_bass().StreamCreateFile(False, 'assets/sound/ui/switch26.ogg').Channel
-				channel.SetAttribute(BASS_ATTRIB_VOL, get_common().get_options().vol_fx)
-				channel.Play()
+				play_sound_fx('assets/sound/ui/switch26.ogg')

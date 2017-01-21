@@ -30,10 +30,10 @@ class OptionsScreen:
 		options.vol_bgm = self.bgm_slider.slider_pos
 		get_common().get_main().change_view('MainMenu')
 
-	def bgm_slider_release(self):
-		bass = get_common().get_bass()
+	def bgm_slider_release(self): pass
 	def fx_slider_release(self):
-		bass = get_common().get_bass()
+		play_sound_fx('assets/sound/ui/switch26.ogg', self.fx_slider.slider_pos)
+
 
 	def handle_ev(self, event):
 		pass
