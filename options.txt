@@ -1,2 +1,2 @@
-vol_fx=1
-vol_bgm=1
+vol_fx=1.0
+vol_bgm=1.0

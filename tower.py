@@ -20,6 +20,8 @@ class Tower:
 		self.SpeedMultiplier=1.0
 		self.Range=1 # one tile radius
 		self.RangeMultiplier=1.0
+		self.Sprite=None
+
 	# finds all valid target fields
 	def find_target_fields(self, fields, x, y):
 		c_x=0
@@ -68,3 +70,6 @@ class Tower:
 	def run(self,fields,x,y):
 		valid_targets = self.find_target_fields(fields,x,y)
 		valid_targets=self.filter_target_fields(valid_targets, fields)
+		
+	def render(self):
+		return self.Sprite

@@ -1,13 +1,23 @@
 from Field import Field
+import tower
+from towers import water_tower
 import pygame
 
 class Level:
 	def __init__(self, screen):
-		self.level       = [(2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (11, 1), (12, 1), (13, 1), (14, 1), (15, 1),
-						    (2, 2), (6, 2), (11, 2),
-						    (2, 3), (3, 3), (6, 3), (7, 3), (11, 3), (12, 3),
-						    (3, 4), (7, 4), (12, 4),
-						    (3, 5), (7, 5), (8, 5), (12, 5)]
+		self.level       = [(2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (12, 1), (13, 1), (14, 1), (15, 1),
+						    (2, 2), (7, 2), (12, 2),
+						    (2, 3), (3, 3), (7, 3), (8, 3), (12, 3), (13, 3),
+						    (3, 4), (8, 4), (13, 4),
+						    (3, 5), (8, 5), (9, 5), (13, 5),
+						    (3, 6), (4, 6), (9, 6), (12, 6), (13, 6),
+						    (4, 7), (5, 7), (6, 7), (9, 7), (12, 7),
+						    (6, 8), (9, 8), (12, 8), (13, 8), (14, 8),
+						    (6, 9), (9, 9), (14, 9),
+						    (3, 10), (4, 10), (5, 10), (6, 10), (9, 10), (14, 10),
+						    (3, 11), (9, 11), (13, 11), (14, 11),
+						    (0, 12), (1, 12), (2, 12), (3, 12), (9, 12), (13, 12),
+						    (9, 13), (10, 13), (11, 13), (12, 13), (13, 13)]
 		self.grid        = []
 		self.gridsize    = 16
 		self.spriteSize  = 32
@@ -16,10 +26,10 @@ class Level:
 		for i in range(self.gridsize):
 			self.grid.append([])
 			for j in range(self.gridsize):
-				self.grid[i].append(Field(0))
+				self.grid[i].append(Field(self.screen, 0))
 				
 		for field in self.level:
-			self.grid[field[0]][field[1]] = Field(1)
+			self.grid[field[0]][field[1]] = Field(self.screen, 1)
 	
 
 	def leave(self):
@@ -28,17 +38,17 @@ class Level:
 	def render(self):
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
-				self.screen.blit(self.grid[i][j].render(), (i * self.spriteSize + (self.screen.get_width() / 2) - ((self.gridsize * self.spriteSize) / 2), j * self.spriteSize))
+				tmpsprite = self.grid[i][j].render()
+				self.screen.blit(tmpsprite, (i * self.spriteSize + (self.screen.get_width() / 2) - ((self.gridsize * self.spriteSize) / 2), (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize)))
 		
 	def handle_ev(self, event):
 		if event.type == pygame.MOUSEBUTTONUP:
 			pos = pygame.mouse.get_pos()
 			i = (pos[0] - (self.screen.get_width() / 2) + ((self.gridsize * self.spriteSize) / 2)) / self.spriteSize
 			j = pos[1] / self.spriteSize
-			print i
-			print j
 			if not ( i < 0 or i > (self.gridsize - 1) or j < 0 or j > (self.gridsize - 1) ):
-				self.grid[i][j].setTower(1)
+				w = water_tower.WaterTower()
+				self.grid[i][j].setTower(w)
 	
 	def update(self):
 		pass

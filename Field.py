@@ -1,7 +1,8 @@
 import pygame
 
 class Field:
-	def __init__(self, ftype):
+	def __init__(self, screen, ftype):
+		self.screen = screen
 		self.type  = ftype
 		#0 - grass
 		if self.type == 0:
@@ -14,10 +15,16 @@ class Field:
 		self.enemies=[]
 		
 	def setTower(self, tower):
-		self.sprite = pygame.image.load('assets/ui/erde.png')
+		self.tower = tower
 		
 	def getType(self):
 		return self.type
 	
 	def render(self):
-		return self.sprite
+		if self.tower == None:
+			return self.sprite
+		
+		surf = pygame.Surface((32,70), pygame.SRCALPHA)
+		surf.blit(self.sprite, (0,38))
+		surf.blit(self.tower.render(), (0,0))
+		return surf

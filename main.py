@@ -21,7 +21,7 @@ class Main:
 		}
 		self.next_view = None
 		self.current_view = None
-		self.change_view('SplashScreen')
+		self.change_view('Level')
 		#self.current_view = Level(self.screen)
 		pygame.display.set_caption('Our awesome tower defense game with waves and shit')
 
