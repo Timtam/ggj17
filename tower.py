@@ -1,3 +1,4 @@
+import pygame
 import math
 
 # some constants
@@ -70,6 +71,9 @@ class Tower:
 	def run(self,fields,x,y):
 		valid_targets = self.find_target_fields(fields,x,y)
 		valid_targets=self.filter_target_fields(valid_targets, fields)
+		
+	def setSprite(self, path):
+		self.Sprite = pygame.image.load(path)
 		
 	def render(self):
 		return self.Sprite
