@@ -50,7 +50,7 @@ class Level:
 
 		for field in self.level:
 			self.grid[field[0]][field[1]] = Field(self.screen, 1, field[0], field[1])
-			
+
 		for field in self.decoration:
 			self.grid[field[0]][field[1]] = Field(self.screen, 2, field[0], field[1])
 
@@ -109,8 +109,6 @@ class Level:
 				for enemy in self.grid[i][j].enemies:
 					surf, coord = enemy.render()
 					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y))
-		for i in range(self.gridsize):
-			for j in range(self.gridsize):
 				if self.grid[i][j].tower != None:
 					tmpsprite = self.grid[i][j].render_tower()
 					self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
