@@ -93,6 +93,7 @@ class Level:
 		wave = self.waves[index]
 		self.current_wave = index
 		self.bgm = play_sound_bgm('assets/sound/bgm/' + wave[0])
+		play_sound_fx('assets/sound/common/level_start.ogg')
 		self.enemy_types = wave[1]
 		self.total_enemies = 0
 		self.removed_enemies = 0
@@ -119,6 +120,7 @@ class Level:
 	def remove_enemy(self, enemy):
 		self.removed_enemies += 1
 		if self.removed_enemies == self.total_enemies:
+			play_sound_fx('assets/sound/common/level_win.ogg')
 			self.in_wave = False
 
 	def render(self):
