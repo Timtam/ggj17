@@ -16,6 +16,7 @@ class Enemy(object):
 		self.health    = None
 		self.speed     = None
 		self.dieSound  = None
+		self.speedMultiplier = 1
 		self.arrivalSound = None
 		self.sprite    = []
 		self.drop      = None
@@ -55,7 +56,7 @@ class Enemy(object):
 		return self.health
 
 	def getSpeed(self):
-		return self.speed
+		return (self.speed * self.speedMultiplier)
 
 	def getDieSound(self):
 		return self.dieSound
@@ -81,7 +82,7 @@ class Enemy(object):
 				level.killed_enemies += 1
 				level.cash += self.drop
 			return
-		if (time.time() - self.start) > self.speed:
+		if (time.time() - self.start) > (self.speed * self.speedMultiplier):
 			index = level.level.index((x,y))
 			if index == 0:
 				level.current_lives -= self.damage
@@ -112,13 +113,13 @@ class Enemy(object):
 		spriteHalfw = self.sprite[self.direction].get_width() / 2
 		spriteHalfh = self.sprite[self.direction].get_height() / 2
 		if self.direction == DIRECTION_RIGHT:
-			self.coords = ((-1) * spriteHalfw + ((time.time() - self.start) * 32 / self.speed) - 16 , 0)
+			self.coords = ((-1) * spriteHalfw + ((time.time() - self.start) * 32 / (self.speed * self.speedMultiplier)) - 16 , 0)
 		if self.direction == DIRECTION_LEFT:
-			self.coords = (spriteHalfw - ((time.time() - self.start) * 32 / self.speed) + 16, 0)
+			self.coords = (spriteHalfw - ((time.time() - self.start) * 32 / (self.speed * self.speedMultiplier)) + 16, 0)
 		if self.direction == DIRECTION_UP:
-			self.coords = (0, spriteHalfh - ((time.time() - self.start) * 32 / self.speed) + 16)
+			self.coords = (0, spriteHalfh - ((time.time() - self.start) * 32 / (self.speed * self.speedMultiplier)) + 16)
 		if self.direction == DIRECTION_DOWN:
-			self.coords = (0, (-1) * spriteHalfh + ((time.time() - self.start) * 32 / self.speed) - 16)
+			self.coords = (0, (-1) * spriteHalfh + ((time.time() - self.start) * 32 / (self.speed * self.speedMultiplier)) - 16)
 
 	def addHealth(self, health):
 		self.health += health
