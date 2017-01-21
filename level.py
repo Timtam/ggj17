@@ -24,9 +24,9 @@ class Level:
 		self.field_y     = 64
 		self.controls    = []
 		self.cash_icon = get_common().get_image('assets/ui/crystal.png')
-		#self.enemy_icon = get_common().get_image('assets/ui/enemy.png')
-		#self.time_icon = get_common().get_image('assets/ui/time.png')
-		#self.health_icon = get_common().get_image('assets/ui/health.png')
+		self.enemy_icon = get_common().get_image('assets/ui/sword.png')
+		self.time_icon = get_common().get_image('assets/ui/time.png')
+		self.health_icon = get_common().get_image('assets/ui/heart.png')
 
 		self.cash=300
 		self.bgm = None
@@ -103,9 +103,9 @@ class Level:
 		for control in self.controls:
 			control.draw(self.screen)
 		self.screen.blit(self.cash_icon, (self.field_x + 17, 17))
-		#self.screen.blit(self.enemy_icon, (self.field_x + 157, 17))
-		#self.screen.blit(self.time_icon, (self.field_x + 307, 17))
-		#self.screen.blit(self.health_icon, (self.field_x + 437, 17))
+		self.screen.blit(self.enemy_icon, (self.field_x + 157, 17))
+		self.screen.blit(self.time_icon, (self.field_x + 307, 17))
+		self.screen.blit(self.health_icon, (self.field_x + 437, 17))
 
 	def handle_ev(self, event):
 		if event.type == pygame.MOUSEBUTTONUP and not self.tower_select.enabled:
