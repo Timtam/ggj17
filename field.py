@@ -52,8 +52,23 @@ class Field:
 	def newEnemy(self, enemy):
 		self.enemies.append(enemy())
 
-	def setTower(self, tower):
+	def setTower(self, tower, everyWay):
 		self.tower = tower
+		for i in range(16):
+			if (self.x + i, self.y) in everyWay:
+				nearestWay = 'right'
+				break;
+			if (self.x - i, self.y) in everyWay:
+				nearestWay = 'left'
+				break;
+			if (self.x, self.y + 1) in everyWay:
+				nearestWay = 'down'
+				break;
+			if (self.x, self.y - 1) in everyWay:
+				nearestWay = 'up'
+				break;
+			
+		self.tower.setDirection(nearestWay)
 
 	def getType(self):
 		return self.type

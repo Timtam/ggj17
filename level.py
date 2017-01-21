@@ -50,30 +50,35 @@ class Level:
 				self.grid[i].append(Field(self.screen, 0, i, j, None, 0))
 		latest = self.level[0]
 		for i in range(len(self.level)):
+			
+			
+			
 			if i == len(self.level) - 1:
 				next = self.level[i]
 			else:
 				next = self.level[i+1]
-				me   = self.level[i]
-				if latest[0] == self.level[i][0] and self.level[i][0] == self.level[i+1][0]:
-					self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 0, 0)
-				elif latest[1] == self.level[i][1] and self.level[i][1] == next[1]:
-					self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 0, 90)
-				else:
-					#dont worry it works - dont touch - dont know how, but its good :)
-					#von oben nach links?
-					if (me[1] > next[1] and me[0] == next[0] and me[0] > latest[0] and me[1] == latest[1]) or (me[1] > latest[1] and me[0] == latest[0] and me[0] > next[0] and me[1] == next[1]):
-						self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 1, 180)
-					#von links nach unten?
-					elif (me[0] == next[0] and me[0] > latest[0] and me[1] == latest[1] and me[1] < next[1]) or (me[0] == latest[0] and me[0] > next[0] and me[1] == next[1] and me[1] < latest[1]):
-						self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 1, 270)
-					#von rechts nach unten
-					elif (me[1] == next[1] and me[1] < latest[1] and me[0] == latest[0] and me[0] < next[0]) or (me[1] == latest[1] and me[1] < next[1] and me[0] == next[0] and me[0] < latest[0]):
-						self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 1, 0)
-					#von oben nach rechts
-					elif (me[1] > latest[1] and me[0] == latest[0] and me[1] == next[1] and me[0] < next[0]) or (me[1] > next[1] and me[0] == next[0] and me[1] == latest[1] and me[0] < latest[0]):
-						self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 1, 90)
-					
+				
+			me   = self.level[i]
+				
+			if latest[0] == self.level[i][0] and self.level[i][0] == self.level[i+1][0]:
+				self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 0, 0)
+			elif latest[1] == self.level[i][1] and self.level[i][1] == next[1]:
+				self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 0, 90)
+			else:
+				#dont worry it works - dont touch - dont know how, but its good :)
+				#von oben nach links?
+				if (me[1] > next[1] and me[0] == next[0] and me[0] > latest[0] and me[1] == latest[1]) or (me[1] > latest[1] and me[0] == latest[0] and me[0] > next[0] and me[1] == next[1]):
+					self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 1, 180)
+				#von links nach unten?
+				elif (me[0] == next[0] and me[0] > latest[0] and me[1] == latest[1] and me[1] < next[1]) or (me[0] == latest[0] and me[0] > next[0] and me[1] == next[1] and me[1] < latest[1]):
+					self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 1, 270)
+				#von rechts nach unten
+				elif (me[1] == next[1] and me[1] < latest[1] and me[0] == latest[0] and me[0] < next[0]) or (me[1] == latest[1] and me[1] < next[1] and me[0] == next[0] and me[0] < latest[0]):
+					self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 1, 0)
+				#von oben nach rechts
+				elif (me[1] > latest[1] and me[0] == latest[0] and me[1] == next[1] and me[0] < next[0]) or (me[1] > next[1] and me[0] == next[0] and me[1] == latest[1] and me[0] < latest[0]):
+					self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 1, 90)
+				
 			latest = self.level[i]
 				
 		for field in self.decoration:
@@ -199,7 +204,7 @@ class Level:
 			i, j = self.new_tower_coord
 			tower = self.tower_select.selected_tower
 			tower.init()
-			self.grid[i][j].setTower(tower)
+			self.grid[i][j].setTower(tower, self.level)
 
 	def update(self):
 		if not self.paused:

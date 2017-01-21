@@ -24,12 +24,13 @@ class Tower:
 		self.SpeedMultiplier=1.0
 		self.Range=1 # one tile radius
 		self.RangeMultiplier=1.0
-		self.Sprite=None
+		self.Sprite=[]
 		self.PlaceSound=None
 		self.AttackSound=None
 		self.PendingTransaction=0
 		self.LastFire=0
 		self.EnemyCache = [] # saves all enemies which shouldn't be attacked again
+		self.direction = 'up'
 
 	def init(self):
 		# setting PendingTransaction to the costs of the tower on first run, so the player needs to pay
@@ -91,6 +92,9 @@ class Tower:
 			targets=[nearest_field]
 		return targets
 
+	def setDirection(self, nearestWay):
+		self.direction = nearestWay
+
 	def update(self,level,x,y):
 		enemy=None
 		enemies=[]
@@ -136,7 +140,10 @@ class Tower:
 			self.LastFire=time.time()
 
 	def setSprite(self, path):
-		self.Sprite = get_common().get_image(path)
+		self.Sprite.append(get_common().get_image("assets/level/towers/" + path + "_up.png"))
+		self.Sprite.append(get_common().get_image("assets/level/towers/" + path + "_down.png"))
+		self.Sprite.append(get_common().get_image("assets/level/towers/" + path + "_left.png"))
+		self.Sprite.append(get_common().get_image("assets/level/towers/" + path + "_right.png"))
 
 	def setPlaceSound(self,filename):
 		self.PlaceSound=filename
@@ -145,4 +152,11 @@ class Tower:
 		self.AttackSound = filename
 
 	def render(self):
-		return self.Sprite
+		if self.direction == 'up':
+			return self.Sprite[0]
+		if self.direction == 'down':
+			return self.Sprite[1]
+		if self.direction == 'left':
+			return self.Sprite[2]
+		if self.direction == 'right':
+			return self.Sprite[3]
