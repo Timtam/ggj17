@@ -29,18 +29,11 @@ class Field:
 	def getType(self):
 		return self.type
 
-	def render(self):
-		if self.tower == None:
-			#TODO!!
-			surf = pygame.Surface((32, 32))
-			surf.blit(self.sprite, (0,0))
-			return surf
+	def render_underground(self):
+		return self.sprite
+	def render_tower(self):
+		return self.tower.render()
 
-		tower_surf = self.tower.render()
-		surf = pygame.Surface(tower_surf.get_size(), pygame.SRCALPHA)
-		surf.blit(self.sprite, (tower_surf.get_width() / 2 - 16, tower_surf.get_height() - 32))
-		surf.blit(tower_surf, (0, 0))
-		return surf
 
 	def update(self, level):
 		if self.tower!=None:
