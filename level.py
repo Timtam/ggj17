@@ -21,7 +21,7 @@ class Level:
 		self.field_x     = (self.screen.get_width() - self.spriteSize * self.gridsize) / 2
 		self.field_y     = 64
 		self.controls    = []
-		self.cash_icon = pygame.transform.scale(pygame.transform.scale(get_common().get_image('assets/ui/temp_cash.png'), (16, 16)), (32, 32))
+		self.cash_icon = get_common().get_image('assets/ui/crystal.png')
 		self.cash=300
 
 		for i in range(self.gridsize):
