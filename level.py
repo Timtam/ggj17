@@ -48,14 +48,14 @@ class Level:
 			self.grid.append([])
 			for j in range(self.gridsize):
 				self.grid[i].append(Field(self.screen, 0, i, j, None, 0))
-	
+
 		latest = self.level[0]
 		for i in range(len(self.level) - 1):
 			if latest[1] == self.level[i][1] and self.level[i][1] == self.level[i+1][1]:
 				self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 0, 90)
 			elif latest[0] == self.level[i][0] and self.level[i][0] == self.level[i+1][0]:
 				self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 0, 0)
-				
+
 			latest = self.level[i]
 		for field in self.decoration:
 			self.grid[field[0]][field[1]] = Field(self.screen, 2, field[0], field[1], 0, 0)
@@ -132,11 +132,9 @@ class Level:
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
 				self.screen.blit(self.grid[i][j].render_underground(), (i * self.spriteSize + self.field_x, j * self.spriteSize + self.field_y))
-		for i in range(self.gridsize):
-			for j in range(self.gridsize):
 				if self.grid[i][j].type == 2:
 					self.screen.blit(self.grid[i][j].render_deco(), (i * self.spriteSize + self.field_x, j * self.spriteSize + self.field_y))
-					
+
 		for j in range(self.gridsize):
 			for i in range(self.gridsize):
 				for enemy in self.grid[i][j].enemies:
