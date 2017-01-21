@@ -3,6 +3,7 @@ import pygame
 class UI:
 	def __init__(self):
 		sprite_sheet = pygame.image.load('assets/ui/ui.png')
+		self.tower_select = pygame.image.load('assets/ui/tower_select.png')
 		color_off = 18 # 6: yellow, 12: green, 18: orange, 24: blue
 		# load panel sprites
 		self.panel_border = []

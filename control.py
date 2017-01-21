@@ -39,7 +39,8 @@ class Control(object):
 
 	def _draw(self, screen): pass
 	def draw(self, screen):
-		screen.blit(self.surface, self.rect)
+		if self.surface != None:
+			screen.blit(self.surface, self.rect)
 		self._draw(screen)
 		for control in self.child_controls:
 			control.draw(screen)

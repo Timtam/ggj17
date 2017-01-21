@@ -2,6 +2,7 @@ from Field import Field
 import tower
 from towers import water_tower
 import pygame
+from controls import *
 
 class Level:
 	def __init__(self, screen):
@@ -22,15 +23,24 @@ class Level:
 		self.gridsize    = 16
 		self.spriteSize  = 32
 		self.screen      = screen
-		
+		self.field_x     = (self.screen.get_width() - self.spriteSize * self.gridsize) / 2
+		self.field_y     = 64
+		self.controls    = []
+
 		for i in range(self.gridsize):
 			self.grid.append([])
 			for j in range(self.gridsize):
 				self.grid[i].append(Field(self.screen, 0))
-				
+
 		for field in self.level:
 			self.grid[field[0]][field[1]] = Field(self.screen, 1)
-	
+
+		panel_width = self.gridsize * self.spriteSize
+		panel = PanelControl((self.screen.get_width() - panel_width) / 2, 0, panel_width, self.field_y)
+		self.controls.append(panel)
+		self.tower_select = TowerSelectControl(0,0)
+		self.controls.append(self.tower_select)
+
 
 	def leave(self):
 		pass
@@ -39,16 +49,22 @@ class Level:
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
 				tmpsprite = self.grid[i][j].render()
-				self.screen.blit(tmpsprite, (i * self.spriteSize + (self.screen.get_width() / 2) - ((self.gridsize * self.spriteSize) / 2), (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize)))
-		
+				self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
+		for control in self.controls:
+			control.draw(self.screen)
+
 	def handle_ev(self, event):
 		if event.type == pygame.MOUSEBUTTONUP:
 			pos = pygame.mouse.get_pos()
-			i = (pos[0] - (self.screen.get_width() / 2) + ((self.gridsize * self.spriteSize) / 2)) / self.spriteSize
-			j = pos[1] / self.spriteSize
+			i = (pos[0] - self.field_x) / self.spriteSize
+			j = (pos[1] - self.field_y) / self.spriteSize
 			if not ( i < 0 or i > (self.gridsize - 1) or j < 0 or j > (self.gridsize - 1) ):
-				w = water_tower.WaterTower()
-				self.grid[i][j].setTower(w)
-	
+				field = self.grid[i][j]
+				if field.getType() == 0:
+					self.tower_select.rect.centerx = i * self.spriteSize + self.field_x + self.spriteSize / 2
+					self.tower_select.rect.centery = j * self.spriteSize + self.field_y + self.spriteSize / 2
+					self.tower_select.enabled = True
+
 	def update(self):
-		pass
+		for control in self.controls:
+			control.update()
