@@ -95,5 +95,6 @@ class Enemy(object):
 
 	def addHealth(self, health):
 		self.health += health
+		print "remaining: %f"%self.health
 		if self.health <= 0:
 			self.die = True
