@@ -68,6 +68,10 @@ class Level:
 		self.tower_select = TowerSelectControl(0, 0, self)
 		self.controls.append(self.tower_select)
 
+		self.paused = False
+		self.was_paused = False
+		self.pause_start_time = None
+
 		self.start_wave(1)
 
 
@@ -104,8 +108,8 @@ class Level:
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
 				self.screen.blit(self.grid[i][j].render_underground(), (i * self.spriteSize + self.field_x, j * self.spriteSize + self.field_y))
-		for i in range(self.gridsize):
-			for j in range(self.gridsize):
+		for j in range(self.gridsize):
+			for i in range(self.gridsize):
 				for enemy in self.grid[i][j].enemies:
 					surf, coord = enemy.render()
 					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y))
@@ -131,6 +135,13 @@ class Level:
 					self.tower_select.rect.centery = j * self.spriteSize + self.field_y + self.spriteSize / 2
 					self.tower_select.enable()
 					self.new_tower_coord = (i, j)
+		if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
+			if self.paused:
+				self.was_paused = True
+				self.paused = False
+			else:
+				self.paused = True
+				self.pause_start_time = time.time()
 		if self.tower_select.enabled and self.tower_select.selected_tower != None:
 			self.tower_select.enabled = False
 			i, j = self.new_tower_coord
@@ -138,27 +149,37 @@ class Level:
 			tower.init()
 			self.grid[i][j].setTower(tower)
 
-
 	def update(self):
-		for i in range(self.gridsize):
-			for j in range(self.gridsize):
-				self.grid[i][j].update(self)
-		if time.time() >= self.next_enemy_spawn and len(self.all_enemies) > self.enemy_spawn_index:
-			firstCoord = self.level[-1]
-			enemy = self.all_enemies[self.enemy_spawn_index]
-			self.enemy_spawn_index += 1
-			new_enemy = enemy[0]()
-			new_enemy.init()
-			self.grid[firstCoord[0]][firstCoord[1]].enemies.append(new_enemy)
-			self.next_enemy_spawn += enemy[1]
-		self.cash_text_control.set_text(str(self.cash))
-		self.enemies_text_control.set_text(str(self.killed_enemies) + " / " + str(self.total_enemies))
-		wave_time = int(time.time() - self.wave_started)
-		s = wave_time % 60
-		m = (wave_time - s) / 60
-		s = str(s).zfill(2)
-		m = str(m).zfill(2)
-		self.timer_text_control.set_text(m + ':' + s)
-		self.health_text_control.set_text(str(self.current_lives))
+		if not self.paused:
+			if self.was_paused:
+				self.was_paused = False
+				time_delta = time.time() - self.pause_start_time
+				for i in range(self.gridsize):
+					for j in range(self.gridsize):
+						field = self.grid[i][j]
+						if field.tower != None:
+							field.tower.LastFire += time_delta
+						for enemy in field.enemies:
+							enemy.start += time_delta
+			for i in range(self.gridsize):
+				for j in range(self.gridsize):
+					self.grid[i][j].update(self)
+			if time.time() >= self.next_enemy_spawn and len(self.all_enemies) > self.enemy_spawn_index:
+				firstCoord = self.level[-1]
+				enemy = self.all_enemies[self.enemy_spawn_index]
+				self.enemy_spawn_index += 1
+				new_enemy = enemy[0]()
+				new_enemy.init()
+				self.grid[firstCoord[0]][firstCoord[1]].enemies.append(new_enemy)
+				self.next_enemy_spawn += enemy[1]
+			self.cash_text_control.set_text(str(self.cash))
+			self.enemies_text_control.set_text(str(self.killed_enemies) + " / " + str(self.total_enemies))
+			wave_time = int(time.time() - self.wave_started)
+			s = wave_time % 60
+			m = (wave_time - s) / 60
+			s = str(s).zfill(2)
+			m = str(m).zfill(2)
+			self.timer_text_control.set_text(m + ':' + s)
+			self.health_text_control.set_text(str(self.current_lives))
 		for control in self.controls:
 			control.update()

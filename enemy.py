@@ -25,6 +25,7 @@ class Enemy(object):
 		self.die = 0
 		self.health_empty = get_common().get_image('assets/ui/health_empty.png')
 		self.health_full = get_common().get_image('assets/ui/health_full.png')
+		self.coords = (0, 0)
 
 	def init(self):
 		if self.arrivalSound!=None:
@@ -39,17 +40,8 @@ class Enemy(object):
 	def render(self):
 		spriteHalfw = self.sprite[self.direction].get_width() / 2
 		spriteHalfh = self.sprite[self.direction].get_height() / 2
-		if self.direction == DIRECTION_RIGHT:
-			coords = ((-1) * spriteHalfw + ((time.time() - self.start) * 32 / self.speed) - 16 , 0)
-		if self.direction == DIRECTION_LEFT:
-			coords = (spriteHalfw - ((time.time() - self.start) * 32 / self.speed) + 16, 0)
-		if self.direction == DIRECTION_UP:
-			coords = (0, spriteHalfh - ((time.time() - self.start) * 32 / self.speed) + 16)
-		if self.direction == DIRECTION_DOWN:
-			coords = (0, (-1) * spriteHalfh + ((time.time() - self.start) * 32 / self.speed) - 16)
-
 		sprite = self.sprite[self.direction]
-		coords = (coords[0], coords[1] - 5)
+		coords = (self.coords[0], self.coords[1] - 5)
 		surf = pygame.Surface((sprite.get_width(), sprite.get_height() + 5), pygame.SRCALPHA)
 		surf.blit(sprite, (0, 5))
 		surf.blit(self.health_empty, (spriteHalfw - 16, 0))
@@ -114,6 +106,18 @@ class Enemy(object):
 			self.corner = False
 			field.enemies.append(self)
 			del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
+			
+		# update render coords
+		spriteHalfw = self.sprite[self.direction].get_width() / 2
+		spriteHalfh = self.sprite[self.direction].get_height() / 2
+		if self.direction == DIRECTION_RIGHT:
+			self.coords = ((-1) * spriteHalfw + ((time.time() - self.start) * 32 / self.speed) - 16 , 0)
+		if self.direction == DIRECTION_LEFT:
+			self.coords = (spriteHalfw - ((time.time() - self.start) * 32 / self.speed) + 16, 0)
+		if self.direction == DIRECTION_UP:
+			self.coords = (0, spriteHalfh - ((time.time() - self.start) * 32 / self.speed) + 16)
+		if self.direction == DIRECTION_DOWN:
+			self.coords = (0, (-1) * spriteHalfh + ((time.time() - self.start) * 32 / self.speed) - 16)
 
 	def addHealth(self, health):
 		self.health += health
