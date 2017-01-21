@@ -43,8 +43,9 @@ class Level:
 
 		for field in self.level:
 			self.grid[field[0]][field[1]] = Field(self.screen, 1, field[0], field[1])
-
-		self.grid[0][12].enemies.append(Ghost(timeit.default_timer()))
+		
+		for i in range(20):
+			self.grid[0][12].enemies.append(Ghost(timeit.default_timer()))
 
 		panel_width = self.gridsize * self.spriteSize
 		panel = PanelControl((self.screen.get_width() - panel_width) / 2, 0, panel_width, self.field_y)
