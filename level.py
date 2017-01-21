@@ -34,13 +34,63 @@ class Level:
 
 		self.cash=300
 		self.bgm = None
-		self.waves = [
+		self.waves = [##################BALANCE###############
 			('level1.ogg', (
-				(12, Skeleton, 1),
+				(12, Skeleton, 3),
 			)),
 			('level2.ogg', (
-				(5, Ghost, 1, 5), # spawn 5 ghosts with 1s between each, then wait 5 seconds
-				(5, Ghost, 1)))]
+				(15, Skeleton, 2, 2), # spawn 5 ghosts with 1s between each, then wait 5 seconds
+				(3, Ghost, 1))),
+			('level3.ogg', (
+				(18, Skeleton, 2, 2),
+				(1, Barrel, 2),
+				(5, Ghost, 1, 5),
+				 (2, Barrel, 1))),
+			('level4.ogg', (
+				(18, Skeleton, 2, 0.5),
+				(5, Barrel, 2),
+				(7, Ghost, 1, 3),
+				 (3, Barrel, 1))),
+			('level5.ogg', (
+				(10, Skeleton,1,1),
+				(10, Ghost,1,2),
+				(11, Barrel,1,3),
+				(13, Ghost,1))), #addGolem
+			('level6.ogg', (
+				(10, Skeleton,0.2,0.2),
+				(3, Ghost,1,1),
+				(3, Barrel,1,1),
+				(3, Skeleton,1,1),
+				(3, Barrel,1,1),
+				(3, Skeleton,2,1),
+				(3, Skeleton,0.2,0.2),
+				(3, Barrel,1,0.2),
+				(3, Skeleton,0.2,0.2),
+				(3, Barrel,1,0.2),
+				(3, Skeleton,0.2,0.2),
+				(3, Barrel,1,0.2),
+				(3, Ghost,1,0.2),
+				(3, Skeleton,0.2,0.2),
+				(5, Barrel,1,0.2))), #addGolem
+			('level7.ogg', (
+				(20, Barrel,1,2),
+				(20, Skeleton,1,1),
+				(11, Barrel,1,1),
+				(20, Ghost,1,2),
+				(10, Skeleton,1,2),
+				(5, Skeleton,2,2),
+				(15, Barrel,1,2),
+				(20, Ghost,1))), #addGolem
+			('level8.ogg', (
+				(20, Skeleton,1,0),
+				(20, Barrel,1,2),
+				(20, Skeleton,1,1),
+				(11, Barrel,1,1),
+				(20, Ghost,1,2),
+				(10, Skeleton,1,2),
+				(5, Skeleton,2,2),
+				(15, Barrel,1,2),
+				(20, Ghost,1)))] #addGolem
 		self.current_lives = 30
 		self.in_wave = False
 

@@ -1,15 +1,15 @@
 import tower
 
 class WaterTower(tower.Tower):
-	Cost=140
+	Cost=120
 	name = "TSUNAMI TOWER"
 	description = "Sends out Haitis Nightmare!"
-	effect_desc = ("Stuns a couple of enemies in a line for ", "[stun]", "s")
+	effect_desc = ("Slows a couple of enemies in a line for ", "[stun]", "s")
 	def __init__(self):
 		tower.Tower.__init__(self)
-		self.EffectValue=20 # percentage
+		self.EffectValue=40 # percentage
 		self.EffectType=tower.EFFECT_TYPE_SLOWDOWN|tower.EFFECT_TYPE_STRAIGHT
-		self.Speed=5
+		self.Speed=5 #attc speed
 		self.setSprite('assets/level/towers/watertower.png')
 		self.setPlaceSound("assets/sound/water_tower/place.ogg")
 		self.setAttackSound("assets/sound/water_tower/attack.ogg")
