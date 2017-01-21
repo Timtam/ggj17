@@ -3,6 +3,7 @@ from Bass4Py.Bass4Py import *
 
 from ui import *
 from options import *
+import platform
 
 class Commons:
 	def __init__(self):
@@ -14,7 +15,11 @@ class Commons:
 		self.ui = UI()
 		self.options = Options()
 		self.options.save()
-		self.bass = BASS('bass.dll', True)
+		if platform.system()=="Windows":
+			basspath=('bass_x64.dll' if sys.maxsize>2**32 else 'bass.dll')
+		else:
+			basspath=('libbass_x64.so' if sys.maxsize>2**32 else 'libbass.so')
+		self.bass = BASS(basspath, True)
 		self.bass.Init()
 
 	def get_font(self):
