@@ -1,4 +1,5 @@
 import pygame
+import timeit
 
 from commons import *
 
@@ -17,6 +18,9 @@ class Field:
 
 		self.tower = None
 		self.enemies=[]
+		
+	def newEnemy(self, enemy):
+		self.enemies.append(enemy(timeit.default_timer()))
 
 	def setTower(self, tower):
 		self.tower = tower
@@ -26,7 +30,12 @@ class Field:
 
 	def render(self):
 		if self.tower == None:
-			return self.sprite
+			#TODO!!
+			surf = pygame.Surface((32, 32))
+			surf.blit(self.sprite, (0,0))
+			#for enemy in self.enemies:
+				#surf.blit(enemy[0].render(), (10 ,10))
+			return surf
 
 		tower_surf = self.tower.render()
 		surf = pygame.Surface(tower_surf.get_size(), pygame.SRCALPHA)
@@ -37,3 +46,5 @@ class Field:
 	def update(self, level):
 		if self.tower!=None:
 			self.tower.update(level, self.x, self.y)
+		for enemy in self.enemies:
+			enemy.update(level, self.x, self.y)

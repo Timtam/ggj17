@@ -1,9 +1,11 @@
 from field import Field
+from ghost import Ghost
 import tower
 from towers import water_tower
 import pygame
 from controls import *
 from commons import *
+import timeit
 
 class Level:
 	def __init__(self, screen):
@@ -31,6 +33,8 @@ class Level:
 
 		for field in self.level:
 			self.grid[field[0]][field[1]] = Field(self.screen, 1, field[0], field[1])
+			
+		self.grid[0][12].enemies.append(Ghost(timeit.default_timer()))
 
 		panel_width = self.gridsize * self.spriteSize
 		panel = PanelControl((self.screen.get_width() - panel_width) / 2, 0, panel_width, self.field_y)
