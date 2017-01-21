@@ -7,3 +7,5 @@ class BassTower(tower.Tower):
 		self.EffectValue=1 # in real damage
 		self.Speed=3 # in seconds
 		self.setSprite('assets/level/towers/soundtower.png')
+		self.Cost=90
+		self.init()

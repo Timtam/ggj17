@@ -21,8 +21,8 @@ class Level:
 		self.field_x     = (self.screen.get_width() - self.spriteSize * self.gridsize) / 2
 		self.field_y     = 64
 		self.controls    = []
-		self.gold        = 300
 		self.gold_surface = get_common().get_image('assets/ui/temp_gold.png')
+		self.cash=300
 
 		for i in range(self.gridsize):
 			self.grid.append([])
