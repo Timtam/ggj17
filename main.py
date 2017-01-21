@@ -5,6 +5,7 @@ from commons   import *
 from Level     import *
 from main_menu import MainMenu
 from options_screen import OptionsScreen
+from towers import light_tower
 
 class Main:
 	def __init__(self, width = 1280, height = 720):
