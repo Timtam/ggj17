@@ -1,0 +1,3 @@
+- updating to newest bass version
+- adding tag information as attributes into channel object
+- documentation
