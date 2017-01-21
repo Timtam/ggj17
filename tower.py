@@ -93,6 +93,7 @@ class Tower:
 
 	def update(self,level,x,y):
 		enemy=None
+		enemies=[]
 		i=0
 		j=0
 		# to pay the crystals required
@@ -111,10 +112,26 @@ class Tower:
 			if self.EffectType&EFFECT_TYPE_ALL==EFFECT_TYPE_ALL:
 				for j in range(len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)):
 					enemy=level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j]
-					enemy.addHealth(-(self.EffectMultiplier*self.EffectValue))
+					if self.EffectType&EFFECT_TYPE_DAMAGE==EFFECT_TYPE_DAMAGE:
+						enemy.addHealth(-(self.EffectMultiplier*self.EffectValue))
+					elif self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN:
+						if enemy in self.EnemyCache:
+							continue
+						enemy.speedMultiplier-=self.EffectValue*enemy.speedMultiplier/100.0
+						self.EnemyCache.append(enemy)
 			else:
-				enemy=level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[randint(0,len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)-1)]
-				enemy.addHealth(-(self.EffectMultiplier*self.EffectValue))
+				enemies=[]
+				for j in range(len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)):
+					if self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN and level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j] in self.EnemyCache:
+						continue
+					enemies.append(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j])
+				if len(enemies)==0:
+					return
+				enemy=enemies[randint(0,len(enemies)-1)]
+				if self.EffectType&EFFECT_TYPE_DAMAGE==EFFECT_TYPE_DAMAGE:
+					enemy.addHealth(-(self.EffectMultiplier*self.EffectValue))
+				elif self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN:
+					enemy.speedMultiplier-=self.EffectValue*enemy.speedMultiplier/100.0
 			play_sound_fx(self.AttackSound)
 			self.LastFire=time.time()
 

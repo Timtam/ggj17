@@ -4,10 +4,8 @@ from enemy import Enemy
 class Ghost(Enemy):
 	def __init__(self):
 		super(Ghost, self).__init__()
-		self.health  = 100
-		self.speed   = 10.0
-		self.sound   = None
-		self.damage  = 1
+		self.health  = self.max_health = 100
+		self.speed   = 1.0
 		self.setDieSound("assets/sound/ghost/die.ogg")
 		self.setSprite("ghost")
 		self.drop    = 8 + randint(-2, 2)
