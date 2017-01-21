@@ -3,7 +3,6 @@ import sys, pygame
   
 from commons   import *
 from Level     import *
-from button    import *
 from main_menu import *
 
 class Main:
