@@ -1,4 +1,4 @@
-from Field import Field
+from field import Field
 import tower
 from towers import water_tower
 import pygame

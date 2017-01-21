@@ -2,7 +2,7 @@
 import sys, pygame
 
 from commons   import *
-from Level     import *
+from level     import *
 from main_menu import MainMenu
 from options_screen import OptionsScreen
 from splash_screen import SplashScreen
