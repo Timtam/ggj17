@@ -29,10 +29,10 @@ class Tower:
 	def find_target_fields(self, fields, x, y):
 		c_x=0
 		c_y=0
-		i_x1=x-(self.Range*self.RangeMultiplier)
-		i_x2=x+(self.Range*self.RangeMultiplier)
-		i_y1=y-(self.Range*self.RangeMultiplier)
-		i_y2=y+(self.Range*self.RangeMultiplier)
+		i_x1=x-(int(self.Range*self.RangeMultiplier))
+		i_x2=x+(int(self.Range*self.RangeMultiplier))
+		i_y1=y-(int(self.Range*self.RangeMultiplier))
+		i_y2=y+(int(self.Range*self.RangeMultiplier))
 		if i_x1<0:
 			i_x1=0
 		if i_x2>=len(fields):
@@ -51,27 +51,38 @@ class Tower:
 				if self.EffectType&EFFECT_TYPE_STRAIGHT==EFFECT_TYPE_STRAIGHT:
 					if c_x!=x and c_y!=y:
 						continue
-				valid_target.append((c_x, c_y, ))
+				valid_targets.append((c_x, c_y, ))
 		return valid_targets
 
 	# needs all valid target fields as tuple array, as returned by find_target_fields
 	# returns all actual targets (deal damage here) as tuple-array
-	def filter_target_fields(valid_targets, fields):
+	def filter_target_fields(self, level, valid_targets):
+		nearest_field=None
 		targets=[]
-		x=0
+		i=0
 		# filter all fields without enemies
-		for x in range(valid_targets):
-			if fields[valid_targets[x][0]][valid_targets[x][1]].getType()!=1:
+		for i in range(len(valid_targets)):
+			if level.grid[valid_targets[i][0]][valid_targets[i][1]].getType()!=1:
 				continue
-			if len(fields[valid_targets[x][0]][valid_targets[x][1]].enemies)==0:
+			if len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)==0:
 				continue
-			targets.append(valid_targets[x])
-		# missing "nearest to target" limitation here, also not a single return yet
+			targets.append(valid_targets[i])
+		# no targets left?
+		if len(targets)==0:
+			return []
+		if self.EffectType&EFFECT_TYPE_CIRCLE!=EFFECT_TYPE_CIRCLE:
+			# filtering down to just one valid field, only one field should be attacked
+			# per definition (Henry) this should be the field with the lowest distance to the target
+			nearest_field=targets[0]
+			for i in range(1,len(targets)):
+				if level.level.index((targets[i][0], targets[i][1], ))<level.level.index((nearest_field[0], nearest_field[1], )):
+					nearest_field=targets[i]
+			targets=[nearest_field]
 		return targets
 
 	def update(self,level,x,y):
 		valid_targets = self.find_target_fields(level.grid,x,y)
-		valid_targets=self.filter_target_fields(valid_targets, level.grid)
+		valid_targets=self.filter_target_fields(level, valid_targets)
 
 	def setSprite(self, path):
 		self.Sprite = get_common().get_image(path)
