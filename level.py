@@ -1,5 +1,7 @@
 from field import Field
 from enemies.ghost import Ghost
+from enemies.skeleton import Skeleton
+from enemies.barrel import Barrel
 import tower
 from towers import water_tower
 import pygame
@@ -32,6 +34,9 @@ class Level:
 		self.bgm = None
 		self.waves = [
 			('level1.ogg', (
+				(12, Skeleton, 1)
+			)),
+			('level2.ogg', (
 				(5, Ghost, 1, 5), # spawn 5 ghosts with 1s between each, then wait 5 seconds
 				(5, Ghost, 1)))]
 		self.current_lives = 30
@@ -58,7 +63,7 @@ class Level:
 		self.tower_select = TowerSelectControl(0, 0, self)
 		self.controls.append(self.tower_select)
 
-		self.start_wave()
+		self.start_wave(1)
 
 
 	def leave(self):
