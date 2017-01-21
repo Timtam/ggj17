@@ -6,7 +6,7 @@ def play_sound_fx(filename, volume = None):
 	if volume == None:
 		volume = common.get_options().vol_fx
 	channel.SetAttribute(BASS_ATTRIB_VOL, volume)
-	channel.Play()
+	channel.Play(True)
 	return channel
 
 def play_sound_bgm(filename, volume = None):
