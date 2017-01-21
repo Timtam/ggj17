@@ -3,11 +3,11 @@ from enemy import Enemy
 
 class Skeleton(Enemy):
 	def __init__(self):
-		super(Skelett,self).__init__()
-		self.health  = 100
-		self.speed   = 0.5
+		super(Skeleton,self).__init__()
+		self.health  = 125
+		self.speed   = 1.25
 		self.sound   = None
 		self.damage  = 1
 		self.setDieSound('assets/sound/skeleton/die.ogg')
 		self.setSprite("skeleton")
-		self.drop    = randint(1,3)
+		self.drop    = 10 + randint(-2, 2)
