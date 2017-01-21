@@ -1,5 +1,5 @@
 import pygame
-
+from random import randint
 from commons import *
 
 
@@ -14,9 +14,12 @@ class Field:
 		if self.type == 0:
 			self.sprite = get_common().get_image('assets/level/tiles/grass.png')
 		#1 - way
-		else:
+		elif self.type == 1:
 			self.sprite = get_common().get_image('assets/level/tiles/dirt.png')
-
+		else:
+			stone = randint(1, 10)
+			self.sprite = get_common().get_image('assets/level/decoration/rock_' + str(stone) + '.png')
+			
 		self.tower = None
 		self.enemies=[]
 

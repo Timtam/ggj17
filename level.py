@@ -9,6 +9,8 @@ import time
 
 class Level:
 	def __init__(self, screen):
+		self.decoration = [
+		(1, 14)]
 		self.level = [
 			(0, 12), (1, 12), (2, 12), (3, 12), (3, 11), (3, 10), (4, 10), (5, 10), (6, 10), (6, 9), (6, 8), (6, 7), (5, 7), (4, 7),
 			(4, 6), (3, 6), (3, 5), (3, 4), (3, 3), (2, 3), (2, 2), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (7, 2),
@@ -43,6 +45,9 @@ class Level:
 
 		for field in self.level:
 			self.grid[field[0]][field[1]] = Field(self.screen, 1, field[0], field[1])
+			
+		for field in self.decoration:
+			self.grid[field[0]][field[1]] = Field(self.screen, 2, field[0], field[1])
 
 		panel_width = self.gridsize * self.spriteSize
 		panel = PanelControl((self.screen.get_width() - panel_width) / 2, 0, panel_width, self.field_y)
@@ -106,6 +111,7 @@ class Level:
 		#self.screen.blit(self.enemy_icon, (self.field_x + 157, 17))
 		#self.screen.blit(self.time_icon, (self.field_x + 307, 17))
 		#self.screen.blit(self.health_icon, (self.field_x + 437, 17))
+			
 
 	def handle_ev(self, event):
 		if event.type == pygame.MOUSEBUTTONUP and not self.tower_select.enabled:
