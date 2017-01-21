@@ -1,3 +1,5 @@
+import pygame
+
 # some constants
 # effect types can be combined (e.g. to deal damage and stop enemies)
 EFFECT_TYPE_NONE=0x0 # no effect at all
@@ -19,6 +21,9 @@ class Tower:
 		self.Range=1 # one tile radius
 		self.RangeMultiplier=1.0
 		self.Sprite=None
+		
+	def setSprite(self, path):
+		self.Sprite = pygame.image.load(path)
 		
 	def render(self):
 		return self.Sprite
