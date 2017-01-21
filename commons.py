@@ -8,6 +8,7 @@ import platform
 class Commons:
 	def __init__(self):
 		self.image_cache = {}
+		self.sound_cache = {}
 
 	def load(self, main):
 		self.main = main
@@ -39,6 +40,13 @@ class Commons:
 			asset = pygame.image.load(filename)
 			self.image_cache[filename] = asset
 			return asset
+
+	def get_sound(self, filename, music=False):
+		if filename in self.sound_cache:
+			return self.sound_cache[filename]
+		channel = self.bass.StreamCreateFile(False, filename, 0, 0, self.bass.BASS_SAMPLE_LOOP if music==True else 0).Channel
+		self.sound_cache[filename] = channel
+		return channel
 
 instance = None
 def get_common():
