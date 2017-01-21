@@ -12,7 +12,7 @@ class Enemy(object):
 	def __init__(self):
 		self.health    = None
 		self.speed     = None
-		self.sound     = None
+		self.dieSound  = None
 		self.sprite    = []
 		self.drop      = None
 		self.damage    = None # damage done to player's castle
@@ -47,8 +47,11 @@ class Enemy(object):
 	def getSpeed(self):
 		return self.speed
 
-	def getSound(self):
-		return self.sound
+	def getDieSound(self):
+		return self.dieSound
+
+	def setDieSound(self, filename):
+		self.dieSound = filename
 
 	def getDrop(self):
 		return self.drop
@@ -59,6 +62,7 @@ class Enemy(object):
 	def update(self, level, x, y):
 		if self.die == True:
 			# enemy is told to die, so do it, now!!!
+			play_sound_fx(self.dieSound)
 			del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
 			return
 		if (time.time() - self.start) > self.speed:
