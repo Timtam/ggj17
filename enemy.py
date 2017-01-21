@@ -8,6 +8,9 @@ DIRECTION_DOWN  = 1
 DIRECTION_LEFT  = 2
 DIRECTION_RIGHT = 3
 
+DIE_DAMAGE=1
+DIE_SUCCESS=2
+
 class Enemy(object):
 	def __init__(self):
 		self.health    = None
@@ -18,7 +21,7 @@ class Enemy(object):
 		self.damage    = None # damage done to player's castle
 		self.direction = DIRECTION_RIGHT
 		self.start     = time.time()
-		self.die = False
+		self.die = 0
 
 	def setSprite(self, filename):
 		self.sprite.append(get_common().get_image("assets/level/enemies/" + filename + "_up.png"))
@@ -60,16 +63,18 @@ class Enemy(object):
 		self.start = start
 
 	def update(self, level, x, y):
-		if self.die == True:
+		if self.die>0:
 			# enemy is told to die, so do it, now!!!
-			play_sound_fx(self.dieSound)
 			del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
+			if self.die==DIE_DAMAGE:
+				level.killed_enemies += 1
+				level.cash += self.drop
 			return
 		if (time.time() - self.start) > self.speed:
 			index = level.level.index((x,y))
 			if index == 0:
 				level.current_lives -= self.damage
-				self.addHealth(-self.getHealth()) # short for: die!!!
+				self.die = DIE_SUCCESS
 				# TODO: check in level if game over or not and end if yes (maybe outside of update?)
 				return
 
@@ -94,5 +99,7 @@ class Enemy(object):
 
 	def addHealth(self, health):
 		self.health += health
+		print "remaining: %f"%self.health
 		if self.health <= 0:
-			self.die = True
+			self.die = DIE_DAMAGE
+			play_sound_fx(self.dieSound)

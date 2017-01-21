@@ -1,5 +1,7 @@
 from field import Field
 from enemies.ghost import Ghost
+from enemies.skeleton import Skeleton
+from enemies.barrel import Barrel
 import tower
 from towers import water_tower
 import pygame
@@ -26,14 +28,17 @@ class Level:
 		self.field_y     = 64
 		self.controls    = []
 		self.cash_icon = get_common().get_image('assets/ui/crystal.png')
-		#self.enemy_icon = get_common().get_image('assets/ui/enemy.png')
-		#self.time_icon = get_common().get_image('assets/ui/time.png')
-		#self.health_icon = get_common().get_image('assets/ui/health.png')
+		self.enemy_icon = get_common().get_image('assets/ui/sword.png')
+		self.time_icon = get_common().get_image('assets/ui/time.png')
+		self.health_icon = get_common().get_image('assets/ui/heart.png')
 
 		self.cash=300
 		self.bgm = None
 		self.waves = [
 			('level1.ogg', (
+				(12, Skeleton, 1)
+			)),
+			('level2.ogg', (
 				(5, Ghost, 1, 5), # spawn 5 ghosts with 1s between each, then wait 5 seconds
 				(5, Ghost, 1)))]
 		self.current_lives = 30
@@ -63,7 +68,7 @@ class Level:
 		self.tower_select = TowerSelectControl(0, 0, self)
 		self.controls.append(self.tower_select)
 
-		self.start_wave()
+		self.start_wave(1)
 
 
 	def leave(self):
@@ -98,20 +103,23 @@ class Level:
 	def render(self):
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
-				tmpsprite = self.grid[i][j].render()
-				self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
+				self.screen.blit(self.grid[i][j].render_underground(), (i * self.spriteSize + self.field_x, j * self.spriteSize + self.field_y))
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
 				for enemy in self.grid[i][j].enemies:
 					surf, coord = enemy.render()
 					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y))
+		for i in range(self.gridsize):
+			for j in range(self.gridsize):
+				if self.grid[i][j].tower != None:
+					tmpsprite = self.grid[i][j].render_tower()
+					self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
 		for control in self.controls:
 			control.draw(self.screen)
 		self.screen.blit(self.cash_icon, (self.field_x + 17, 17))
-		#self.screen.blit(self.enemy_icon, (self.field_x + 157, 17))
-		#self.screen.blit(self.time_icon, (self.field_x + 307, 17))
-		#self.screen.blit(self.health_icon, (self.field_x + 437, 17))
-			
+		self.screen.blit(self.enemy_icon, (self.field_x + 157, 17))
+		self.screen.blit(self.time_icon, (self.field_x + 307, 17))
+		self.screen.blit(self.health_icon, (self.field_x + 437, 17))
 
 	def handle_ev(self, event):
 		if event.type == pygame.MOUSEBUTTONUP and not self.tower_select.enabled:

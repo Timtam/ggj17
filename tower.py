@@ -1,5 +1,7 @@
+from random import randint
 import pygame
 import math
+import time
 
 from commons import *
 
@@ -8,11 +10,9 @@ from commons import *
 EFFECT_TYPE_NONE=0x0 # no effect at all
 EFFECT_TYPE_DAMAGE=0x1 # tower will deal damage to one single opponent, EffectValue equals real damage
 EFFECT_TYPE_SLOWDOWN=0x2 # slow down opponents, EffectValue equals percentage of slowdown (compared to enemy speed)
-EFFECT_TYPE_STOP=0x4 # stop opponents' movement for a short time, EffectValue equals seconds to stop movement
-EFFECT_TYPE_SINGLE=0x8 # single target on best field
-EFFECT_TYPE_ALL=0x10 # all targets on best field
-EFFECT_TYPE_CIRCLE=0x20 # all enemies in range
-EFFECT_TYPE_STRAIGHT=0x40 # target only straight forward (obviously not together with circle^^)
+EFFECT_TYPE_ALL=0x4 # all targets on best field
+EFFECT_TYPE_CIRCLE=0x8 # all enemies in range
+EFFECT_TYPE_STRAIGHT=0x10 # target only straight forward (obviously not together with circle^^)
 
 class Tower:
 	Cost=0
@@ -26,7 +26,10 @@ class Tower:
 		self.RangeMultiplier=1.0
 		self.Sprite=None
 		self.PlaceSound=None
+		self.AttackSound=None
 		self.PendingTransaction=0
+		self.LastFire=0
+		self.EnemyCache = [] # saves all enemies which shouldn't be attacked again
 
 	def init(self):
 		# setting PendingTransaction to the costs of the tower on first run, so the player needs to pay
@@ -89,6 +92,9 @@ class Tower:
 		return targets
 
 	def update(self,level,x,y):
+		enemy=None
+		i=0
+		j=0
 		# to pay the crystals required
 		if self.PendingTransaction>0:
 			if self.PendingTransaction>level.cash:
@@ -97,12 +103,29 @@ class Tower:
 			self.PendingTransaction=0
 		valid_targets = self.find_target_fields(level.grid,x,y)
 		valid_targets=self.filter_target_fields(level, valid_targets)
+		if len(valid_targets)==0:
+			return
+		if time.time()-self.LastFire<(self.SpeedMultiplier*self.Speed):
+			return
+		for i in range(len(valid_targets)):
+			if self.EffectType&EFFECT_TYPE_ALL==EFFECT_TYPE_ALL:
+				for j in range(len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)):
+					enemy=level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j]
+					enemy.addHealth(-(self.EffectMultiplier*self.EffectValue))
+			else:
+				enemy=level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[randint(0,len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)-1)]
+				enemy.addHealth(-(self.EffectMultiplier*self.EffectValue))
+			play_sound_fx(self.AttackSound)
+			self.LastFire=time.time()
 
 	def setSprite(self, path):
 		self.Sprite = get_common().get_image(path)
 
 	def setPlaceSound(self,filename):
 		self.PlaceSound=filename
+
+	def setAttackSound(self, filename):
+		self.AttackSound = filename
 
 	def render(self):
 		return self.Sprite
