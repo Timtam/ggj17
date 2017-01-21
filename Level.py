@@ -3,12 +3,14 @@ import pygame
 
 class Level:
 	def __init__(self, screen):
-		self.level       = [(0,8), (1,8), (2,8), (3,8), (4,8), (5,8), (6,8), (7,8), (8,8), (9,8), (10,8), (11,8), (12,8), (13,8), (14,8), (15,8)]
+		self.level       = [(2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (11, 1), (12, 1), (13, 1), (14, 1), (15, 1),
+						    (2, 2), (6, 2), (11, 2),
+						    (2, 3), (3, 3), (6, 3), (7, 3), (11, 3), (12, 3),
+						    (3, 4), (7, 4), (12, 4),
+						    (3, 5), (7, 5), (8, 5), (12, 5)]
 		self.grid        = []
 		self.gridsize    = 16
 		self.spriteSize  = 32
-		self.grassSprite = pygame.image.load('assets/ui/gras.png')
-		self.waySprite   = pygame.image.load('assets/ui/erde.png') 
 		self.screen      = screen
 		
 		for i in range(self.gridsize):
@@ -22,9 +24,17 @@ class Level:
 	def render(self):
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
-				if self.grid[i][j].getType() == 0:
-					self.screen.blit(self.grassSprite, (i * self.spriteSize, j * self.spriteSize))
-				else:
-					self.screen.blit(self.waySprite, (i * self.spriteSize, j * self.spriteSize))
+				self.screen.blit(self.grid[i][j].render(), (i * self.spriteSize + (self.screen.get_width() / 2) - ((self.gridsize * self.spriteSize) / 2), j * self.spriteSize))
 		
+	def handle_ev(self, event):
+		if event.type == pygame.MOUSEBUTTONUP:
+			pos = pygame.mouse.get_pos()
+			i = (pos[0] - (self.screen.get_width() / 2) + ((self.gridsize * self.spriteSize) / 2)) / self.spriteSize
+			j = pos[1] / self.spriteSize
+			print i
+			print j
+			if not ( i < 0 or i > (self.gridsize - 1) or j < 0 or j > (self.gridsize - 1) ):
+				self.grid[i][j].setTower(1)
 	
+	def update(self):
+		pass
