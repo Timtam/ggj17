@@ -66,5 +66,8 @@ class Level:
 					self.tower_select.enabled = True
 
 	def update(self):
+		for i in range(self.gridsize):
+			for j in range(self.gridsize):
+				self.grid[i][j].update(self)
 		for control in self.controls:
 			control.update()
