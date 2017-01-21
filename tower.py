@@ -125,6 +125,8 @@ class Tower:
 					if self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN and level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j] in self.EnemyCache:
 						continue
 					enemies.append(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j])
+				if len(enemies)==0:
+					return
 				enemy=enemies[randint(0,len(enemies)-1)]
 				if self.EffectType&EFFECT_TYPE_DAMAGE==EFFECT_TYPE_DAMAGE:
 					enemy.addHealth(-(self.EffectMultiplier*self.EffectValue))
