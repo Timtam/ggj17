@@ -33,7 +33,7 @@ class OptionsScreen:
 		get_common().get_main().change_view('MainMenu')
 
 	def fx_slider_release(self):
-		play_sound_fx('assets/sound/ui/switch26.ogg', self.fx_slider.slider_pos)
+		play_sound_fx('assets/sound/ui/click.ogg', self.fx_slider.slider_pos)
 
 
 	def handle_ev(self, event):
