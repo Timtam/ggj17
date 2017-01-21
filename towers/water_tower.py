@@ -1,5 +1,4 @@
 import tower
-import pygame
 
 class WaterTower(tower.Tower):
 	def __init__(self):
