@@ -17,6 +17,8 @@ class Enemy(object):
 		self.drop      = None
 		self.direction = DIRECTION_RIGHT
 		self.start     = time.time()
+		self.die = False
+		self.damage = 1 # damage done to player's castle
 
 	def setSprite(self, filename):
 		self.sprite.append(get_common().get_image("assets/level/enemies/" + filename + "_up.png"))
@@ -55,9 +57,17 @@ class Enemy(object):
 		self.start = start
 
 	def update(self, level, x, y):
+		if self.die==True:
+			# enemy is told to die, so do it, now!!!
+			del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
+			return
 		if (time.time() - self.start) > self.speed:
 			index = level.level.index((x,y))
-			#TODO index == 0: Enemy am Ende der Karte => Schaden fuer Spieler
+			if index == 0:
+				self.current_lives = self.current_lives - self.damage
+				self.addHealth(-self.getHealth()) # short for: die!!!
+				# TODO: check in level if game over or not and end if yes (maybe outside of update?)
+				return
 			next = level.level[index-1]
 
 			#x bleibt gleich und y erhoeht sich => Nach unten
@@ -77,3 +87,8 @@ class Enemy(object):
 			self.corner = False
 			field.enemies.append(self)
 			del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
+
+	def addHealth(self, health):
+		self.health = self.health + health
+		if self.health <= 0:
+			self.die = True
