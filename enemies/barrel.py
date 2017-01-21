@@ -4,7 +4,7 @@ from enemy import Enemy
 class Barrel(Enemy):
 	def __init__(self):
 		super(Barrel,self).__init__()
-		self.health  = 75
+		self.health  = self.max_health = 75
 		self.speed   = 0.75
 		self.sound   = None
 		self.damage  = 1
