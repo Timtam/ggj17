@@ -11,6 +11,3 @@ class PanelControl(Control):
 			self.surface = self.ui.draw_panel_border(self.rect.width, self.rect.height)
 		else:
 			self.surface = self.ui.draw_panel_full(self.rect.width, self.rect.height)
-
-	def draw(self, screen):
-		screen.blit(self.surface, self.rect)
