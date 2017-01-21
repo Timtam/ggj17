@@ -18,3 +18,7 @@ class Tower:
 		self.SpeedMultiplier=1.0
 		self.Range=1 # one tile radius
 		self.RangeMultiplier=1.0
+		self.Sprite=None
+		
+	def render(self):
+		return self.Sprite
