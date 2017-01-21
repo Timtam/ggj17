@@ -6,3 +6,4 @@ class BassTower(tower.Tower):
 		self.EffectType=tower.EFFECT_TYPE_DAMAGE|tower.EFFECT_TYPE_CIRCLE
 		self.EffectValue=1 # in real damage
 		self.Speed=3 # in seconds
+		self.setSprite('assets/level/towers/soundtower.png')

@@ -54,7 +54,7 @@ class Level:
 			control.draw(self.screen)
 
 	def handle_ev(self, event):
-		if event.type == pygame.MOUSEBUTTONUP:
+		if event.type == pygame.MOUSEBUTTONUP and not self.tower_select.enabled:
 			pos = pygame.mouse.get_pos()
 			i = (pos[0] - self.field_x) / self.spriteSize
 			j = (pos[1] - self.field_y) / self.spriteSize
@@ -63,7 +63,13 @@ class Level:
 				if field.getType() == 0:
 					self.tower_select.rect.centerx = i * self.spriteSize + self.field_x + self.spriteSize / 2
 					self.tower_select.rect.centery = j * self.spriteSize + self.field_y + self.spriteSize / 2
-					self.tower_select.enabled = True
+					self.tower_select.enable()
+					self.new_tower_coord = (i, j)
+		if self.tower_select.enabled and self.tower_select.selected_tower != None:
+			self.tower_select.enabled = False
+			i, j = self.new_tower_coord
+			self.grid[i][j].setTower(self.tower_select.selected_tower)
+
 
 	def update(self):
 		for i in range(self.gridsize):
