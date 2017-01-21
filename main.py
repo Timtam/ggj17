@@ -5,7 +5,7 @@ from commons   import *
 from Level     import *
 from main_menu import MainMenu
 from options_screen import OptionsScreen
-from towers import light_tower
+from splash_screen import SplashScreen
 
 class Main:
 	def __init__(self, width = 1280, height = 720):
@@ -14,11 +14,14 @@ class Main:
 		self.height = height
 		self.screen = pygame.display.set_mode((width, height))
 		self.views = {
+			'SplashScreen': SplashScreen,
 			'MainMenu': MainMenu,
 			'OptionsScreen': OptionsScreen,
 			'Level': Level,
 		}
-		self.change_view('MainMenu')
+		self.next_view = None
+		self.current_view = None
+		self.change_view('SplashScreen')
 		#self.current_view = Level(self.screen)
 		pygame.display.set_caption('Our awesome tower defense game with waves and shit')
 
@@ -27,6 +30,11 @@ class Main:
 
 	def main_loop(self):
 		while True:
+			if self.next_view != None:
+				if self.current_view != None:
+					self.current_view.leave()
+				self.current_view = self.next_view
+				self.next_view = None
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.stop()
@@ -39,7 +47,7 @@ class Main:
 		sys.exit()
 
 	def change_view(self, view):
-		self.current_view = self.views[view](self.screen)
+		self.next_view = self.views[view](self.screen)
 
 	def handle_ev(self, event):
 		self.current_view.handle_ev(event)
