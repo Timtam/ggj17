@@ -6,6 +6,7 @@ import pygame
 from controls import *
 from commons import *
 import timeit
+import time
 
 class Level:
 	def __init__(self, screen):
@@ -24,7 +25,16 @@ class Level:
 		self.field_y     = 64
 		self.controls    = []
 		self.cash_icon = get_common().get_image('assets/ui/crystal.png')
+		#self.enemy_icon = get_common().get_image('assets/ui/enemy.png')
+		#self.time_icon = get_common().get_image('assets/ui/time.png')
+		#self.health_icon = get_common().get_image('assets/ui/health.png')
+
 		self.cash=300
+		self.enemy_types = (Ghost, Ghost, Ghost)
+		self.total_enemies = len(self.enemy_types)
+		self.killed_enemies = 0
+		self.wave_started = time.clock()
+		self.current_lives = 30
 
 		for i in range(self.gridsize):
 			self.grid.append([])
@@ -33,15 +43,21 @@ class Level:
 
 		for field in self.level:
 			self.grid[field[0]][field[1]] = Field(self.screen, 1, field[0], field[1])
-			
+
 		self.grid[0][12].enemies.append(Ghost(timeit.default_timer()))
 
 		panel_width = self.gridsize * self.spriteSize
 		panel = PanelControl((self.screen.get_width() - panel_width) / 2, 0, panel_width, self.field_y)
 		self.controls.append(panel)
-		self.gold_text_control = TextControl(50, 23, '0')
-		panel.add_child_control(self.gold_text_control)
-		self.tower_select = TowerSelectControl(0,0)
+		self.cash_text_control = TextControl(50, 23, '0')
+		panel.add_child_control(self.cash_text_control)
+		self.enemies_text_control = TextControl(190, 23, '0/0')
+		panel.add_child_control(self.enemies_text_control)
+		self.timer_text_control = TextControl(340, 23, '00:00')
+		panel.add_child_control(self.timer_text_control)
+		self.health_text_control = TextControl(470, 23, '0')
+		panel.add_child_control(self.health_text_control)
+		self.tower_select = TowerSelectControl(0, 0, self)
 		self.controls.append(self.tower_select)
 
 
@@ -61,6 +77,9 @@ class Level:
 		for control in self.controls:
 			control.draw(self.screen)
 		self.screen.blit(self.cash_icon, (self.field_x + 17, 17))
+		#self.screen.blit(self.enemy_icon, (self.field_x + 157, 17))
+		#self.screen.blit(self.time_icon, (self.field_x + 307, 17))
+		#self.screen.blit(self.health_icon, (self.field_x + 437, 17))
 
 	def handle_ev(self, event):
 		if event.type == pygame.MOUSEBUTTONUP and not self.tower_select.enabled:
@@ -69,7 +88,7 @@ class Level:
 			j = (pos[1] - self.field_y) / self.spriteSize
 			if not ( i < 0 or i > (self.gridsize - 1) or j < 0 or j > (self.gridsize - 1) ):
 				field = self.grid[i][j]
-				if field.getType() == 0:
+				if field.getType() == 0 and field.tower == None:
 					self.tower_select.rect.centerx = i * self.spriteSize + self.field_x + self.spriteSize / 2
 					self.tower_select.rect.centery = j * self.spriteSize + self.field_y + self.spriteSize / 2
 					self.tower_select.enable()
@@ -77,13 +96,23 @@ class Level:
 		if self.tower_select.enabled and self.tower_select.selected_tower != None:
 			self.tower_select.enabled = False
 			i, j = self.new_tower_coord
-			self.grid[i][j].setTower(self.tower_select.selected_tower)
+			tower = self.tower_select.selected_tower
+			tower.init()
+			self.grid[i][j].setTower(tower)
 
 
 	def update(self):
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
 				self.grid[i][j].update(self)
-		self.gold_text_control.set_text(str(self.cash))
+		self.cash_text_control.set_text(str(self.cash))
+		self.enemies_text_control.set_text(str(self.killed_enemies) + " / " + str(self.total_enemies))
+		wave_time = int(time.clock() - self.wave_started)
+		s = wave_time % 60
+		m = (wave_time - s) / 60
+		s = str(s).zfill(2)
+		m = str(m).zfill(2)
+		self.timer_text_control.set_text(m + ':' + s)
+		self.health_text_control.set_text(str(self.current_lives))
 		for control in self.controls:
 			control.update()

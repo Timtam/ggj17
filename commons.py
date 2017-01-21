@@ -13,6 +13,7 @@ class Commons:
 	def load(self, main):
 		self.main = main
 		self.font = pygame.font.Font('assets/font/KenPixel.ttf', 14)
+		self.font_small = pygame.font.Font('assets/font/KenPixel Nova.ttf', 25)
 		self.ui = UI()
 		self.options = Options()
 		self.options.save()
@@ -25,6 +26,8 @@ class Commons:
 
 	def get_font(self):
 		return self.font
+	def get_font_small(self):
+		return self.font_small
 	def get_ui(self):
 		return self.ui
 	def get_bass(self):
