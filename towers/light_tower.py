@@ -10,6 +10,6 @@ class LightTower(tower.Tower):
 		self.EffectType=tower.EFFECT_TYPE_DAMAGE
 		self.EffectValue=10.5 # damage
 		self.Speed=0.5 # in seconds
-		self.setSprite('assets/level/towers/lighttower.png')
+		self.setSprite('lighttower')
 		self.setPlaceSound("assets/sound/light_tower/place.ogg")
 		self.setAttackSound("assets/sound/light_tower/attack.ogg")

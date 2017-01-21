@@ -10,6 +10,6 @@ class WaterTower(tower.Tower):
 		self.EffectValue=40 # percentage
 		self.EffectType=tower.EFFECT_TYPE_SLOWDOWN|tower.EFFECT_TYPE_STRAIGHT
 		self.Speed=5 #attc speed
-		self.setSprite('assets/level/towers/watertower.png')
+		self.setSprite('watertower')
 		self.setPlaceSound("assets/sound/water_tower/place.ogg")
 		self.setAttackSound("assets/sound/water_tower/attack.ogg")
