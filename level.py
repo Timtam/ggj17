@@ -31,7 +31,9 @@ class Level:
 		self.cash=300
 		self.bgm = None
 		self.waves = [
-			('level1.ogg', (Ghost, Ghost, Ghost, Ghost, Ghost))]
+			('level1.ogg', (
+				(5, Ghost, 1, 5), # spawn 5 ghosts with 1s between each, then wait 5 seconds
+				(5, Ghost, 1)))]
 		self.current_lives = 30
 
 		for i in range(self.gridsize):
@@ -63,17 +65,30 @@ class Level:
 		if self.bgm != None:
 			self.bgm.Stop()
 
+	def next_wave(self):
+		self.start_wave(self.current_wave + 1)
+
 	def start_wave(self, index = 0):
 		if self.bgm != None:
 			self.bgm.Stop()
 		wave = self.waves[index]
+		self.current_wave = index
 		self.bgm = play_sound_bgm('assets/sound/bgm/' + wave[0])
 		self.enemy_types = wave[1]
-		self.total_enemies = len(self.enemy_types)
+		self.total_enemies = 0
+		self.all_enemies = []
+		for e in self.enemy_types:
+			self.total_enemies += e[0]
+			for i in range(e[0] - 1):
+				self.all_enemies.append((e[1], e[2]))
+			if len(e) == 4:
+				self.all_enemies.append((e[1], e[3]))
+			else:
+				self.all_enemies.append((e[1], 0))
 		self.killed_enemies = 0
 		self.wave_started = time.time()
-		firstCoord = self.level[-1]
-		self.grid[firstCoord[0]][firstCoord[1]].enemies.append(self.enemy_types[0]())
+		self.enemy_spawn_index = 0
+		self.next_enemy_spawn = time.time()
 
 	def render(self):
 		for i in range(self.gridsize):
@@ -116,6 +131,12 @@ class Level:
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
 				self.grid[i][j].update(self)
+		if time.time() >= self.next_enemy_spawn and len(self.all_enemies) > self.enemy_spawn_index:
+			firstCoord = self.level[-1]
+			enemy = self.all_enemies[self.enemy_spawn_index]
+			self.enemy_spawn_index += 1
+			self.grid[firstCoord[0]][firstCoord[1]].enemies.append(enemy[0]())
+			self.next_enemy_spawn += enemy[1]
 		self.cash_text_control.set_text(str(self.cash))
 		self.enemies_text_control.set_text(str(self.killed_enemies) + " / " + str(self.total_enemies))
 		wave_time = int(time.time() - self.wave_started)

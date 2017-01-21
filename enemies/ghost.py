@@ -7,5 +7,6 @@ class Ghost(Enemy):
 		self.health  = 100
 		self.speed   = 0.5
 		self.sound   = None
+		self.damage  = 1
 		self.setSprite("ghost")
 		self.drop    = randint(1,3)

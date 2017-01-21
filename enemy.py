@@ -15,6 +15,7 @@ class Enemy(object):
 		self.sound     = None
 		self.sprite    = []
 		self.drop      = None
+		self.damage    = None
 		self.direction = DIRECTION_RIGHT
 		self.start     = time.time()
 
@@ -57,23 +58,25 @@ class Enemy(object):
 	def update(self, level, x, y):
 		if (time.time() - self.start) > self.speed:
 			index = level.level.index((x,y))
-			#TODO index == 0: Enemy am Ende der Karte => Schaden fuer Spieler
-			next = level.level[index-1]
+			if index != 0:
+				next = level.level[index-1]
 
-			#x bleibt gleich und y erhoeht sich => Nach unten
-			if x == next[0] and y < next[1]:
-				self.setDirection(DIRECTION_DOWN)
-			#x bleibt gleich und y wird kleiner => Nach oben
-			if x == next[0] and y > next[1]:
-				self.setDirection(DIRECTION_UP)
-			#y bleibt gleich und x wird kleiner => Nach links
-			if y == next[1] and x < next[0]:
-				self.setDirection(DIRECTION_RIGHT)
-			if y == next[1] and x > next[0]:
-				self.setDirection(DIRECTION_LEFT)
+				#x bleibt gleich und y erhoeht sich => Nach unten
+				if x == next[0] and y < next[1]:
+					self.setDirection(DIRECTION_DOWN)
+				#x bleibt gleich und y wird kleiner => Nach oben
+				if x == next[0] and y > next[1]:
+					self.setDirection(DIRECTION_UP)
+				#y bleibt gleich und x wird kleiner => Nach links
+				if y == next[1] and x < next[0]:
+					self.setDirection(DIRECTION_RIGHT)
+				if y == next[1] and x > next[0]:
+					self.setDirection(DIRECTION_LEFT)
 
-			field = level.grid[next[0]][next[1]]
-			self.setStart(time.time())
-			self.corner = False
-			field.enemies.append(self)
+				field = level.grid[next[0]][next[1]]
+				self.setStart(time.time())
+				self.corner = False
+				field.enemies.append(self)
+			else:
+				level.current_lives -= self.damage
 			del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
