@@ -5,6 +5,7 @@ from commons   import *
 from Level     import *
 from main_menu import MainMenu
 from options_screen import OptionsScreen
+from splash_screen import SplashScreen
 
 class Main:
 	def __init__(self, width = 1280, height = 720):
@@ -13,13 +14,14 @@ class Main:
 		self.height = height
 		self.screen = pygame.display.set_mode((width, height))
 		self.views = {
+			'SplashScreen': SplashScreen,
 			'MainMenu': MainMenu,
 			'OptionsScreen': OptionsScreen,
 			'Level': Level,
 		}
 		self.next_view = None
 		self.current_view = None
-		self.change_view('MainMenu')
+		self.change_view('SplashScreen')
 		#self.current_view = Level(self.screen)
 		pygame.display.set_caption('Our awesome tower defense game with waves and shit')
 
