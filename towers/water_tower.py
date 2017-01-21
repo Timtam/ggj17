@@ -7,3 +7,5 @@ class WaterTower(tower.Tower):
 		self.EffectType=tower.EFFECT_TYPE_STOP|tower.EFFECT_TYPE_ALL|tower.EFFECT_TYPE_STRAIGHT
 		self.Speed=12
 		self.setSprite('assets/level/towers/watertower.png')
+		self.Cost=140
+		self.init()

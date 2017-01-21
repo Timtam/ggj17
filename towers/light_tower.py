@@ -7,3 +7,5 @@ class LightTower(tower.Tower):
 		self.EffectValue=10 # percentage
 		self.Speed=8.0 # in seconds
 		self.setSprite('assets/level/towers/lighttower.png')
+		self.Cost=80
+		self.init()

@@ -24,6 +24,12 @@ class Tower:
 		self.Range=1 # one tile radius
 		self.RangeMultiplier=1.0
 		self.Sprite=None
+		self.Cost=0
+		self.PendingTransaction=0
+
+	def init(self):
+		# setting PendingTransaction to the costs of the tower on first run, so the player needs to pay
+		self.PendingTransaction=self.Cost
 
 	# finds all valid target fields
 	def find_target_fields(self, fields, x, y):
@@ -81,6 +87,12 @@ class Tower:
 		return targets
 
 	def update(self,level,x,y):
+		# to pay the crystals required
+		if self.PendingTransaction>0:
+			if self.PendingTransaction>level.cash:
+				raise IOError("User wants to build tower, but doesn't have enough money. Please try again later!")
+			level.cash=level.cash-self.PendingTransaction
+			self.PendingTransaction=0
 		valid_targets = self.find_target_fields(level.grid,x,y)
 		valid_targets=self.filter_target_fields(level, valid_targets)
 

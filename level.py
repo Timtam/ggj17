@@ -20,6 +20,7 @@ class Level:
 		self.field_x     = (self.screen.get_width() - self.spriteSize * self.gridsize) / 2
 		self.field_y     = 64
 		self.controls    = []
+		self.cash=300
 
 		for i in range(self.gridsize):
 			self.grid.append([])
