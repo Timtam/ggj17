@@ -98,13 +98,17 @@ class Level:
 	def render(self):
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
-				tmpsprite = self.grid[i][j].render()
-				self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
+				self.screen.blit(self.grid[i][j].render_underground(), (i * self.spriteSize + self.field_x, j * self.spriteSize + self.field_y))
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
 				for enemy in self.grid[i][j].enemies:
 					surf, coord = enemy.render()
 					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y))
+		for i in range(self.gridsize):
+			for j in range(self.gridsize):
+				if self.grid[i][j].tower != None:
+					tmpsprite = self.grid[i][j].render_tower()
+					self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
 		for control in self.controls:
 			control.draw(self.screen)
 		self.screen.blit(self.cash_icon, (self.field_x + 17, 17))
