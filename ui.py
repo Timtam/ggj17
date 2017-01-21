@@ -9,6 +9,7 @@ class UI:
 		self.panel_full = []
 		self.button_down = []
 		self.button_up = []
+		self.slider_horizontal = []
 		for x in range(0,3):
 			borders = []
 			full = []
@@ -27,6 +28,12 @@ class UI:
 			down = pygame.Surface((16, 16), pygame.SRCALPHA)
 			down.blit(sprite_sheet, (0, 0), pygame.Rect(18 * (color_off + 3 + x), 18 * 1, 16, 16))
 			self.button_down.append(pygame.transform.scale(down, (32, 32)))
+			slider = pygame.Surface((16, 16), pygame.SRCALPHA)
+			slider.blit(sprite_sheet, (0, 0), pygame.Rect(18 * (3 + x), 18 * 8, 16, 16))
+			self.slider_horizontal.append(pygame.transform.scale(slider, (32, 32)))
+		slider = pygame.Surface((16, 16), pygame.SRCALPHA)
+		slider.blit(sprite_sheet, (0, 0), pygame.Rect(18 * (color_off + 5), 18 * 6, 16, 16))
+		self.slider_horizontal.append(pygame.transform.scale(slider, (32, 32)))
 
 	def draw_panel_full(self, width, height):
 		return self.draw_panel(width, height, self.panel_full)
@@ -58,3 +65,12 @@ class UI:
 		surface.blit(sprites[2], (width - 32, 0))
 		surface.blit(pygame.transform.scale(sprites[1], (width - 64, 32)), (32, 0))
 		return surface
+
+	def draw_slider_bar(self, width):
+		surface = pygame.Surface((width, 32), pygame.SRCALPHA)
+		surface.blit(self.slider_horizontal[0], (0, 0))
+		surface.blit(self.slider_horizontal[2], (width - 32, 0))
+		surface.blit(pygame.transform.scale(self.slider_horizontal[1], (width - 64, 32)), (32, 0))
+		return surface
+	def draw_slider(self):
+		return self.slider_horizontal[3]

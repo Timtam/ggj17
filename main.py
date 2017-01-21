@@ -17,6 +17,8 @@ class Main:
 			'OptionsScreen': OptionsScreen,
 			'Level': Level,
 		}
+		self.next_view = None
+		self.current_view = None
 		self.change_view('MainMenu')
 		#self.current_view = Level(self.screen)
 		pygame.display.set_caption('Our awesome tower defense game with waves and shit')
@@ -26,6 +28,11 @@ class Main:
 
 	def main_loop(self):
 		while True:
+			if self.next_view != None:
+				if self.current_view != None:
+					self.current_view.leave()
+				self.current_view = self.next_view
+				self.next_view = None
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.stop()
@@ -38,7 +45,7 @@ class Main:
 		sys.exit()
 
 	def change_view(self, view):
-		self.current_view = self.views[view](self.screen)
+		self.next_view = self.views[view](self.screen)
 
 	def handle_ev(self, event):
 		self.current_view.handle_ev(event)
