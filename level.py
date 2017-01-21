@@ -147,7 +147,9 @@ class Level:
 			firstCoord = self.level[-1]
 			enemy = self.all_enemies[self.enemy_spawn_index]
 			self.enemy_spawn_index += 1
-			self.grid[firstCoord[0]][firstCoord[1]].enemies.append(enemy[0]())
+			new_enemy = enemy[0]()
+			new_enemy.init()
+			self.grid[firstCoord[0]][firstCoord[1]].enemies.append(new_enemy)
 			self.next_enemy_spawn += enemy[1]
 		self.cash_text_control.set_text(str(self.cash))
 		self.enemies_text_control.set_text(str(self.killed_enemies) + " / " + str(self.total_enemies))
