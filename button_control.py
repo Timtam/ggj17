@@ -21,7 +21,7 @@ class ButtonControl(Control):
 			self.state = 0
 			self.surface = self.ui.draw_button(self.rect.width, self.state)
 			self.text.rect.top -= 4
-			play_sound_fx('assets/sound/ui/switch28.ogg')
+			play_sound_fx('assets/sound/ui/release.ogg')
 			self.callback()
 		if self.state == 0 and lmb:
 			mx, my = pygame.mouse.get_pos()
@@ -29,4 +29,4 @@ class ButtonControl(Control):
 				self.state = 1
 				self.surface = self.ui.draw_button(self.rect.width, self.state)
 				self.text.rect.top += 4
-				play_sound_fx('assets/sound/ui/switch26.ogg')
+				play_sound_fx('assets/sound/ui/click.ogg')
