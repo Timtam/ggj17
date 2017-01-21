@@ -66,7 +66,7 @@ class Enemy(object):
 		if self.die>0:
 			# enemy is told to die, so do it, now!!!
 			del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
-			if self.Die==DIE_DAMAGE:
+			if self.die==DIE_DAMAGE:
 				level.killed_enemies += 1
 				level.cash += self.drop
 			return
