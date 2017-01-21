@@ -12,6 +12,7 @@ class Field:
 			self.sprite = pygame.image.load('assets/ui/erde.png')
 			
 		self.tower = None
+		self.enemies=[]
 		
 	def setTower(self, tower):
 		self.tower = tower
