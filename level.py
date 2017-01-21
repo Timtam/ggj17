@@ -75,6 +75,6 @@ class Level:
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
 				self.grid[i][j].update(self)
-		self.gold_text_control.set_text(str(self.gold))
+		self.gold_text_control.set_text(str(self.cash))
 		for control in self.controls:
 			control.update()
