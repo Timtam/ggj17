@@ -16,7 +16,7 @@ class Level:
 		self.level = [
 			(2, 12), (3, 12), (3, 11), (3, 10), (4, 10), (5, 10), (6, 10), (6, 9), (6, 8), (6, 7), (5, 7),
 			(4, 7), (4, 6), (3, 6), (3, 5), (3, 4), (3, 3), (4, 3), (5, 3), (6, 3), (7, 3), (8, 3), (8, 4),
-			(8, 5), (9, 5), (9, 6), (9, 7), (9, 8), (9, 9), (9, 10), (9, 11), (9, 12), (9, 13), (10, 13), 
+			(8, 5), (9, 5), (9, 6), (9, 7), (9, 8), (9, 9), (9, 10), (9, 11), (9, 12), (9, 13), (10, 13),
 			(11, 13), (12, 13), (13, 13), (13, 12), (13, 11), (13, 10), (13, 9), (13, 8), (12, 8), (12, 7),
 			(12, 6), (13, 6), (13, 5)]
 		self.level.reverse()
@@ -74,6 +74,7 @@ class Level:
 		self.pause_start_time = None
 		self.pause_panel = PanelControl((self.screen.get_width() - 400) / 2, (self.screen.get_height() - 400) / 2, 400, 400)
 		self.pause_panel.add_child_control(TextControl(0, 0, 'Paused'), center = True)
+		self.pause_panel.add_child_control(ButtonControl(105, 350, 'Back to main menu', self.back_to_main_clicked))
 		self.pause_dim = pygame.transform.scale(get_common().get_image('assets/ui/dim.png'), self.screen.get_size())
 
 		self.current_wave = -1
@@ -112,6 +113,8 @@ class Level:
 
 	def start_wave_clicked(self):
 		self.next_wave()
+	def back_to_main_clicked(self):
+		get_common().get_main().change_view('MainMenu')
 
 	def remove_enemy(self, enemy):
 		self.removed_enemies += 1
