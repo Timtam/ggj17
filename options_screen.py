@@ -10,15 +10,15 @@ class OptionsScreen:
 		self.controls = []
 		panel = PanelControl((self.screen.get_width() - 350) / 2, 200, 350, 350)
 		self.controls.append(panel)
-		panel.add_child_control(TextControl(20, 20, 'Musik'))
+		panel.add_child_control(TextControl(20, 20, 'Music'))
 		options = get_common().get_options();
 		self.bgm_slider = SliderControl(20, 50, 310, None, options.vol_bgm)
 		panel.add_child_control(self.bgm_slider)
-		panel.add_child_control(TextControl(20, 100, 'Effekte'))
+		panel.add_child_control(TextControl(20, 100, 'Sound effects'))
 		self.fx_slider = SliderControl(20, 130, 310, self.fx_slider_release, options.vol_fx)
 		panel.add_child_control(self.fx_slider)
-		panel.add_child_control(ButtonControl(20, 300, 'Abbrechen', self.cancel_clicked, 150))
-		panel.add_child_control(ButtonControl(180, 300, 'Speichern', self.save_clicked, 150))
+		panel.add_child_control(ButtonControl(20, 300, 'Cancel', self.cancel_clicked, 150))
+		panel.add_child_control(ButtonControl(180, 300, 'Save', self.save_clicked, 150))
 
 	def leave(self):
 		self.bgm.Stop()
