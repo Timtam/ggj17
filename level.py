@@ -31,6 +31,8 @@ class Level:
 		self.enemy_icon = get_common().get_image('assets/ui/sword.png')
 		self.time_icon = get_common().get_image('assets/ui/time.png')
 		self.health_icon = get_common().get_image('assets/ui/heart.png')
+		#TODO: add new sprite
+		self.wave_icon = get_common().get_image('assets/ui/heart.png')
 
 		self.cash=300
 		self.bgm = None
@@ -87,14 +89,17 @@ class Level:
 		panel_width = self.gridsize * self.spriteSize
 		panel = PanelControl((self.screen.get_width() - panel_width) / 2, 0, panel_width, self.field_y)
 		self.controls.append(panel)
+		#TODO
 		self.cash_text_control = TextControl(50, 23, '0')
 		panel.add_child_control(self.cash_text_control)
-		self.enemies_text_control = TextControl(190, 23, '0 / 0')
+		self.enemies_text_control = TextControl(150, 23, '0 / 0')
 		panel.add_child_control(self.enemies_text_control)
-		self.timer_text_control = TextControl(340, 23, '00:00')
+		self.timer_text_control = TextControl(255, 23, '00:00')
 		panel.add_child_control(self.timer_text_control)
-		self.health_text_control = TextControl(470, 23, '0')
+		self.health_text_control = TextControl(375, 23, '0')
 		panel.add_child_control(self.health_text_control)
+		self.wave_text_control = TextControl(445, 23, '0')
+		panel.add_child_control(self.wave_text_control)
 		self.tower_select = TowerSelectControl(0, 0, self)
 		self.controls.append(self.tower_select)
 
@@ -173,9 +178,11 @@ class Level:
 		if not self.in_wave:
 			self.start_wave_button.draw(self.screen)
 		self.screen.blit(self.cash_icon, (self.field_x + 17, 17))
-		self.screen.blit(self.enemy_icon, (self.field_x + 157, 17))
-		self.screen.blit(self.time_icon, (self.field_x + 307, 17))
-		self.screen.blit(self.health_icon, (self.field_x + 437, 17))
+		self.screen.blit(self.enemy_icon, (self.field_x + 117, 17))
+		self.screen.blit(self.time_icon, (self.field_x + 217, 17))
+		self.screen.blit(self.health_icon, (self.field_x + 337, 17))
+		#TODO: calculate
+		self.screen.blit(self.wave_icon, (self.field_x + 410, 17))
 		if self.paused:
 			self.screen.blit(self.pause_dim, (0, 0))
 			self.pause_panel.draw(self.screen)
@@ -238,6 +245,7 @@ class Level:
 				m = str(m).zfill(2)
 				self.timer_text_control.set_text(m + ':' + s)
 			self.cash_text_control.set_text(str(self.cash))
+			self.wave_text_control.set_text(str(self.current_wave + 1) + ' / ' + str(len(self.waves)))
 			self.health_text_control.set_text(str(self.current_lives))
 		for control in self.controls:
 			control.update()
