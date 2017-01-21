@@ -28,3 +28,6 @@ class Field:
 		surf.blit(self.sprite, (0,38))
 		surf.blit(self.tower.render(), (0,0))
 		return surf
+
+	def update(self, level):
+		pass
