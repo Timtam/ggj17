@@ -15,6 +15,7 @@ EFFECT_TYPE_CIRCLE=0x20 # all enemies in range
 EFFECT_TYPE_STRAIGHT=0x40 # target only straight forward (obviously not together with circle^^)
 
 class Tower:
+	Cost=0
 	def __init__(self):
 		self.EffectType=EFFECT_TYPE_NONE
 		self.EffectMultiplier=1.0
@@ -24,12 +25,13 @@ class Tower:
 		self.Range=1 # one tile radius
 		self.RangeMultiplier=1.0
 		self.Sprite=None
-		self.Cost=0
+		self.PlaceSound=None
 		self.PendingTransaction=0
 
 	def init(self):
 		# setting PendingTransaction to the costs of the tower on first run, so the player needs to pay
 		self.PendingTransaction=self.Cost
+		play_sound_fx(self.PlaceSound)
 
 	# finds all valid target fields
 	def find_target_fields(self, fields, x, y):
@@ -98,6 +100,9 @@ class Tower:
 
 	def setSprite(self, path):
 		self.Sprite = get_common().get_image(path)
+
+	def setPlaceSound(self,filename):
+		self.PlaceSound=filename
 
 	def render(self):
 		return self.Sprite
