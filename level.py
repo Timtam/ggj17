@@ -1,5 +1,5 @@
 from field import Field
-from ghost import Ghost
+from enemies.ghost import Ghost
 import tower
 from towers import water_tower
 import pygame
@@ -53,6 +53,11 @@ class Level:
 			for j in range(self.gridsize):
 				tmpsprite = self.grid[i][j].render()
 				self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
+		for i in range(self.gridsize):
+			for j in range(self.gridsize):
+				for enemy in self.grid[i][j].enemies:
+					surf, coord = enemy.render()
+					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y))
 		for control in self.controls:
 			control.draw(self.screen)
 		self.screen.blit(self.cash_icon, (self.field_x + 17, 17))

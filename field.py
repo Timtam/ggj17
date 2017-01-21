@@ -3,6 +3,8 @@ import timeit
 
 from commons import *
 
+
+
 class Field:
 	def __init__(self, screen, ftype, x, y):
 		self.x = x
@@ -33,8 +35,6 @@ class Field:
 			#TODO!!
 			surf = pygame.Surface((32, 32))
 			surf.blit(self.sprite, (0,0))
-			#for enemy in self.enemies:
-				#surf.blit(enemy[0].render(), (10 ,10))
 			return surf
 
 		tower_surf = self.tower.render()
