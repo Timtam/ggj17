@@ -8,9 +8,9 @@ class Options:
 			with open('options.txt', 'r') as f:
 				for line in f:
 					if line.startswith('vol_fx='):
-						self._vol_fx = float(line[7:])
+						self.vol_fx = float(line[7:])
 					elif line.startswith('vol_bgm='):
-						self._vol_bgm = float(line[8:])
+						self.vol_bgm = float(line[8:])
 	def save(self):
 		with open('options.txt', 'w') as f:
 			f.write('vol_fx=' + str(self.vol_fx) + '\n')

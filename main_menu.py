@@ -16,7 +16,7 @@ class MainMenu:
 		self.channel.Stop()
 
 	def new_game_clicked(self):
-		pass
+		get_common().get_main().change_view('Level')
 
 	def options_clicked(self):
 		get_common().get_main().change_view('OptionsScreen')
