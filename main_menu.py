@@ -5,9 +5,7 @@ from controls import *
 
 class MainMenu:
 	def __init__(self, screen):
-		self.channel = get_common().get_bass().StreamCreateFile(False, 'assets/sound/bgm/ui.ogg').Channel
-		self.channel.SetAttribute(BASS_ATTRIB_VOL, get_common().get_options().vol_bgm)
-		self.channel.Play(True)
+		self.channel = play_sound_bgm('assets/sound/bgm/ui.ogg')
 		self.screen = screen
 		self.controls = []
 		self.controls.append(ButtonControl((self.screen.get_width() - 190) / 2, 300, 'Neues Spiel', self.new_game_clicked))
