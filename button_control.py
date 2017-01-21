@@ -2,6 +2,7 @@ import pygame
 
 from commons import *
 from control import Control
+from text_control import TextControl
 
 class ButtonControl(Control):
 	def __init__(self, left, top, text, callback, width = 190):
@@ -9,29 +10,25 @@ class ButtonControl(Control):
 		self.state = 0
 		self.enabled = True
 		self.callback = callback
-		self.text = text
+		self.surface = self.ui.draw_button(self.rect.width, self.state)
+		self.text = TextControl(0, 0, text)
+		self.add_child_control(self.text, center = True)
 
 	def update(self):
 		if not self.enabled: return
+		super(ButtonControl, self).update()
 		lmb, mmb, rmb = pygame.mouse.get_pressed()
 		if self.state == 1 and not lmb:
 			self.state = 0
+			self.surface = self.ui.draw_button(self.rect.width, self.state)
+			self.text.rect.top -= 4
 			self.callback()
-			return
 		if self.state == 0 and lmb:
 			mx, my = pygame.mouse.get_pos()
 			if (self.rect.collidepoint(mx, my)):
 				self.state = 1
+				self.surface = self.ui.draw_button(self.rect.width, self.state)
+				self.text.rect.top += 4
 				channel = get_common().get_bass().StreamCreateFile(False, 'assets/sound/ui/switch26.ogg').Channel
-				channel.SetAttribute(BASS_ATTRIB_VOL, 0.5)
+				channel.SetAttribute(BASS_ATTRIB_VOL, get_common().get_options().vol_fx)
 				channel.Play()
-
-	def draw(self, screen):
-		surface = self.ui.draw_button(self.rect.width, self.state)
-		screen.blit(surface, self.rect)
-		font = get_common().get_font()
-		tw, th = font.size(self.text)
-		ts = font.render(self.text, 0, (0, 0, 0))
-		if self.state == 1:
-			th -= 8
-		screen.blit(ts, (self.rect.centerx - tw / 2, self.rect.centery - th / 2))
