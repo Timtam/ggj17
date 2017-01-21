@@ -12,9 +12,9 @@ import time
 class Level:
 	def __init__(self, screen):
 		self.decoration = [
-		(1, 14)]
+		(1, 14), (14, 3), (14, 4)]
 		self.level = [
-			(0, 12), (1, 12), (2, 12), (3, 12), (3, 11), (3, 10), (4, 10), (5, 10), (6, 10), (6, 9), (6, 8), (6, 7), (5, 7), (4, 7),
+			 (0, 12), (1, 12), (2, 12), (3, 12), (3, 11), (3, 10), (4, 10), (5, 10), (6, 10), (6, 9), (6, 8), (6, 7), (5, 7), (4, 7),
 			(4, 6), (3, 6), (3, 5), (3, 4), (3, 3), (2, 3), (2, 2), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (7, 2),
 			(7, 3), (8, 3), (8, 4), (8, 5), (9, 5), (9, 6), (9, 7), (9, 8), (9, 9), (9, 10), (9, 11), (9, 12), (9, 13), (10, 13),
 			(11, 13), (12, 13), (13, 13), (13, 12), (13, 11), (14, 11), (14, 10), (14, 9), (14, 8), (13, 8), (12, 8), (12, 7), (12, 6), (13, 6),
@@ -46,13 +46,19 @@ class Level:
 		for i in range(self.gridsize):
 			self.grid.append([])
 			for j in range(self.gridsize):
-				self.grid[i].append(Field(self.screen, 0, i, j))
-
-		for field in self.level:
-			self.grid[field[0]][field[1]] = Field(self.screen, 1, field[0], field[1])
+				self.grid[i].append(Field(self.screen, 0, i, j, None, 0))
+	
+		latest = self.level[0]
+		for i in range(len(self.level) - 1):
+			if latest[1] == self.level[i][1] and self.level[i][1] == self.level[i+1][1]:
+				self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 0, 90)
+			elif latest[0] == self.level[i][0] and self.level[i][0] == self.level[i+1][0]:
+				self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 0, 0)
+				
+			latest = self.level[i]
 			
 		for field in self.decoration:
-			self.grid[field[0]][field[1]] = Field(self.screen, 2, field[0], field[1])
+			self.grid[field[0]][field[1]] = Field(self.screen, 2, field[0], field[1], 0, 0)
 
 		panel_width = self.gridsize * self.spriteSize
 		panel = PanelControl((self.screen.get_width() - panel_width) / 2, 0, panel_width, self.field_y)
@@ -106,6 +112,10 @@ class Level:
 				self.screen.blit(self.grid[i][j].render_underground(), (i * self.spriteSize + self.field_x, j * self.spriteSize + self.field_y))
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
+				if self.grid[i][j].type == 2:
+					self.screen.blit(self.grid[i][j].render_deco(), (i * self.spriteSize + self.field_x, j * self.spriteSize + self.field_y))
+		for i in range(self.gridsize):
+			for j in range(self.gridsize):
 				for enemy in self.grid[i][j].enemies:
 					surf, coord = enemy.render()
 					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y))
@@ -116,6 +126,7 @@ class Level:
 					self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
 		for control in self.controls:
 			control.draw(self.screen)
+				
 		self.screen.blit(self.cash_icon, (self.field_x + 17, 17))
 		self.screen.blit(self.enemy_icon, (self.field_x + 157, 17))
 		self.screen.blit(self.time_icon, (self.field_x + 307, 17))
