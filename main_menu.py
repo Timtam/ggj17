@@ -8,9 +8,9 @@ class MainMenu:
 		self.channel = play_sound_bgm('assets/sound/bgm/ui.ogg')
 		self.screen = screen
 		self.controls = []
-		self.controls.append(ButtonControl((self.screen.get_width() - 190) / 2, 300, 'Neues Spiel', self.new_game_clicked))
-		self.controls.append(ButtonControl((self.screen.get_width() - 190) / 2, 350, 'Optionen', self.options_clicked))
-		self.controls.append(ButtonControl((self.screen.get_width() - 190) / 2, 400, 'Beenden', self.exit_clicked))
+		self.controls.append(ButtonControl((self.screen.get_width() - 190) / 2, 300, 'New game', self.new_game_clicked))
+		self.controls.append(ButtonControl((self.screen.get_width() - 190) / 2, 350, 'Options', self.options_clicked))
+		self.controls.append(ButtonControl((self.screen.get_width() - 190) / 2, 400, 'Exit', self.exit_clicked))
 
 	def leave(self):
 		self.channel.Stop()

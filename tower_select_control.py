@@ -16,6 +16,7 @@ class TowerSelectControl(Control):
 		self.towers.append(get_common().get_image('assets/level/towers/watertower.png'))
 		self.towers.append(get_common().get_image('assets/level/towers/soundtower.png'))
 		self.towers.append(get_common().get_image('assets/level/towers/lighttower.png'))
+		self.lmb_down = False
 
 	def enable(self):
 		self.enabled = True
@@ -47,7 +48,12 @@ class TowerSelectControl(Control):
 		if lmb:
 			if self.tower_rects[0].collidepoint(mx, my):
 				self.selected_tower = WaterTower()
-			if self.tower_rects[1].collidepoint(mx, my):
+			elif self.tower_rects[1].collidepoint(mx, my):
 				self.selected_tower = BassTower()
-			if self.tower_rects[2].collidepoint(mx, my):
+			elif self.tower_rects[2].collidepoint(mx, my):
 				self.selected_tower = LightTower()
+			elif not self.rect.collidepoint(mx, my):
+				self.lmb_down = True
+		if not lmb and self.lmb_down:
+			self.enabled = False
+			self.lmb_down = False

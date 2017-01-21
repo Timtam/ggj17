@@ -23,7 +23,7 @@ class Level:
 		self.field_x     = (self.screen.get_width() - self.spriteSize * self.gridsize) / 2
 		self.field_y     = 64
 		self.controls    = []
-		self.gold_surface = get_common().get_image('assets/ui/temp_gold.png')
+		self.cash_icon = get_common().get_image('assets/ui/crystal.png')
 		self.cash=300
 
 		for i in range(self.gridsize):
@@ -55,7 +55,7 @@ class Level:
 				self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
 		for control in self.controls:
 			control.draw(self.screen)
-		self.screen.blit(self.gold_surface, (self.field_x + 17, 17))
+		self.screen.blit(self.cash_icon, (self.field_x + 17, 17))
 
 	def handle_ev(self, event):
 		if event.type == pygame.MOUSEBUTTONUP and not self.tower_select.enabled:

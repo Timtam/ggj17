@@ -1,0 +1,16 @@
+##### TOWER #####
+
+## LIGHTWAVE TOWER ##
+Lumus Maxima! Blinds enemies with high concentrated power of will.
+
+Effect: Slows the target enemy by [slow%]
+
+## SOUND TOWER ##
+As loud as Cannibal Corpse!
+
+Effect: Deals huge AoE damage: [damage]
+
+## TSUNAMI TOWER ##
+Sends out Haiitis Nightmare!
+
+Effect: Stuns a couple of enemies in a line: [stunDuration]
