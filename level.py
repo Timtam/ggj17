@@ -36,12 +36,13 @@ class Level:
 		self.bgm = None
 		self.waves = [
 			('level1.ogg', (
-				(12, Skeleton, 1)
+				(12, Skeleton, 1),
 			)),
 			('level2.ogg', (
 				(5, Ghost, 1, 5), # spawn 5 ghosts with 1s between each, then wait 5 seconds
 				(5, Ghost, 1)))]
 		self.current_lives = 30
+		self.in_wave = False
 
 		for i in range(self.gridsize):
 			self.grid.append([])
@@ -59,7 +60,7 @@ class Level:
 		self.controls.append(panel)
 		self.cash_text_control = TextControl(50, 23, '0')
 		panel.add_child_control(self.cash_text_control)
-		self.enemies_text_control = TextControl(190, 23, '0/0')
+		self.enemies_text_control = TextControl(190, 23, '0 / 0')
 		panel.add_child_control(self.enemies_text_control)
 		self.timer_text_control = TextControl(340, 23, '00:00')
 		panel.add_child_control(self.timer_text_control)
@@ -75,8 +76,8 @@ class Level:
 		self.pause_panel.add_child_control(TextControl(0, 0, 'Paused'), center = True)
 		self.pause_dim = pygame.transform.scale(get_common().get_image('assets/ui/dim.png'), self.screen.get_size())
 
-		self.start_wave(1)
-
+		self.current_wave = -1
+		self.start_wave_button = ButtonControl(self.field_x + panel_width + 50, self.field_y + 150, 'Start wave', self.start_wave_clicked)
 
 	def leave(self):
 		if self.bgm != None:
@@ -93,6 +94,7 @@ class Level:
 		self.bgm = play_sound_bgm('assets/sound/bgm/' + wave[0])
 		self.enemy_types = wave[1]
 		self.total_enemies = 0
+		self.removed_enemies = 0
 		self.all_enemies = []
 		for e in self.enemy_types:
 			self.total_enemies += e[0]
@@ -106,6 +108,15 @@ class Level:
 		self.wave_started = time.time()
 		self.enemy_spawn_index = 0
 		self.next_enemy_spawn = time.time()
+		self.in_wave = True
+
+	def start_wave_clicked(self):
+		self.next_wave()
+
+	def remove_enemy(self, enemy):
+		self.removed_enemies += 1
+		if self.removed_enemies == self.total_enemies:
+			self.in_wave = False
 
 	def render(self):
 		for i in range(self.gridsize):
@@ -121,6 +132,8 @@ class Level:
 					self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
 		for control in self.controls:
 			control.draw(self.screen)
+		if not self.in_wave:
+			self.start_wave_button.draw(self.screen)
 		self.screen.blit(self.cash_icon, (self.field_x + 17, 17))
 		self.screen.blit(self.enemy_icon, (self.field_x + 157, 17))
 		self.screen.blit(self.time_icon, (self.field_x + 307, 17))
@@ -170,24 +183,27 @@ class Level:
 			for i in range(self.gridsize):
 				for j in range(self.gridsize):
 					self.grid[i][j].update(self)
-			if time.time() >= self.next_enemy_spawn and len(self.all_enemies) > self.enemy_spawn_index:
-				firstCoord = self.level[-1]
-				enemy = self.all_enemies[self.enemy_spawn_index]
-				self.enemy_spawn_index += 1
-				new_enemy = enemy[0]()
-				new_enemy.init()
-				self.grid[firstCoord[0]][firstCoord[1]].enemies.append(new_enemy)
-				self.next_enemy_spawn += enemy[1]
+			if self.in_wave:
+				if time.time() >= self.next_enemy_spawn and len(self.all_enemies) > self.enemy_spawn_index:
+					firstCoord = self.level[-1]
+					enemy = self.all_enemies[self.enemy_spawn_index]
+					self.enemy_spawn_index += 1
+					new_enemy = enemy[0]()
+					new_enemy.init()
+					self.grid[firstCoord[0]][firstCoord[1]].enemies.append(new_enemy)
+					self.next_enemy_spawn += enemy[1]
+				self.enemies_text_control.set_text(str(self.killed_enemies) + " / " + str(self.total_enemies))
+				wave_time = int(time.time() - self.wave_started)
+				s = wave_time % 60
+				m = (wave_time - s) / 60
+				s = str(s).zfill(2)
+				m = str(m).zfill(2)
+				self.timer_text_control.set_text(m + ':' + s)
 			self.cash_text_control.set_text(str(self.cash))
-			self.enemies_text_control.set_text(str(self.killed_enemies) + " / " + str(self.total_enemies))
-			wave_time = int(time.time() - self.wave_started)
-			s = wave_time % 60
-			m = (wave_time - s) / 60
-			s = str(s).zfill(2)
-			m = str(m).zfill(2)
-			self.timer_text_control.set_text(m + ':' + s)
 			self.health_text_control.set_text(str(self.current_lives))
 		for control in self.controls:
 			control.update()
+		if not self.in_wave:
+			self.start_wave_button.update()
 		if self.paused:
 			self.pause_panel.update()

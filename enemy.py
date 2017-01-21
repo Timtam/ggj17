@@ -76,6 +76,7 @@ class Enemy(object):
 		if self.die>0:
 			# enemy is told to die, so do it, now!!!
 			del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
+			level.remove_enemy(self)
 			if self.die==DIE_DAMAGE:
 				level.killed_enemies += 1
 				level.cash += self.drop
@@ -106,7 +107,7 @@ class Enemy(object):
 			self.corner = False
 			field.enemies.append(self)
 			del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
-			
+
 		# update render coords
 		spriteHalfw = self.sprite[self.direction].get_width() / 2
 		spriteHalfh = self.sprite[self.direction].get_height() / 2
