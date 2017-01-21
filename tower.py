@@ -114,13 +114,13 @@ class Tower:
 					if self.EffectType&EFFECT_TYPE_DAMAGE==EFFECT_TYPE_DAMAGE:
 						enemy.addHealth(-(self.EffectMultiplier*self.EffectValue))
 					elif self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN:
-						enemy.SpeedMultiplier-=self.EffectValue*enemy.SpeedMultiplier/100.0
+						enemy.speedMultiplier-=self.EffectValue*enemy.speedMultiplier/100.0
 			else:
 				enemy=level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[randint(0,len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)-1)]
 				if self.EffectType&EFFECT_TYPE_DAMAGE==EFFECT_TYPE_DAMAGE:
 					enemy.addHealth(-(self.EffectMultiplier*self.EffectValue))
 				elif self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN:
-					enemy.SpeedMultiplier-=self.EffectValue*enemy.SpeedMultiplier/100.0
+					enemy.speedMultiplier-=self.EffectValue*enemy.speedMultiplier/100.0
 			play_sound_fx(self.AttackSound)
 			self.LastFire=time.time()
 
