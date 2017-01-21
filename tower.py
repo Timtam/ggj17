@@ -51,7 +51,7 @@ class Tower:
 				if self.EffectType&EFFECT_TYPE_STRAIGHT==EFFECT_TYPE_STRAIGHT:
 					if c_x!=x and c_y!=y:
 						continue
-				valid_target.push((c_x, c_y, ))
+				valid_target.append((c_x, c_y, ))
 		return valid_targets
 
 	# needs all valid target fields as tuple array, as returned by find_target_fields
@@ -65,14 +65,13 @@ class Tower:
 				continue
 			if len(fields[valid_targets[x][0]][valid_targets[x][1]].enemies)==0:
 				continue
-			targets.push(valid_targets[x])
+			targets.append(valid_targets[x])
 		# missing "nearest to target" limitation here, also not a single return yet
 		return targets
 
-	# needs the fields as array and it's x and y position
-	def run(self,fields,x,y):
-		valid_targets = self.find_target_fields(fields,x,y)
-		valid_targets=self.filter_target_fields(valid_targets, fields)
+	def update(self,level,x,y):
+		valid_targets = self.find_target_fields(level.grid,x,y)
+		valid_targets=self.filter_target_fields(valid_targets, level.grid)
 
 	def setSprite(self, path):
 		self.Sprite = get_common().get_image(path)

@@ -30,10 +30,10 @@ class Level:
 		for i in range(self.gridsize):
 			self.grid.append([])
 			for j in range(self.gridsize):
-				self.grid[i].append(Field(self.screen, 0))
+				self.grid[i].append(Field(self.screen, 0, i, j))
 
 		for field in self.level:
-			self.grid[field[0]][field[1]] = Field(self.screen, 1)
+			self.grid[field[0]][field[1]] = Field(self.screen, 1, field[0], field[1])
 
 		panel_width = self.gridsize * self.spriteSize
 		panel = PanelControl((self.screen.get_width() - panel_width) / 2, 0, panel_width, self.field_y)

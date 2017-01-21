@@ -3,7 +3,9 @@ import pygame
 from commons import *
 
 class Field:
-	def __init__(self, screen, ftype):
+	def __init__(self, screen, ftype, x, y):
+		self.x = x
+		self.y = y
 		self.screen = screen
 		self.type  = ftype
 		#0 - grass
@@ -33,4 +35,5 @@ class Field:
 		return surf
 
 	def update(self, level):
-		pass
+		if self.tower!=None:
+			self.tower.update(level, self.x, self.y)
