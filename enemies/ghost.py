@@ -5,8 +5,7 @@ class Ghost(Enemy):
 	def __init__(self):
 		super(Ghost, self).__init__()
 		self.health  = self.max_health = 100
-		self.speed   = 1
-		self.sound   = None
+		self.speed   = 1.0
 		self.damage  = 1
 		self.setDieSound("assets/sound/ghost/die.ogg")
 		self.setSprite("ghost")

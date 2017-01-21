@@ -7,9 +7,9 @@ class LightTower(tower.Tower):
 	effect_desc = ("Slows the target enemy by ", "[slow]", "%")
 	def __init__(self):
 		tower.Tower.__init__(self)
-		self.EffectType=tower.EFFECT_TYPE_SLOWDOWN
-		self.EffectValue=10 # percentage
-		self.Speed=8.0 # in seconds
+		self.EffectType=tower.EFFECT_TYPE_DAMAGE
+		self.EffectValue=10 # damage
+		self.Speed=0.5 # in seconds
 		self.setSprite('assets/level/towers/lighttower.png')
 		self.setPlaceSound("assets/sound/light_tower/place.ogg")
 		self.setAttackSound("assets/sound/light_tower/attack.ogg")

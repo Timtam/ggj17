@@ -8,8 +8,8 @@ class BassTower(tower.Tower):
 	def __init__(self):
 		tower.Tower.__init__(self)
 		self.EffectType=tower.EFFECT_TYPE_DAMAGE|tower.EFFECT_TYPE_CIRCLE|tower.EFFECT_TYPE_ALL
-		self.EffectValue=20 # in real damage
-		self.Speed=1 # in seconds
+		self.EffectValue=5.0 # in real damage
+		self.Speed=2.0 # in seconds
 		self.setSprite('assets/level/towers/soundtower.png')
 		self.setPlaceSound("assets/sound/sound_tower/place.ogg")
 		self.setAttackSound("assets/sound/sound_tower/attack.ogg")
