@@ -1,5 +1,4 @@
 import pygame
-import timeit
 
 from commons import *
 
@@ -20,9 +19,9 @@ class Field:
 
 		self.tower = None
 		self.enemies=[]
-		
+
 	def newEnemy(self, enemy):
-		self.enemies.append(enemy(timeit.default_timer()))
+		self.enemies.append(enemy())
 
 	def setTower(self, tower):
 		self.tower = tower
