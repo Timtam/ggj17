@@ -16,6 +16,7 @@ class Enemy(object):
 		self.health    = None
 		self.speed     = None
 		self.dieSound  = None
+		self.arrivalSound = None
 		self.sprite    = []
 		self.drop      = None
 		self.damage    = None # damage done to player's castle
@@ -24,6 +25,10 @@ class Enemy(object):
 		self.die = 0
 		self.health_empty = get_common().get_image('assets/ui/health_empty.png')
 		self.health_full = get_common().get_image('assets/ui/health_full.png')
+
+	def init(self):
+		if self.arrivalSound!=None:
+			play_sound_fx(self.arrivalSound)
 
 	def setSprite(self, filename):
 		self.sprite.append(get_common().get_image("assets/level/enemies/" + filename + "_up.png"))
@@ -65,6 +70,9 @@ class Enemy(object):
 
 	def setDieSound(self, filename):
 		self.dieSound = filename
+
+	def setArrivalSound(self, filename):
+		self.arrivalSound = filename
 
 	def getDrop(self):
 		return self.drop
