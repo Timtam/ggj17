@@ -19,7 +19,7 @@ class Enemy(object):
 		self.arrivalSound = None
 		self.sprite    = []
 		self.drop      = None
-		self.damage    = None # damage done to player's castle
+		self.damage    = 1 # damage done to player's castle
 		self.direction = DIRECTION_RIGHT
 		self.start     = time.time()
 		self.die = 0

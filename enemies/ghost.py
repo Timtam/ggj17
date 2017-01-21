@@ -6,7 +6,6 @@ class Ghost(Enemy):
 		super(Ghost, self).__init__()
 		self.health  = self.max_health = 100
 		self.speed   = 1.0
-		self.damage  = 1
 		self.setDieSound("assets/sound/ghost/die.ogg")
 		self.setSprite("ghost")
 		self.drop    = 8 + randint(-2, 2)

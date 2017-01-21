@@ -6,7 +6,6 @@ class Skeleton(Enemy):
 		super(Skeleton,self).__init__()
 		self.health  = self.max_health = 125
 		self.speed   = 1.25
-		self.damage  = 1
 		self.setDieSound('assets/sound/skeleton/die.ogg')
 		self.setSprite("skeleton")
 		self.drop    = 10 + randint(-2, 2)
