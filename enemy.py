@@ -64,6 +64,7 @@ class Enemy(object):
 			# enemy is told to die, so do it, now!!!
 			play_sound_fx(self.dieSound)
 			del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
+			level.killed_enemies += 1
 			return
 		if (time.time() - self.start) > self.speed:
 			index = level.level.index((x,y))
