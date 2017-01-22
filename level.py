@@ -416,7 +416,6 @@ class Level:
 		self.screen.blit(get_common().get_image('assets/level/decoration/Trforrest.png'), (self.field_x, self.field_y))
 
 		self.screen.blit(get_common().get_image('assets/ui/frame.png'), (0,0))
-
 		for control in self.controls:
 			control.draw(self.screen)
 
