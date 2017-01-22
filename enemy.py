@@ -89,6 +89,9 @@ class Enemy(object):
 				play_sound_fx(self.hitSound)
 			return
 		self.field = (x, y)
+		
+		newfield = False
+		
 		if (time.time() - self.start) > (self.speed * self.speedMultiplier):
 			index = level.level.index((x,y))
 			if index == 0:
@@ -113,20 +116,30 @@ class Enemy(object):
 			self.setStart(time.time())
 			self.corner = False
 			field.enemies.append(self)
+			newfield = True
 			del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
 
 		# update render coords
 		spriteHalfw = self.sprite[self.direction].get_width() / 2
 		spriteHalfh = self.sprite[self.direction].get_height() / 2
+		oldCoords = self.coords
 		if self.direction == DIRECTION_RIGHT:
 			self.coords = ((-1) * spriteHalfw + ((time.time() - self.start) * 32 / (self.speed * self.speedMultiplier)) - 16 , 0)
-		if self.direction == DIRECTION_LEFT:
+			if oldCoords[0] > self.coords[0] and newfield:
+				self.coord = oldCoords
+		elif self.direction == DIRECTION_LEFT:
 			self.coords = (spriteHalfw - ((time.time() - self.start) * 32 / (self.speed * self.speedMultiplier)) + 16, 0)
-		if self.direction == DIRECTION_UP:
+			if oldCoords[0] < self.coords[0] and newfield:
+				self.coord = oldCoords
+		elif self.direction == DIRECTION_UP:
 			self.coords = (0, spriteHalfh - ((time.time() - self.start) * 32 / (self.speed * self.speedMultiplier)) + 16)
-		if self.direction == DIRECTION_DOWN:
+			if oldCoords[1] > self.coords[1] and newfield:
+				self.coord = oldCoords
+		elif self.direction == DIRECTION_DOWN:
 			self.coords = (0, (-1) * spriteHalfh + ((time.time() - self.start) * 32 / (self.speed * self.speedMultiplier)) - 16)
-
+			if oldCoords[0] < self.coords[0] and newfield:
+				self.coord = oldCoords
+			
 	def addHealth(self, health):
 		self.health += health
 		if self.health <= 0:

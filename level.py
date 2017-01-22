@@ -136,7 +136,7 @@ class Level:
 				(2, Golem,0.2,15),
 				(20, Ghost,0.1,0.1),
 				(20, Skeleton,0.01,0.1),
-				(30, Ghost,0.01,0.1))),] #addGolem
+				(30, Ghost,0.01,0.1))),] #paddGolem
 		self.current_lives = 20
 		self.in_wave = False
 
