@@ -107,16 +107,13 @@ class Level:
 				self.grid[i].append(Field(self.screen, 0, i, j, None, 0))
 		latest = self.level[0]
 		for i in range(len(self.level)):
-			
-			
-			
 			if i == len(self.level) - 1:
 				next = self.level[i]
 			else:
 				next = self.level[i+1]
-				
+
 			me   = self.level[i]
-				
+
 			if latest[0] == self.level[i][0] and self.level[i][0] == self.level[i+1][0]:
 				self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 0, 0)
 			elif latest[1] == self.level[i][1] and self.level[i][1] == next[1]:
@@ -135,9 +132,9 @@ class Level:
 				#von oben nach rechts
 				elif (me[1] > latest[1] and me[0] == latest[0] and me[1] == next[1] and me[0] < next[0]) or (me[1] > next[1] and me[0] == next[0] and me[1] == latest[1] and me[0] < latest[0]):
 					self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 1, 90)
-				
+
 			latest = self.level[i]
-				
+
 		for field in self.decoration:
 			self.grid[field[0]][field[1]] = Field(self.screen, 2, field[0], field[1], 0, 0)
 
@@ -168,21 +165,21 @@ class Level:
 
 		self.current_wave = -1
 		self.start_wave_button = ButtonControl(self.field_x + panel_width + 50, self.field_y + 150, 'Start wave', self.start_wave_clicked)
+		self.init_wave()
 
 	def leave(self):
 		if self.bgm != None:
 			self.bgm.Stop()
 
 	def next_wave(self):
-		self.start_wave(self.current_wave + 1)
+		self.init_wave(self.current_wave + 1)
 
-	def start_wave(self, index = 0):
+	def init_wave(self, index = 0):
 		if self.bgm != None:
 			self.bgm.Stop()
 		wave = self.waves[index]
 		self.current_wave = index
 		self.bgm = play_sound_bgm('assets/sound/bgm/' + wave[0])
-		play_sound_fx('assets/sound/common/level_start.ogg')
 		self.enemy_types = wave[1]
 		self.total_enemies = 0
 		self.removed_enemies = 0
@@ -196,13 +193,17 @@ class Level:
 			else:
 				self.all_enemies.append((e[1], 0))
 		self.killed_enemies = 0
-		self.wave_started = time.time()
 		self.enemy_spawn_index = 0
-		self.next_enemy_spawn = time.time()
+		self.in_wave = False
+
+	def start_wave(self):
 		self.in_wave = True
+		play_sound_fx('assets/sound/common/level_start.ogg')
+		self.next_enemy_spawn = time.time()
+		self.wave_started = time.time()
 
 	def start_wave_clicked(self):
-		self.next_wave()
+		self.start_wave()
 	def back_to_main_clicked(self):
 		get_common().get_main().change_view('MainMenu')
 
@@ -210,7 +211,7 @@ class Level:
 		self.removed_enemies += 1
 		if self.removed_enemies == self.total_enemies:
 			play_sound_fx('assets/sound/common/level_win.ogg')
-			self.in_wave = False
+			self.next_wave()
 
 	def render(self):
 		for i in range(self.gridsize):
@@ -292,13 +293,13 @@ class Level:
 					new_enemy.init()
 					self.grid[firstCoord[0]][firstCoord[1]].enemies.append(new_enemy)
 					self.next_enemy_spawn += enemy[1]
-				self.enemies_text_control.set_text(str(self.killed_enemies) + " / " + str(self.total_enemies))
 				wave_time = int(time.time() - self.wave_started)
 				s = wave_time % 60
 				m = (wave_time - s) / 60
 				s = str(s).zfill(2)
 				m = str(m).zfill(2)
 				self.timer_text_control.set_text(m + ':' + s)
+			self.enemies_text_control.set_text(str(self.killed_enemies) + " / " + str(self.total_enemies))
 			self.cash_text_control.set_text(str(self.cash))
 			self.wave_text_control.set_text(str(self.current_wave + 1) + ' / ' + str(len(self.waves)))
 			self.health_text_control.set_text(str(self.current_lives))
