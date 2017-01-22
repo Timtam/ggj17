@@ -56,8 +56,7 @@ class Level:
 		self.bgm = None
 		self.waves = [##################BALANCE###############
 			('level1.ogg', (
-				#(12, Skeleton, 3),
-				(12, Golem, 3),
+				(12, Skeleton, 3),
 			)),
 			('level2.ogg', (
 				(15, Skeleton, 2, 2), # spawn 5 ghosts with 1s between each, then wait 5 seconds
