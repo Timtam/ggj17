@@ -1,4 +1,4 @@
-from random import randin
+from random import randint
 from enemy import Enemy
 
 class Golem(Enemy):
