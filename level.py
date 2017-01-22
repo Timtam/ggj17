@@ -315,13 +315,20 @@ class Level:
 			pos = pygame.mouse.get_pos()
 			i = (pos[0] - self.field_x) / self.spriteSize
 			j = (pos[1] - self.field_y) / self.spriteSize
-			if not ( i < 0 or i > (self.gridsize - 1) or j < 0 or j > (self.gridsize - 1) ):
-				field = self.grid[i][j]
-				if field.getType() == 0 and field.tower == None:
-					self.tower_select.rect.centerx = i * self.spriteSize + self.field_x + self.spriteSize / 2
-					self.tower_select.rect.centery = j * self.spriteSize + self.field_y + self.spriteSize / 2
-					self.tower_select.enable()
-					self.new_tower_coord = (i, j)
+			if event.button == 1:
+				if not ( i < 0 or i > (self.gridsize - 1) or j < 0 or j > (self.gridsize - 1) ):
+					field = self.grid[i][j]
+					if field.getType() == 0 and field.tower == None:
+						self.tower_select.rect.centerx = i * self.spriteSize + self.field_x + self.spriteSize / 2
+						self.tower_select.rect.centery = j * self.spriteSize + self.field_y + self.spriteSize / 2
+						self.tower_select.enable()
+						self.new_tower_coord = (i, j)
+			elif event.button == 3:
+				if not ( i < 0 or i > (self.gridsize - 1) or j < 0 or j > (self.gridsize - 1) ):
+					field = self.grid[i][j]
+				if field.getType() == 0 and field.tower != None:
+					field.tower.Sell()
+
 		if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
 			if self.paused:
 				if self.show_pause_panel:
