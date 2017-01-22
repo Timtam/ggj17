@@ -77,6 +77,8 @@ class Field:
 		return self.sprite
 	def render_tower(self):
 		return self.tower.render()
+	def render_tower_animation(self):
+		return self.tower.render_animation()
 	def render_deco(self):
 		surf = pygame.Surface((32, 32), pygame.SRCALPHA)
 		surf.blit(get_common().get_image('assets/level/tiles/Maptiles_0.png'), (0,0))
@@ -84,8 +86,9 @@ class Field:
 		return surf
 
 
-	def update(self, level):
-		if self.tower!=None:
-			self.tower.update(level, self.x, self.y)
+	def update_enemies(self, level):
 		for enemy in self.enemies:
 			enemy.update(level, self.x, self.y)
+	def update_tower(self, level):
+		if self.tower!=None:
+			self.tower.update(level, self.x, self.y)

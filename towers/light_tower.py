@@ -13,3 +13,5 @@ class LightTower(tower.Tower):
 		self.setSprite('lighttower')
 		self.setPlaceSound("assets/sound/light_tower/place.ogg")
 		self.setAttackSound("assets/sound/light_tower/attack.ogg")
+		self.set_animation('assets/level/towers/light')
+		self.animation_speed = 4

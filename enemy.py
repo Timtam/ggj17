@@ -28,6 +28,7 @@ class Enemy(object):
 		self.health_empty = get_common().get_image('assets/ui/health_empty.png')
 		self.health_full = get_common().get_image('assets/ui/health_full.png')
 		self.coords = (0, 0)
+		self.field = (0, 0)
 
 	def init(self):
 		if self.arrivalSound!=None:
@@ -87,6 +88,7 @@ class Enemy(object):
 			elif self.die==DIE_SUCCESS:
 				play_sound_fx(self.hitSound)
 			return
+		self.field = (x, y)
 		if (time.time() - self.start) > (self.speed * self.speedMultiplier):
 			index = level.level.index((x,y))
 			if index == 0:
@@ -106,6 +108,7 @@ class Enemy(object):
 			if y == next[1] and x > next[0]:
 				self.setDirection(DIRECTION_LEFT)
 
+			self.field = (next[0], next[1])
 			field = level.grid[next[0]][next[1]]
 			self.setStart(time.time())
 			self.corner = False

@@ -259,7 +259,11 @@ class Level:
 				for enemy in self.grid[i][j].enemies:
 					surf, coord = enemy.render()
 					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y))
+		for j in range(self.gridsize):
+			for i in range(self.gridsize):
 				if self.grid[i][j].tower != None:
+					surf, coord = self.grid[i][j].render_tower_animation()
+					self.screen.blit(surf, (coord[0] + self.field_x + i * self.spriteSize, coord[1] + self.field_y + j * self.spriteSize))
 					tmpsprite = self.grid[i][j].render_tower()
 					self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
 		self.screen.blit(get_common().get_image('assets/level/decoration/Trforrest.png'), (self.field_x, self.field_y))
@@ -322,7 +326,10 @@ class Level:
 							enemy.start += time_delta
 			for i in range(self.gridsize):
 				for j in range(self.gridsize):
-					self.grid[i][j].update(self)
+					self.grid[i][j].update_enemies(self)
+			for i in range(self.gridsize):
+				for j in range(self.gridsize):
+					self.grid[i][j].update_tower(self)
 			if self.in_wave:
 				if time.time() >= self.next_enemy_spawn and len(self.all_enemies) > self.enemy_spawn_index:
 					firstCoord = self.level[-1]

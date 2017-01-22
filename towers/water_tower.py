@@ -13,4 +13,7 @@ class WaterTower(tower.Tower):
 		self.setSprite('watertower')
 		self.setPlaceSound("assets/sound/water_tower/place.ogg")
 		self.setAttackSound("assets/sound/water_tower/attack.ogg")
+		self.set_animation('assets/level/towers/wave')
+		self.animation_repeat = 2
+		self.animation_speed = 5
 		self.Range=16
