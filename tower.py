@@ -44,6 +44,7 @@ class Tower:
 		self.EnemyCache = [] # saves all enemies which shouldn't be attacked again
 		self.WillSell=False
 		self.SellPercentage=50
+		self.SellPercentageUpgrades = 30
 		self.UpgradeCosts=[0,0,0]
 		self.UpgradeMultipliers=[0.0,0.0,0.0]
 		self.UpgradeStatus=[UPGRADE_FALSE,UPGRADE_FALSE,UPGRADE_FALSE]
@@ -138,7 +139,7 @@ class Tower:
 		j=0
 		if self.WillSell==True:
 			level.grid[x][y].tower=None
-			level.cash+=self.Cost*self.SellPercentage/100
+			level.cash+=self.getValue()
 			self.WillSell=False
 			play_sound_fx("assets/sound/common/sell.ogg")
 			play_sound_fx("assets/sound/common/coin.ogg")
@@ -315,3 +316,21 @@ class Tower:
 
 	def setUpgradeSound(self, filename):
 		self.UpgradeSound = filename
+
+	def getValue(self):
+		i=0
+		value=self.Cost*self.SellPercentage/100
+		for i in range(len(self.UpgradeStatus)):
+			if self.UpgradeStatus[i] == UPGRADE_TRUE:
+				value+=self.UpgradeCosts[i]*self.SellPercentageUpgrades/100
+		return value
+
+	def canUpgrades(self):
+		upgrades=[False, False, False]
+		if self.UpgradeStatus[UPGRADE_SPEED]==UPGRADE_FALSE and self.UpgradeCosts[UPGRADE_SPEED]>0:
+			upgrades[UPGRADE_SPEED]=True
+		if self.UpgradeStatus[UPGRADE_RANGE]==UPGRADE_FALSE and self.UpgradeCosts[UPGRADE_RANGE]>0:
+			upgrades[UPGRADE_RANGE]=True
+		if self.UpgradeStatus[UPGRADE_EFFECT]==UPGRADE_FALSE and self.UpgradeCosts[UPGRADE_EFFECT]>0:
+			upgrades[UPGRADE_EFFECT]=True
+		return upgrades
