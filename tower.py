@@ -155,6 +155,7 @@ class Tower:
 				elif i == UPGRADE_EFFECT:
 					self.EffectMultiplier=self.UpgradeMultipliers[i]
 				play_sound_fx(self.UpgradeSound)
+				self.onUpgrade(i)
 				break
 		# to pay the crystals required
 		if self.PendingTransaction>0:
@@ -352,3 +353,6 @@ class Tower:
 		if self.UpgradeStatus[UPGRADE_EFFECT]==UPGRADE_FALSE and self.UpgradeCosts[UPGRADE_EFFECT]>0:
 			upgrades[UPGRADE_EFFECT]=True
 		return upgrades
+
+	def onUpgrade(self, upgrade):
+		pass

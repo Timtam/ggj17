@@ -24,3 +24,7 @@ class BassTower(tower.Tower):
 
 		self.SetUpgradeCost(tower.UPGRADE_RANGE, 100)
 		self.SetUpgradeMultiplier(tower.UPGRADE_RANGE, 2.0)
+
+	def onUpgrade(self, upgrade):
+		if upgrade == tower.UPGRADE_EFFECT:
+			self.setAttackSound("assets/sound/sound_tower/attack_upgrade.ogg")
