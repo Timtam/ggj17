@@ -49,7 +49,15 @@ class Enemy(object):
 		surf = pygame.Surface((sprite.get_width(), sprite.get_height() + 5), pygame.SRCALPHA)
 		surf.blit(sprite, (0, 5))
 		surf.blit(self.health_empty, (spriteHalfw - 16, 0))
-		surf.blit(self.health_full, (spriteHalfw - 15, 1), pygame.Rect(0, 0, int(self.health / self.max_health * 30), 2))
+		health_fract = max(0, self.health / self.max_health)
+		health_full = pygame.Surface((int(health_fract * 30), 2), pygame.SRCALPHA)
+		if health_fract > 0.5:
+			health_full.fill(pygame.Color(0, 170, 0, 255))
+		elif health_fract > 0.25:
+			health_full.fill(pygame.Color(200, 200, 0, 255))
+		else:
+			health_full.fill(pygame.Color(255, 0, 0, 255))
+		surf.blit(health_full, (spriteHalfw - 15, 1))
 		return surf, coords
 
 	def setDirection(self, direction):
@@ -90,9 +98,9 @@ class Enemy(object):
 				play_sound_fx(self.hitSound)
 			return
 		self.field = (x, y)
-		
+
 		newfield = False
-		
+
 		if (time.time() - self.start) > (self.speed * self.speedMultiplier):
 			index = level.level.index((x,y))
 			if index == 0:
@@ -140,7 +148,7 @@ class Enemy(object):
 			self.coords = (0, (-1) * spriteHalfh + ((time.time() - self.start) * 32 / (self.speed * self.speedMultiplier)) - 16)
 			if oldCoords[0] < self.coords[0] and newfield:
 				self.coord = oldCoords
-			
+
 	def addHealth(self, health):
 		self.health += health
 		if self.health <= 0:
