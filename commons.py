@@ -22,9 +22,9 @@ class Commons:
 		self.options = Options()
 		self.options.save()
 		if platform.system()=="Windows":
-			basspath=os.path.join(Script().Path, ('bass_x64.dll' if sys.maxsize>2**32 else 'bass.dll'))
+			basspath=str(os.path.join(Script().Path, ('bass_x64.dll' if sys.maxsize>2**32 else 'bass.dll')))
 		else:
-			basspath=os.path.joion(Script().Path, ('libbass_x64.so' if sys.maxsize>2**32 else 'libbass.so'))
+			basspath=str(os.path.join(Script().Path, ('libbass_x64.so' if sys.maxsize>2**32 else 'libbass.so')))
 		self.bass = BASS(basspath, True)
 		self.bass.Init()
 
