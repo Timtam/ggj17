@@ -2,6 +2,7 @@ from field import Field
 from enemies.ghost import Ghost
 from enemies.skeleton import Skeleton
 from enemies.barrel import Barrel
+from enemies.golem import Golem
 import tower
 from towers import water_tower
 import pygame
@@ -57,7 +58,8 @@ class Level:
 				(10, Skeleton,1,1),
 				(10, Ghost,1,2),
 				(11, Barrel,1,3),
-				(13, Ghost,1))), #addGolem
+				(13, Ghost,3,2),
+				(1, Golem,1))), #addGolem
 			('level6.ogg', (
 				(10, Skeleton,0.2,0.2),
 				(3, Ghost,1,1),
@@ -73,7 +75,8 @@ class Level:
 				(3, Barrel,1,0.2),
 				(3, Ghost,1,0.2),
 				(3, Skeleton,0.2,0.2),
-				(5, Barrel,1,0.2))), #addGolem
+				(5, Barrel,1,0.2),
+				(2, Golem,1))), #addGolem
 			('level7.ogg', (
 				(20, Barrel,1,2),
 				(20, Skeleton,1,1),
@@ -82,7 +85,8 @@ class Level:
 				(10, Skeleton,1,2),
 				(5, Skeleton,2,2),
 				(15, Barrel,1,2),
-				(20, Ghost,1))), #addGolem
+				(20, Ghost,1,0.2),
+				(4, Golem,1))), #addGolem
 			('level8.ogg', (
 				(20, Skeleton,1,0),
 				(20, Barrel,1,2),
@@ -92,7 +96,8 @@ class Level:
 				(10, Skeleton,1,2),
 				(5, Skeleton,2,2),
 				(15, Barrel,1,2),
-				(20, Ghost,1)))] #addGolem
+				(20, Ghost,1,5),
+				(8, Golem,1)))] #addGolem
 		self.current_lives = 30
 		self.in_wave = False
 
