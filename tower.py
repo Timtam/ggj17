@@ -15,6 +15,9 @@ EFFECT_TYPE_ALL=0x4 # all targets on best field
 EFFECT_TYPE_CIRCLE=0x8 # all enemies in range
 EFFECT_TYPE_STRAIGHT=0x10 # target only straight forward (obviously not together with circle^^)
 
+ANIMATION_SCALE_SCALE = 1 # scale animation to correct size
+ANIMATION_SCALE_TRANSLATE = 2 # move animation from start to end instead of scaling
+
 class Tower:
 	Cost=0
 	def __init__(self):
@@ -35,9 +38,10 @@ class Tower:
 		self.SellPercentage=50
 		self.direction = 'up'
 		self.animation = {}
-		self.animation_data = {'index': 0, 'play': False, 'time': 0, 'direction': 'self', 'attacked_enemy': None}
+		self.animation_data = {'index': 0, 'fraction': 0, 'play': False, 'time': 0, 'direction': 'self', 'attacked_enemy': None}
 		self.animation_repeat = 1
 		self.animation_speed = 1
+		self.animation_scale = ANIMATION_SCALE_SCALE
 
 	def init(self):
 		# setting PendingTransaction to the costs of the tower on first run, so the player needs to pay
@@ -140,8 +144,10 @@ class Tower:
 			if anim_fraction >= 1:
 				self.animation_data['play'] = False
 				self.animation_data['index'] = 0
+				self.animation_data['fraction'] = 0
 			elif len(self.animation) > 0:
-				self.animation_data['index'] = int(math.floor(len(self.animation.values()[0]) * ((anim_fraction * self.animation_repeat) %  1)))
+				self.animation_data['fraction'] = (anim_fraction * self.animation_repeat) %  1
+				self.animation_data['index'] = int(math.floor(len(self.animation.values()[0]) * self.animation_data['fraction']))
 			if self.animation_data['attacked_enemy'] != None:
 				self.animation_data['attacked_enemy_coords'] = self.animation_data['attacked_enemy'].coords
 				self.animation_data['enemy_field_relative'] = (self.animation_data['attacked_enemy'].field[0] - x, self.animation_data['attacked_enemy'].field[1] - y)
@@ -193,7 +199,7 @@ class Tower:
 	def setAttackSound(self, filename):
 		self.AttackSound = filename
 
-	def set_animation(self, path):
+	def set_animation(self, path, repeat_frames = 0, repeat_count = 0):
 		animation_name = path[(path.rfind('/') + 1):] + '_'
 		for direction in ('left', 'right', 'up', 'down', 'circle', 'line'):
 			dir_path = path + '_' + direction + '/'
@@ -205,6 +211,8 @@ class Tower:
 				files.sort()
 				for f in files:
 					self.animation[direction].append(get_common().get_image(dir_path + f))
+				for i in range(repeat_count * repeat_frames):
+					self.animation[direction].append(self.animation[direction][-repeat_frames])
 
 	def render(self):
 		if self.direction == 'up':
@@ -227,15 +235,29 @@ class Tower:
 		surf = animation[self.animation_data['index']]
 		render_above = False
 		if anim_direction == 'up':
-			coords = ((32 - surf.get_width()) / 2, -surf.get_height())
+			if self.animation_scale == ANIMATION_SCALE_SCALE:
+				surf = pygame.transform.scale(surf, (32, int(32 * self.Range * self.RangeMultiplier)))
+				coords = ((32 - surf.get_width()) / 2, -surf.get_height())
+			else:
+				coords = ((32 - surf.get_width()) / 2, -surf.get_height() - self.animation_data['fraction'] * 32 * (self.Range * self.RangeMultiplier - 1))
 		elif anim_direction == 'down':
-			coords = ((32 - surf.get_width()) / 2, 32)
+			if self.animation_scale == ANIMATION_SCALE_SCALE:
+				surf = pygame.transform.scale(surf, (32, int(32 * self.Range * self.RangeMultiplier)))
+				coords = ((32 - surf.get_width()) / 2, 32)
+			else:
+				coords = ((32 - surf.get_width()) / 2, 32 + self.animation_data['fraction'] * 32 * (self.Range * self.RangeMultiplier - 1))
 		elif anim_direction == 'left':
-			surf = pygame.transform.scale(surf, (int(32 * self.Range * self.RangeMultiplier), 32))
-			coords = (-surf.get_width(), (32 - surf.get_height()) / 2)
+			if self.animation_scale == ANIMATION_SCALE_SCALE:
+				surf = pygame.transform.scale(surf, (int(32 * self.Range * self.RangeMultiplier), 32))
+				coords = (-surf.get_width(), (32 - surf.get_height()) / 2)
+			else:
+				coords = (-surf.get_width() - self.animation_data['fraction'] * 32 * (self.Range * self.RangeMultiplier - 1), (32 - surf.get_height()) / 2)
 		elif anim_direction == 'right':
-			surf = pygame.transform.scale(surf, (int(32 * self.Range * self.RangeMultiplier), 32))
-			coords = (32, (32 - surf.get_height()) / 2)
+			if self.animation_scale == ANIMATION_SCALE_SCALE:
+				surf = pygame.transform.scale(surf, (int(32 * self.Range * self.RangeMultiplier), 32))
+				coords = (32, (32 - surf.get_height()) / 2)
+			else:
+				coords = (32 + self.animation_data['fraction'] * 32 * (self.Range * self.RangeMultiplier - 1), (32 - surf.get_height()) / 2)
 		elif anim_direction == 'circle':
 			surf = pygame.transform.scale(surf, (32 + int(64 * self.Range * self.RangeMultiplier), 32 + int(64 * self.Range * self.RangeMultiplier)))
 			coords = ((32 - surf.get_width()) / 2, (32 - surf.get_height()) / 2)
