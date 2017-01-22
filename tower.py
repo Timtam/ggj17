@@ -71,6 +71,8 @@ class Tower:
 	# needs all valid target fields as tuple array, as returned by find_target_fields
 	# returns all actual targets (deal damage here) as tuple-array
 	def filter_target_fields(self, level, valid_targets):
+		enemies=[]
+		j=0
 		nearest_field=None
 		targets=[]
 		i=0
@@ -78,7 +80,11 @@ class Tower:
 		for i in range(len(valid_targets)):
 			if level.grid[valid_targets[i][0]][valid_targets[i][1]].getType()!=1:
 				continue
-			if len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)==0:
+			for j in range(len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)):
+				if self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN and level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j] in self.EnemyCache:
+					continue
+				enemies.append(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j])
+			if len(enemies)==0:
 				continue
 			targets.append(valid_targets[i])
 		# no targets left?
