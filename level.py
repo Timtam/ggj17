@@ -49,10 +49,11 @@ class Level:
 		self.enemy_icon = get_common().get_image('assets/ui/sword.png')
 		self.time_icon = get_common().get_image('assets/ui/time.png')
 		self.health_icon = get_common().get_image('assets/ui/heart.png')
-		#TODO: add new sprite
+		self.wave_icon = get_common().get_image('assets/ui/enemywave.png')
 		self.wave_icon = get_common().get_image('assets/ui/heart.png')
 		self.allTotalEnemies = 0
 		self.allTotalEnemiesKilled = 0
+
 
 		self.cash=300
 		self.bgm = None
@@ -178,14 +179,13 @@ class Level:
 		panel_width = self.gridsize * self.spriteSize
 		panel = PanelControl((self.screen.get_width() - panel_width) / 2, 0, panel_width, self.field_y)
 		self.controls.append(panel)
-		#TODO
 		self.cash_text_control = TextControl(50, 23, '0')
 		panel.add_child_control(self.cash_text_control)
 		self.enemies_text_control = TextControl(130, 23, '0 / 0')
 		panel.add_child_control(self.enemies_text_control)
 		self.timer_text_control = TextControl(255, 23, '00:00')
 		panel.add_child_control(self.timer_text_control)
-		self.health_text_control = TextControl(375, 23, '0')
+		self.health_text_control = TextControl(365, 23, '0')
 		panel.add_child_control(self.health_text_control)
 		self.wave_text_control = TextControl(445, 23, '0')
 		panel.add_child_control(self.wave_text_control)
@@ -199,7 +199,7 @@ class Level:
 		self.pause_panel = PanelControl((self.screen.get_width() - 400) / 2, (self.screen.get_height() - 400) / 2, 400, 400)
 		self.pause_panel.add_child_control(TextControl(0, 0, 'Paused'), center = True)
 		self.pause_panel.add_child_control(ButtonControl(105, 350, 'Back to main menu', self.back_to_main_clicked))
-		
+
 		self.pause_dim = pygame.transform.scale(get_common().get_image('assets/ui/dim.png'), self.screen.get_size())
 
 		self.current_wave = -1
@@ -247,7 +247,7 @@ class Level:
 		self.start_wave()
 	def back_to_main_clicked(self):
 		get_common().get_main().change_view('MainMenu')
-		
+
 	def restart_game_clicked(self):
 		get_common().get_main().change_view('Level')
 
@@ -305,7 +305,7 @@ class Level:
 		self.screen.blit(self.cash_icon, (self.field_x + 17, 17))
 		self.screen.blit(self.enemy_icon, (self.field_x + 97, 17))
 		self.screen.blit(self.time_icon, (self.field_x + 217, 17))
-		self.screen.blit(self.health_icon, (self.field_x + 337, 17))
+		self.screen.blit(self.health_icon, (self.field_x + 327, 17))
 		#TODO: calculate
 		self.screen.blit(self.wave_icon, (self.field_x + 410, 17))
 		if self.paused:
@@ -396,79 +396,79 @@ class Level:
 			self.start_wave_button.update()
 		if self.show_pause_panel:
 			self.pause_panel.update()
-		
+
 		if self.won:
 			line_height_before = 60
 			self.game_won_panel = PanelControl((self.screen.get_width() - 400) / 2, (self.screen.get_height() - 400) / 2, 400, 400)
-			
+
 			tc = TextControl(0, line_height_before, 'GAME OVER')
 			tc.rect.centerx = 200
 			self.game_won_panel.add_child_control(tc)
-			
+
 			tower_counter = 0
 			for i in range(self.gridsize):
 				for j in range(self.gridsize):
 					if self.grid[i][j].tower != None:
 						tower_counter += 1
-						
+
 			tc = TextControl(155, line_height_before + tc.rect.height, 'You reached wave ' + str(self.current_wave + 1) + ' of ' + str(len(self.waves)) + '.' )
 			tc.rect.centerx = 200
 			line_height_before += tc.rect.height
 			self.game_won_panel.add_child_control(tc)
-			
+
 			tc = TextControl(155, line_height_before + tc.rect.height, 'You built ' + str(tower_counter) + ' towers' )
 			tc.rect.centerx = 200
 			line_height_before += tc.rect.height
 			self.game_won_panel.add_child_control(tc)
-			
+
 			self.allTotalEnemies = 0
 			for i in range(len(self.waves)):
 				for j in range(len(self.waves[i][1])):
 					self.allTotalEnemies += self.waves[i][1][j][0]
-			
+
 			tc = TextControl(155, line_height_before + tc.rect.height, 'and slained ' + str(self.allTotalEnemiesKilled) + " / " + str(self.total_enemies) + ' enemies.' )
 			tc.rect.centerx = 200
 			line_height_before += tc.rect.height
 			self.game_won_panel.add_child_control(tc)
-			
+
 			self.game_won_panel.add_child_control(tc)
 			self.game_won_panel.add_child_control(ButtonControl(105, 300, 'Back to main menu', self.back_to_main_clicked))
 			self.game_won_panel.add_child_control(ButtonControl(105, 350, 'Restart game', self.restart_game_clicked))
-		
+
 		if self.game_over:
 			line_height_before = 60
 			self.game_over_panel = PanelControl((self.screen.get_width() - 400) / 2, (self.screen.get_height() - 400) / 2, 400, 400)
-			
+
 			tc = TextControl(0, line_height_before, 'GAME OVER')
 			tc.rect.centerx = 200
 			self.game_over_panel.add_child_control(tc)
-			
+
 			tower_counter = 0
 			for i in range(self.gridsize):
 				for j in range(self.gridsize):
 					if self.grid[i][j].tower != None:
 						tower_counter += 1
-						
+
 			tc = TextControl(155, line_height_before + tc.rect.height, 'You reached wave ' + str(self.current_wave + 1) + ' of ' + str(len(self.waves)) + '.' )
 			tc.rect.centerx = 200
 			line_height_before += tc.rect.height
 			self.game_over_panel.add_child_control(tc)
-			
+
 			tc = TextControl(155, line_height_before + tc.rect.height, 'You built ' + str(tower_counter) + ' towers' )
 			tc.rect.centerx = 200
 			line_height_before += tc.rect.height
 			self.game_over_panel.add_child_control(tc)
-			
+
 			self.allTotalEnemies = 0
 			for i in range(len(self.waves)):
 				for j in range(len(self.waves[i][1])):
 					self.allTotalEnemies += self.waves[i][1][j][0]
-			
+
 			tc = TextControl(155, line_height_before + tc.rect.height, 'and slained ' + str(self.allTotalEnemiesKilled) + " / " + str(self.total_enemies) + ' enemies.' )
 			tc.rect.centerx = 200
 			line_height_before += tc.rect.height
 			self.game_over_panel.add_child_control(tc)
-			
+
 			self.game_over_panel.add_child_control(tc)
 			self.game_over_panel.add_child_control(ButtonControl(105, 300, 'Back to main menu', self.back_to_main_clicked))
 			self.game_over_panel.add_child_control(ButtonControl(105, 350, 'Restart game', self.restart_game_clicked))
