@@ -307,7 +307,7 @@ class Level:
 
 	def upgrade_clicked(self, button):
 		upgrade = self.upgrade_buttons.index(button)
-		cost = int(self.tower_panel_tower.UpgradeCosts[upgrade])
+		cost = self.tower_panel_tower.UpgradeCosts[upgrade]
 		if cost < self.cash:
 			self.tower_panel_tower.Upgrade(upgrade)
 			self.show_tower_panel = False
@@ -341,7 +341,7 @@ class Level:
 				self.createGameEndPanel(False)
 				self.paused = True
 				self.won = True
-				
+
 	def createGameEndPanel(self, gameover):
 		line_height_before = 60
 		me = PanelControl((self.screen.get_width() - 400) / 2, (self.screen.get_height() - 400) / 2, 400, 400)
@@ -351,23 +351,23 @@ class Level:
 			tc = TextControl(0, line_height_before, 'CONGRATULATIONS')
 		tc.rect.centerx = 200
 		me.add_child_control(tc)
-		
+
 		tower_counter = 0
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
 				if self.grid[i][j].tower != None:
 					tower_counter += 1
-					
+
 		tc = TextControl(155, line_height_before + tc.rect.height, 'You reached wave ' + str(self.current_wave + 1) + ' of ' + str(len(self.waves)) + '.' )
 		tc.rect.centerx = 200
 		line_height_before += tc.rect.height
 		me.add_child_control(tc)
-		
+
 		tc = TextControl(155, line_height_before + tc.rect.height, 'You built ' + str(tower_counter) + ' towers' )
 		tc.rect.centerx = 200
 		line_height_before += tc.rect.height
 		me.add_child_control(tc)
-		
+
 		self.allTotalEnemies = 0
 		for i in range(len(self.waves)):
 			for j in range(len(self.waves[i][1])):
@@ -380,12 +380,12 @@ class Level:
 
 		me.add_child_control(ButtonControl(105, 300, 'Back to main menu', self.back_to_main_clicked))
 		me.add_child_control(ButtonControl(105, 350, 'Restart game', self.restart_game_clicked))
-		
+
 		if gameover:
 			self.game_over_panel = me
 		else:
 			self.game_won_panel = me
-		
+
 	def render(self):
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
@@ -458,6 +458,10 @@ class Level:
 							self.tower_select.enable()
 							self.new_tower_coord = (i, j)
 						elif field.tower != None and not self.show_tower_panel:
+							for i in range(3):
+								self.upgrade_buttons[i].set_text('Upgrade')
+								self.upgrade_buttons[i].enable()
+								self.upgrade_cost_texts[i].set_text(str(field.tower.UpgradeCosts[i]))
 							self.tower_panel.reset_child_controls()
 							self.tower_panel.rect.x = i * self.spriteSize + self.field_x
 							self.tower_panel.rect.y = j * self.spriteSize + self.field_y
@@ -467,11 +471,7 @@ class Level:
 							can_upgrade = field.tower.canUpgrades()
 							self.sell_value_text.set_text(str(field.tower.getValue()))
 							for i in range(3):
-								if can_upgrade[i]:
-									self.upgrade_buttons[i].set_text('Upgrade')
-									self.upgrade_buttons[i].enable()
-									self.upgrade_cost_texts[i].set_text(str(field.tower.UpgradeCosts[i]))
-								else:
+								if not can_upgrade[i]:
 									self.upgrade_buttons[i].set_text('Upgraded')
 									self.upgrade_buttons[i].disable()
 									self.upgrade_cost_texts[i].set_text('')
@@ -539,6 +539,12 @@ class Level:
 		if self.show_pause_panel:
 			self.pause_panel.update()
 		if self.show_tower_panel:
+			for i in range(3):
+				cost = self.tower_panel_tower.UpgradeCosts[i]
+				if cost < self.cash and self.tower_panel_tower.canUpgrades()[i]:
+					self.upgrade_buttons[i].enable()
+				else:
+					self.upgrade_buttons[i].disable()
 			self.tower_panel.update()
 		if self.game_over:
 			self.game_over_panel.update()
