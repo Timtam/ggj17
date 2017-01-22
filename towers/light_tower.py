@@ -3,8 +3,8 @@ import tower
 class LightTower(tower.Tower):
 	Cost=90
 	name = "LIGHTWAVE TOWER"
-	description = "Lumos Maxima! Blinds enemies with high\n concentrated power of will."
-	effect_desc = ("Slows the target enemy by ", "[slow]", "%")
+	description = "Lumos Maxima! Deals damage to single targets with high\n concentrated power of will."
+	effect_desc = ("Deals damage to the target enemy by ", "[slow]", "dps")
 	def __init__(self):
 		tower.Tower.__init__(self)
 		self.EffectType=tower.EFFECT_TYPE_DAMAGE
