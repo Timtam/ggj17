@@ -18,6 +18,7 @@ class Enemy(object):
 		self.dieSound  = None
 		self.speedMultiplier = 1.0
 		self.arrivalSound = None
+		self.hitSound = "assets/sound/common/hit.ogg"
 		self.sprite    = []
 		self.drop      = None
 		self.damage    = 1 # damage done to player's castle
@@ -67,6 +68,9 @@ class Enemy(object):
 	def setArrivalSound(self, filename):
 		self.arrivalSound = filename
 
+	def setHitSound(self, filename):
+		self.hitSound = filename
+
 	def getDrop(self):
 		return self.drop
 
@@ -81,6 +85,9 @@ class Enemy(object):
 			if self.die==DIE_DAMAGE:
 				level.killed_enemies += 1
 				level.cash += self.drop
+				play_sound_fx("assets/sound/common/coin.ogg")
+			elif self.die==DIE_SUCCESS:
+				play_sound_fx(self.hitSound)
 			return
 		if (time.time() - self.start) > (self.speed * self.speedMultiplier):
 			index = level.level.index((x,y))
