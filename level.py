@@ -236,6 +236,8 @@ class Level:
 		elif enemy.die == DIE_SUCCESS:
 			self.current_lives -= enemy.damage
 		if self.current_lives == 0:
+			if self.bgm != None:
+				self.bgm.Stop()
 			play_sound_fx('assets/sound/common/game_over.ogg')
 			self.paused = True
 			self.show_game_over = True
