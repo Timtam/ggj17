@@ -313,6 +313,7 @@ class Level:
 			if self.current_wave < len(self.waves) - 1:
 				#20% more cash after every round
 				self.cash = int(self.cash * 1.2)
+				play_sound_fx("assets/sound/common/coin.ogg")
 				self.next_wave()
 			else:
 				self.createGameEndPanel(False)

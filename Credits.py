@@ -12,7 +12,7 @@ class Credits:
 		self.controls.append(ButtonControl(self.screen.get_width() - (self.screen.get_width() - 20), 20, 'Back to Menu', self.back_to_menu_clicked))
 		
 	def back_to_menu_clicked(self):
-		et_common().get_main().change_view('MainMenu')
+		get_common().get_main().change_view('MainMenu')
 		
 	def render(self):
 		self.screen.fill((0,0,0))
@@ -123,7 +123,7 @@ class Credits:
 			control.update()
 		
 	def leave(self):
-		get_common().get_main().change_view('MainMenu')
+		self.channel.Stop()
 
 	def handle_ev(self, event):
 		pass
