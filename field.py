@@ -61,10 +61,10 @@ class Field:
 			if (self.x - i, self.y) in everyWay:
 				nearestWay = 'left'
 				break;
-			if (self.x, self.y + 1) in everyWay:
+			if (self.x, self.y + i) in everyWay:
 				nearestWay = 'down'
 				break;
-			if (self.x, self.y - 1) in everyWay:
+			if (self.x, self.y - i) in everyWay:
 				nearestWay = 'up'
 				break;
 
