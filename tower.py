@@ -89,6 +89,7 @@ class Tower:
 		i=0
 		# filter all fields without enemies
 		for i in range(len(valid_targets)):
+			enemies=[]
 			if level.grid[valid_targets[i][0]][valid_targets[i][1]].getType()!=1:
 				continue
 			for j in range(len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)):
