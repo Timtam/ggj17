@@ -307,6 +307,8 @@ class Level:
 		elif self.removed_enemies == self.total_enemies:
 			play_sound_fx('assets/sound/common/level_win.ogg')
 			if self.current_wave < len(self.waves) - 1:
+				#20% more cash after every round
+				self.cash = int(self.cash * 1.2)
 				self.next_wave()
 			else:
 				self.won = True
