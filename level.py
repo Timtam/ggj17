@@ -1,5 +1,4 @@
 from field import Field
-from enemy import *
 from enemies.ghost import Ghost
 from enemies.skeleton import Skeleton
 from enemies.barrel import Barrel
@@ -10,27 +9,11 @@ import pygame
 from controls import *
 from commons import *
 import time
-import random
 
 class Level:
 	def __init__(self, screen):
-		self.possibleDecoration = [
-			(1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (8, 1), (9, 1), (10, 1),
-			(1, 2), (10, 2),
-			(11, 10), (11, 11),
-			(1, 3),
-			(1, 4),
-			(1, 5),
-			(1, 6),
-			(1, 7),
-			(1, 8), (2, 8),
-			(6, 5),
-			(6, 12),
-			(5, 13), (6, 13),
-			(3, 14), (4, 14), (5, 14), (6, 14), (7, 14)]
-		self.decoration = []
-		for i in range(random.randint(3, 8)):
-			self.decoration.append(random.choice(self.possibleDecoration))
+		self.decoration = [
+		(1, 14), (14, 3), (14, 4)]
 		self.level = [
 			(2, 12), (3, 12), (3, 11), (3, 10), (4, 10), (5, 10), (6, 10), (6, 9), (6, 8), (6, 7), (5, 7),
 			(4, 7), (4, 6), (3, 6), (3, 5), (3, 4), (3, 3), (4, 3), (5, 3), (6, 3), (7, 3), (8, 3), (8, 4),
@@ -59,41 +42,44 @@ class Level:
 				(12, Skeleton, 3),
 			)),
 			('level2.ogg', (
-				(15, Skeleton, 2, 2), # spawn 5 ghosts with 1s between each, then wait 5 seconds
-				(3, Ghost, 1))),
+				(3, Skeleton, 2, 2), # spawn 5 ghosts with 1s between each, then wait 5 seconds
+				(3, Ghost, 4, 2),
+				(3, Skeleton, 2, 1),
+				(3, Skeleton, 2))),
 			('level3.ogg', (
-				(18, Skeleton, 2, 2),
+				(12, Skeleton, 2, 2),
 				(1, Barrel, 2),
-				(5, Ghost, 1, 5),
-				 (2, Barrel, 1))),
+				(2, Ghost, 2, 2),
+				(2, Barrel, 1))),
 			('level4.ogg', (
 				(18, Skeleton, 2, 0.5),
 				(5, Barrel, 2),
 				(7, Ghost, 1, 3),
-				 (3, Barrel, 1))),
+				(3, Barrel, 1))),
 			('level5.ogg', (
 				(10, Skeleton,1,1),
 				(10, Ghost,1,2),
-				(11, Barrel,1,3),
-				(13, Ghost,3,2),
-				(1, Golem,1))), #addGolem
+				(11, Barrel,1,0.5),
+				(1, Golem,1,0.2),
+				(13, Ghost,1))), 
 			('level6.ogg', (
-				(10, Skeleton,0.2,0.2),
+				(10, Skeleton,0.2,0.4),
 				(3, Ghost,1,1),
 				(3, Barrel,1,1),
 				(3, Skeleton,1,1),
 				(3, Barrel,1,1),
 				(3, Skeleton,2,1),
-				(3, Skeleton,0.2,0.2),
-				(3, Barrel,1,0.2),
-				(3, Skeleton,0.2,0.2),
-				(3, Barrel,1,0.2),
-				(3, Skeleton,0.2,0.2),
-				(3, Barrel,1,0.2),
-				(3, Ghost,1,0.2),
-				(3, Skeleton,0.2,0.2),
-				(5, Barrel,1,0.2),
-				(2, Golem,1))), #addGolem
+				(3, Skeleton,0.4,0.4),
+				(3, Barrel,1,0.4),
+				(1, Golem,1),
+				(3, Skeleton,0.4,0.4),
+				(3, Barrel,1,0.4),
+				(3, Skeleton,0.4,0.4),
+				(3, Barrel,1,0.4),
+				(3, Ghost,1,0.4),
+				(3, Skeleton,0.4,0.4),
+				(5, Barrel,1,0.4),
+				(1, Golem,1))), #addGolem
 			('level7.ogg', (
 				(20, Barrel,1,2),
 				(20, Skeleton,1,1),
@@ -115,7 +101,7 @@ class Level:
 				(15, Barrel,1,2),
 				(20, Ghost,1,5),
 				(8, Golem,1)))] #addGolem
-		self.current_lives = 1
+		self.current_lives = 20
 		self.in_wave = False
 
 		for i in range(self.gridsize):
@@ -124,13 +110,16 @@ class Level:
 				self.grid[i].append(Field(self.screen, 0, i, j, None, 0))
 		latest = self.level[0]
 		for i in range(len(self.level)):
+			
+			
+			
 			if i == len(self.level) - 1:
 				next = self.level[i]
 			else:
 				next = self.level[i+1]
-
+				
 			me   = self.level[i]
-
+				
 			if latest[0] == self.level[i][0] and self.level[i][0] == self.level[i+1][0]:
 				self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 0, 0)
 			elif latest[1] == self.level[i][1] and self.level[i][1] == next[1]:
@@ -149,9 +138,9 @@ class Level:
 				#von oben nach rechts
 				elif (me[1] > latest[1] and me[0] == latest[0] and me[1] == next[1] and me[0] < next[0]) or (me[1] > next[1] and me[0] == next[0] and me[1] == latest[1] and me[0] < latest[0]):
 					self.grid[self.level[i][0]][self.level[i][1]] = Field(self.screen, 1, self.level[i][0], self.level[i][1], 1, 90)
-
+				
 			latest = self.level[i]
-
+				
 		for field in self.decoration:
 			self.grid[field[0]][field[1]] = Field(self.screen, 2, field[0], field[1], 0, 0)
 
@@ -173,7 +162,6 @@ class Level:
 		self.controls.append(self.tower_select)
 
 		self.paused = False
-		self.show_pause_panel = False
 		self.was_paused = False
 		self.pause_start_time = None
 		self.pause_panel = PanelControl((self.screen.get_width() - 400) / 2, (self.screen.get_height() - 400) / 2, 400, 400)
@@ -183,21 +171,21 @@ class Level:
 
 		self.current_wave = -1
 		self.start_wave_button = ButtonControl(self.field_x + panel_width + 50, self.field_y + 150, 'Start wave', self.start_wave_clicked)
-		self.init_wave()
 
 	def leave(self):
 		if self.bgm != None:
 			self.bgm.Stop()
 
 	def next_wave(self):
-		self.init_wave(self.current_wave + 1)
+		self.start_wave(self.current_wave + 1)
 
-	def init_wave(self, index = 0):
+	def start_wave(self, index = 0):
 		if self.bgm != None:
 			self.bgm.Stop()
 		wave = self.waves[index]
 		self.current_wave = index
 		self.bgm = play_sound_bgm('assets/sound/bgm/' + wave[0])
+		play_sound_fx('assets/sound/common/level_start.ogg')
 		self.enemy_types = wave[1]
 		self.total_enemies = 0
 		self.removed_enemies = 0
@@ -211,34 +199,21 @@ class Level:
 			else:
 				self.all_enemies.append((e[1], 0))
 		self.killed_enemies = 0
-		self.enemy_spawn_index = 0
-		self.in_wave = False
-
-	def start_wave(self):
-		self.in_wave = True
-		play_sound_fx('assets/sound/common/level_start.ogg')
-		self.next_enemy_spawn = time.time()
 		self.wave_started = time.time()
+		self.enemy_spawn_index = 0
+		self.next_enemy_spawn = time.time()
+		self.in_wave = True
 
 	def start_wave_clicked(self):
-		self.start_wave()
+		self.next_wave()
 	def back_to_main_clicked(self):
 		get_common().get_main().change_view('MainMenu')
 
 	def remove_enemy(self, enemy):
 		self.removed_enemies += 1
-		if enemy.die == DIE_DAMAGE:
-			self.killed_enemies += 1
-			self.cash += enemy.drop
-		elif enemy.die == DIE_SUCCESS:
-			self.current_lives -= enemy.damage
-		if self.current_lives == 0:
-			play_sound_fx('assets/sound/common/game_over.ogg')
-			self.paused = True
-			self.show_game_over = True
-		elif self.removed_enemies == self.total_enemies:
+		if self.removed_enemies == self.total_enemies:
 			play_sound_fx('assets/sound/common/level_win.ogg')
-			self.next_wave()
+			self.in_wave = False
 
 	def render(self):
 		for i in range(self.gridsize):
@@ -247,18 +222,14 @@ class Level:
 				if self.grid[i][j].type == 2:
 					self.screen.blit(self.grid[i][j].render_deco(), (i * self.spriteSize + self.field_x, j * self.spriteSize + self.field_y))
 
-		self.screen.blit(get_common().get_image('assets/ui/castle.png'), (self.field_x ,64))
-					
 		for j in range(self.gridsize):
 			for i in range(self.gridsize):
 				for enemy in self.grid[i][j].enemies:
 					surf, coord = enemy.render()
-					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y - 6))
+					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y))
 				if self.grid[i][j].tower != None:
 					tmpsprite = self.grid[i][j].render_tower()
 					self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
-		self.screen.blit(get_common().get_image('assets/ui/Trforrest.png'), (self.field_x ,64))
-		
 		for control in self.controls:
 			control.draw(self.screen)
 
@@ -272,7 +243,6 @@ class Level:
 		self.screen.blit(self.wave_icon, (self.field_x + 410, 17))
 		if self.paused:
 			self.screen.blit(self.pause_dim, (0, 0))
-		if self.show_pause_panel:
 			self.pause_panel.draw(self.screen)
 
 	def handle_ev(self, event):
@@ -289,14 +259,11 @@ class Level:
 					self.new_tower_coord = (i, j)
 		if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
 			if self.paused:
-				if self.show_pause_panel:
-					self.was_paused = True
-					self.paused = False
-					self.show_pause_panel = False
+				self.was_paused = True
+				self.paused = False
 			else:
 				self.paused = True
 				self.pause_start_time = time.time()
-				self.show_pause_panel = True
 		if self.tower_select.enabled and self.tower_select.selected_tower != None:
 			self.tower_select.enabled = False
 			i, j = self.new_tower_coord
@@ -328,13 +295,13 @@ class Level:
 					new_enemy.init()
 					self.grid[firstCoord[0]][firstCoord[1]].enemies.append(new_enemy)
 					self.next_enemy_spawn += enemy[1]
+				self.enemies_text_control.set_text(str(self.killed_enemies) + " / " + str(self.total_enemies))
 				wave_time = int(time.time() - self.wave_started)
 				s = wave_time % 60
 				m = (wave_time - s) / 60
 				s = str(s).zfill(2)
 				m = str(m).zfill(2)
 				self.timer_text_control.set_text(m + ':' + s)
-			self.enemies_text_control.set_text(str(self.killed_enemies) + " / " + str(self.total_enemies))
 			self.cash_text_control.set_text(str(self.cash))
 			self.wave_text_control.set_text(str(self.current_wave + 1) + ' / ' + str(len(self.waves)))
 			self.health_text_control.set_text(str(self.current_lives))
@@ -342,5 +309,5 @@ class Level:
 			control.update()
 		if not self.in_wave:
 			self.start_wave_button.update()
-		if self.show_pause_panel:
+		if self.paused:
 			self.pause_panel.update()
