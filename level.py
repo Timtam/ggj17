@@ -64,12 +64,11 @@ class Level:
 				(3, Skeleton, 2, 1),
 				(3, Skeleton, 2))),
 			('level3.ogg', (
-				(12, Skeleton, 2, 2),
+				(8, Skeleton, 2, 2),
 				(1, Barrel, 2),
-				(2, Ghost, 2, 2),
-				(2, Barrel, 1))),
+				(2, Ghost, 2, 2))),
 			('level4.ogg', (
-				(18, Skeleton, 2, 0.5),
+				(13, Skeleton, 2, 0.5),
 				(5, Barrel, 2),
 				(7, Ghost, 1, 3),
 				(3, Barrel, 1))),
@@ -80,6 +79,7 @@ class Level:
 				(1, Golem,1,0.2),
 				(13, Ghost,1))),
 			('level6.ogg', (
+				(2, Golem,0.5,5),
 				(10, Skeleton,0.2,0.4),
 				(3, Ghost,1,1),
 				(3, Barrel,1,1),
@@ -88,15 +88,13 @@ class Level:
 				(3, Skeleton,2,1),
 				(3, Skeleton,0.4,0.4),
 				(3, Barrel,1,0.4),
-				(1, Golem,1),
 				(3, Skeleton,0.4,0.4),
 				(3, Barrel,1,0.4),
 				(3, Skeleton,0.4,0.4),
 				(3, Barrel,1,0.4),
 				(3, Ghost,1,0.4),
 				(3, Skeleton,0.4,0.4),
-				(5, Barrel,1,0.4),
-				(1, Golem,1))), #addGolem
+				(5, Barrel,1,0.4))), #addGolem
 			('level7.ogg', (
 				(20, Barrel,1,2),
 				(20, Skeleton,1,1),
