@@ -30,6 +30,8 @@ class Tower:
 		self.PendingTransaction=0
 		self.LastFire=0
 		self.EnemyCache = [] # saves all enemies which shouldn't be attacked again
+		self.WillSell=False
+		self.SellPercentage=50
 		self.direction = 'up'
 
 	def init(self):
@@ -101,6 +103,11 @@ class Tower:
 		i=0
 		j=0
 		# to pay the crystals required
+		if self.WillSell==True:
+			level.grid[x][y].tower=None
+			level.cash+=self.Cost*self.SellPercentage/100
+			self.WillSell=False
+			return
 		if self.PendingTransaction>0:
 			if self.PendingTransaction>level.cash:
 				raise IOError("User wants to build tower, but doesn't have enough money. Please try again later!")
@@ -161,3 +168,6 @@ class Tower:
 			return self.Sprite[2]
 		if self.direction == 'right':
 			return self.Sprite[3]
+
+	def Sell(self):
+		self.WillSell=True
