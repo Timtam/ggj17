@@ -17,7 +17,7 @@ class Level:
 		self.possibleFlowers = [
 			(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0), (10, 0), (11, 0), (12, 0), (13, 0), (14, 0), (15, 0),
 			(0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (8, 1), (9, 1), (10, 1), (11, 1), (12, 1), (15, 1),
-			(0, 2), (1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2), (7, 2), (8, 2), (9, 2), (10, 2), (11, 2), (12, 2), 
+			(0, 2), (1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2), (7, 2), (8, 2), (9, 2), (10, 2), (11, 2), (12, 2),
 			(0, 3), (1, 3), (2, 3), (9, 3), (10, 3),
 			(0, 4), (1, 4), (2, 4),
 			(0, 5), (1, 5), (2, 5),
@@ -198,9 +198,9 @@ class Level:
 
 		for field in self.decoration:
 			self.grid[field[0]][field[1]] = Field(self.screen, 2, field[0], field[1], 0, 0)
-			
+
 		for flower in self.flowers:
-			self.grid[flower[0]][flower[1]] = Field(self.screen, 3, field[0], field[1], 0, 0)
+			self.grid[flower[0]][flower[1]] = Field(self.screen, 3, flower[0], flower[1], 0, 0)
 
 		panel_width = self.gridsize * self.spriteSize
 		panel = PanelControl((self.screen.get_width() - panel_width) / 2, 0, panel_width, self.field_y)
@@ -411,9 +411,9 @@ class Level:
 					if render_above:
 						self.screen.blit(surf, (coord[0] + self.field_x + i * self.spriteSize, coord[1] + self.field_y + j * self.spriteSize))
 		self.screen.blit(get_common().get_image('assets/level/decoration/Trforrest.png'), (self.field_x, self.field_y))
-		
+
 		#TODO: hier das Holz einfuegen
-		
+
 		for control in self.controls:
 			control.draw(self.screen)
 
