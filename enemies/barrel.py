@@ -9,3 +9,4 @@ class Barrel(Enemy):
 		self.setDieSound('assets/sound/barrelguy/die.ogg')
 		self.setSprite("barrel")
 		self.drop    = 6 + randint(-2, 2)
+		self.name = "barrelguy"

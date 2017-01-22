@@ -19,6 +19,7 @@ class WaterTower(tower.Tower):
 		self.animation_scale = tower.ANIMATION_SCALE_TRANSLATE
 		self.Range=16
 		self.setUpgradeSound("assets/sound/water_tower/upgrade.ogg")
+		self.setImpact("golem", 1.2)
 
 		self.SetUpgradeCost(tower.UPGRADE_SPEED, 120)
 		self.SetUpgradeMultiplier(tower.UPGRADE_SPEED, 0.6)

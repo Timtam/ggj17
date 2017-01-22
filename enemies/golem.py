@@ -12,3 +12,4 @@ class Golem(Enemy):
 		self.setHitSound("assets/sound/boss/hit.ogg")
 		self.setSprite("golem")
 		self.drop    = 20 + randint(-5, 5)
+		self.name = "golem"

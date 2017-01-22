@@ -29,6 +29,7 @@ class Enemy(object):
 		self.health_full = get_common().get_image('assets/ui/health_full.png')
 		self.coords = (0, 0)
 		self.field = (0, 0)
+		self.name = ""
 
 	def init(self):
 		if self.arrivalSound!=None:

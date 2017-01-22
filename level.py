@@ -124,18 +124,22 @@ class Level:
 				(10, Ghost,0.5,0.8),
 				(1, Golem,0.5,0.8),
 				(20, Barrel,0.5,1),
-				(4, Golem,0.5,0.5),
+				(1, Golem,0.5,5),
+				(10, Ghost,0.5,2),
 				(5, Skeleton,0.5,0.3),
 				(10, Ghost,0.5,0.3),
 				(10, Barrel,0.4,0.3),
 				(5, Skeleton,0.1,0.1),
+				(1, Golem,0.5,10),
+				(10, Skeleton,0.5,2),
+				(10, Barrel,0.7,0.1),
 				(2, Golem,0.2,8),
-				(20, Skeleton,0.1,0.5),
-				(50, Barrel,0.7,0.1),
+				(20, Ghost,0.1,1),
+				(10, Skeleton,0.1,0.5),
 				(2, Golem,0.2,15),
-				(20, Ghost,0.1,0.1),
-				(20, Skeleton,0.5,0.1),
-				(30, Ghost,0.5,0.1))),] #addGolem
+				(10, Barrel,0.7,1),
+				(20, Skeleton,0.5,2),
+				(10, Ghost,0.5,2))),] #addGolem
 		self.current_lives = 20
 		self.in_wave = False
 

@@ -9,3 +9,4 @@ class Skeleton(Enemy):
 		self.setDieSound('assets/sound/skeleton/die.ogg')
 		self.setSprite("skeleton")
 		self.drop    = 9 + randint(-2, 2)
+		self.name = "skeleton"
