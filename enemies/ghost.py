@@ -8,4 +8,4 @@ class Ghost(Enemy):
 		self.speed   = 0.75
 		self.setDieSound("assets/sound/ghost/die.ogg")
 		self.setSprite("ghost")
-		self.drop    = 5 + randint(-2, 2)
+		self.drop    = 7 + randint(-2, 2)

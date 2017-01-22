@@ -8,4 +8,4 @@ class Barrel(Enemy):
 		self.speed   = 0.5
 		self.setDieSound('assets/sound/barrelguy/die.ogg')
 		self.setSprite("barrel")
-		self.drop    = 3 + randint(-2, 2)
+		self.drop    = 6 + randint(-2, 2)

@@ -8,4 +8,4 @@ class Skeleton(Enemy):
 		self.speed   = 1.25
 		self.setDieSound('assets/sound/skeleton/die.ogg')
 		self.setSprite("skeleton")
-		self.drop    = 7 + randint(-2, 2)
+		self.drop    = 9 + randint(-2, 2)
