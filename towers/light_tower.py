@@ -17,6 +17,7 @@ class LightTower(tower.Tower):
 		self.animation_speed = 4
 		self.animation_scale = tower.ANIMATION_SCALE_TRANSLATE
 		self.setUpgradeSound("assets/sound/light_tower/upgrade.ogg")
+		self.setImpact("ghost", 0.9)
 
 		self.SetUpgradeCost(tower.UPGRADE_SPEED, 55)
 		self.SetUpgradeMultiplier(tower.UPGRADE_SPEED, 0.8)
@@ -30,3 +31,4 @@ class LightTower(tower.Tower):
 	def onUpgrade(self, upgrade):
 		if upgrade == tower.UPGRADE_EFFECT:
 			self.setAttackSound("assets/sound/sound_tower/attack_upgrade.ogg")
+			self.setImpact("barrelguy", 1.1)

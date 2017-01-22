@@ -49,6 +49,7 @@ class Tower:
 		self.UpgradeMultipliers=[0.0,0.0,0.0]
 		self.UpgradeStatus=[UPGRADE_FALSE,UPGRADE_FALSE,UPGRADE_FALSE]
 		self.UpgradeSound = None
+		self.Impacts={}
 		self.direction = 'up'
 		self.animation = {}
 		self.animation_data = {'index': 0, 'fraction': 0, 'play': False, 'time': 0, 'direction': 'self', 'attacked_enemy': None}
@@ -186,11 +187,11 @@ class Tower:
 				for j in range(len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)):
 					enemy=level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j]
 					if self.EffectType&EFFECT_TYPE_DAMAGE==EFFECT_TYPE_DAMAGE:
-						enemy.addHealth(-(self.EffectMultiplier*self.EffectValue))
+						enemy.addHealth(-self.getImpact(enemy.name)*(self.EffectMultiplier*self.EffectValue))
 					elif self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN:
 						if enemy in self.EnemyCache:
 							continue
-						enemy.speedMultiplier+=self.EffectValue*enemy.speedMultiplier/100.0
+						enemy.speedMultiplier+=self.getImpact(enemy.name)*(self.EffectValue*enemy.speedMultiplier/100.0)
 						self.EnemyCache.append(enemy)
 			else:
 				enemies=[]
@@ -205,9 +206,9 @@ class Tower:
 				self.animation_data['attacked_enemy_coords'] = enemy.coords
 				self.animation_data['enemy_field_relative'] = (valid_targets[i][0] - x, valid_targets[i][1] - y)
 				if self.EffectType&EFFECT_TYPE_DAMAGE==EFFECT_TYPE_DAMAGE:
-					enemy.addHealth(-(self.EffectMultiplier*self.EffectValue))
+					enemy.addHealth(-self.getImpact(enemy.name)*(self.EffectMultiplier*self.EffectValue))
 				elif self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN:
-					enemy.speedMultiplier+=self.EffectValue*enemy.speedMultiplier/100.0
+					enemy.speedMultiplier+=self.getImpact(enemy.name)*(self.EffectValue*enemy.speedMultiplier/100.0)
 					self.EnemyCache.append(enemy)
 			play_sound_fx(self.AttackSound)
 			self.LastFire=time.time()
@@ -356,3 +357,11 @@ class Tower:
 
 	def onUpgrade(self, upgrade):
 		pass
+
+	def setImpact(self, target, multiplier):
+		self.Impacts[target]=multiplier
+
+	def getImpact(self, target):
+		if target in self.Impacts:
+			return float(self.Impacts[target])
+		return 1.0

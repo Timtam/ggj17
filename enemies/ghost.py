@@ -9,3 +9,4 @@ class Ghost(Enemy):
 		self.setDieSound("assets/sound/ghost/die.ogg")
 		self.setSprite("ghost")
 		self.drop    = 7 + randint(-2, 2)
+		self.name = "ghost"
