@@ -14,6 +14,25 @@ import random
 
 class Level:
 	def __init__(self, screen):
+		self.possibleFlowers = [
+			(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0), (10, 0), (11, 0), (12, 0), (13, 0), (14, 0), (15, 0),
+			(0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (8, 1), (9, 1), (10, 1), (11, 1), (12, 1), (15, 1),
+			(0, 2), (1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2), (7, 2), (8, 2), (9, 2), (10, 2), (11, 2), (12, 2), 
+			(0, 3), (1, 3), (2, 3), (9, 3), (10, 3),
+			(0, 4), (1, 4), (2, 4),
+			(0, 5), (1, 5), (2, 5),
+			(0, 6), (1, 6), (2, 6),
+			(0, 7), (1, 7), (2, 7), (3, 7),
+			(1, 8), (2, 8), (3, 8), (4, 8), (5, 8),
+			(1, 9), (2, 9), (3, 9), (4, 9), (5, 9),
+			(2, 9), (3, 9), (4, 9), (5, 9),
+			(2, 10),
+			(2, 11)
+		]
+		self.flowers = []
+		#for i in range(random.randint(10, 20)):
+		#	self.flowers.append(random.choice(self.possibleFlowers))
+		self.flowers = self.possibleFlowers
 		self.possibleDecoration = [
 			(1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (8, 1), (9, 1), (10, 1),
 			(1, 2), (10, 2),
@@ -50,7 +69,6 @@ class Level:
 		self.time_icon = get_common().get_image('assets/ui/time.png')
 		self.health_icon = get_common().get_image('assets/ui/heart.png')
 		self.wave_icon = get_common().get_image('assets/ui/enemywave.png')
-		self.wave_icon = get_common().get_image('assets/ui/heart.png')
 		self.allTotalEnemies = 0
 		self.allTotalEnemiesKilled = 0
 
@@ -180,6 +198,9 @@ class Level:
 
 		for field in self.decoration:
 			self.grid[field[0]][field[1]] = Field(self.screen, 2, field[0], field[1], 0, 0)
+			
+		for flower in self.flowers:
+			self.grid[flower[0]][flower[1]] = Field(self.screen, 3, field[0], field[1], 0, 0)
 
 		panel_width = self.gridsize * self.spriteSize
 		panel = PanelControl((self.screen.get_width() - panel_width) / 2, 0, panel_width, self.field_y)
@@ -286,7 +307,7 @@ class Level:
 
 	def upgrade_clicked(self, button):
 		upgrade = self.upgrade_buttons.index(button)
-		cost = int(self.tower_panel_tower.UpgradeCosts[upgrade])
+		cost = self.tower_panel_tower.UpgradeCosts[upgrade]
 		if cost < self.cash:
 			self.tower_panel_tower.Upgrade(upgrade)
 			self.show_tower_panel = False
@@ -320,7 +341,7 @@ class Level:
 				self.createGameEndPanel(False)
 				self.paused = True
 				self.won = True
-				
+
 	def createGameEndPanel(self, gameover):
 		line_height_before = 60
 		me = PanelControl((self.screen.get_width() - 400) / 2, (self.screen.get_height() - 400) / 2, 400, 400)
@@ -330,23 +351,23 @@ class Level:
 			tc = TextControl(0, line_height_before, 'CONGRATULATIONS')
 		tc.rect.centerx = 200
 		me.add_child_control(tc)
-		
+
 		tower_counter = 0
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
 				if self.grid[i][j].tower != None:
 					tower_counter += 1
-					
+
 		tc = TextControl(155, line_height_before + tc.rect.height, 'You reached wave ' + str(self.current_wave + 1) + ' of ' + str(len(self.waves)) + '.' )
 		tc.rect.centerx = 200
 		line_height_before += tc.rect.height
 		me.add_child_control(tc)
-		
+
 		tc = TextControl(155, line_height_before + tc.rect.height, 'You built ' + str(tower_counter) + ' towers' )
 		tc.rect.centerx = 200
 		line_height_before += tc.rect.height
 		me.add_child_control(tc)
-		
+
 		self.allTotalEnemies = 0
 		for i in range(len(self.waves)):
 			for j in range(len(self.waves[i][1])):
@@ -359,12 +380,12 @@ class Level:
 
 		me.add_child_control(ButtonControl(105, 300, 'Back to main menu', self.back_to_main_clicked))
 		me.add_child_control(ButtonControl(105, 350, 'Restart game', self.restart_game_clicked))
-		
+
 		if gameover:
 			self.game_over_panel = me
 		else:
 			self.game_won_panel = me
-		
+
 	def render(self):
 		for i in range(self.gridsize):
 			for j in range(self.gridsize):
@@ -390,6 +411,9 @@ class Level:
 					if render_above:
 						self.screen.blit(surf, (coord[0] + self.field_x + i * self.spriteSize, coord[1] + self.field_y + j * self.spriteSize))
 		self.screen.blit(get_common().get_image('assets/level/decoration/Trforrest.png'), (self.field_x, self.field_y))
+		
+		#TODO: hier das Holz einfuegen
+		
 		for control in self.controls:
 			control.draw(self.screen)
 
@@ -427,13 +451,17 @@ class Level:
 			if event.button == 1:
 				if not ( i < 0 or i > (self.gridsize - 1) or j < 0 or j > (self.gridsize - 1) ):
 					field = self.grid[i][j]
-					if field.getType() == 0:
+					if field.getType() == 0 or field.getType() == 3:
 						if field.tower == None and not self.show_tower_panel:
 							self.tower_select.rect.centerx = i * self.spriteSize + self.field_x + self.spriteSize / 2
 							self.tower_select.rect.centery = j * self.spriteSize + self.field_y + self.spriteSize / 2
 							self.tower_select.enable()
 							self.new_tower_coord = (i, j)
 						elif field.tower != None and not self.show_tower_panel:
+							for i in range(3):
+								self.upgrade_buttons[i].set_text('Upgrade')
+								self.upgrade_buttons[i].enable()
+								self.upgrade_cost_texts[i].set_text(str(field.tower.UpgradeCosts[i]))
 							self.tower_panel.reset_child_controls()
 							self.tower_panel.rect.x = i * self.spriteSize + self.field_x
 							self.tower_panel.rect.y = j * self.spriteSize + self.field_y
@@ -443,11 +471,7 @@ class Level:
 							can_upgrade = field.tower.canUpgrades()
 							self.sell_value_text.set_text(str(field.tower.getValue()))
 							for i in range(3):
-								if can_upgrade[i]:
-									self.upgrade_buttons[i].set_text('Upgrade')
-									self.upgrade_buttons[i].enable()
-									self.upgrade_cost_texts[i].set_text(str(field.tower.UpgradeCosts[i]))
-								else:
+								if not can_upgrade[i]:
 									self.upgrade_buttons[i].set_text('Upgraded')
 									self.upgrade_buttons[i].disable()
 									self.upgrade_cost_texts[i].set_text('')
@@ -515,6 +539,12 @@ class Level:
 		if self.show_pause_panel:
 			self.pause_panel.update()
 		if self.show_tower_panel:
+			for i in range(3):
+				cost = self.tower_panel_tower.UpgradeCosts[i]
+				if cost < self.cash and self.tower_panel_tower.canUpgrades()[i]:
+					self.upgrade_buttons[i].enable()
+				else:
+					self.upgrade_buttons[i].disable()
 			self.tower_panel.update()
 		if self.game_over:
 			self.game_over_panel.update()

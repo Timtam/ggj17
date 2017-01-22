@@ -5,6 +5,7 @@ from commons import *
 UNDERGROUNDTYPE_GRASS      = 0
 UNDERGROUNDTYPE_WAY        = 1
 UNDERGROUNDTYPE_DECORATION = 2
+UNDERGROUNDTYPE_FLOWERS    = 3
 WAYTYPE_STRAIGHT           = 0
 WAYTYPE_CURVE              = 1
 
@@ -29,7 +30,7 @@ class Field:
 
 			self.sprite = self.rot_center(self.sprite, self.degree)
 		#2 - decoration
-		else:
+		elif self.type == 2:
 			if randint(1,2) == 1:
 				decoitem = 'wood'
 				deconum = randint(1, 3)
@@ -37,6 +38,9 @@ class Field:
 				decoitem = 'rock'
 				deconum = randint(1, 10)
 			self.sprite = get_common().get_image('assets/level/decoration/' + decoitem + '_' + str(deconum) + '.png')
+		#3 - flowers
+		else:
+			self.sprite = get_common().get_image('assets/level/decoration/' + 'Deko' + str(randint(1,6)) + '.png')
 
 		self.tower = None
 		self.enemies=[]
