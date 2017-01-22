@@ -83,8 +83,6 @@ class Enemy(object):
 			del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
 			level.remove_enemy(self)
 			if self.die==DIE_DAMAGE:
-				level.killed_enemies += 1
-				level.cash += self.drop
 				play_sound_fx("assets/sound/common/coin.ogg")
 			elif self.die==DIE_SUCCESS:
 				play_sound_fx(self.hitSound)
@@ -92,9 +90,7 @@ class Enemy(object):
 		if (time.time() - self.start) > (self.speed * self.speedMultiplier):
 			index = level.level.index((x,y))
 			if index == 0:
-				level.current_lives -= self.damage
 				self.die = DIE_SUCCESS
-				# TODO: check in level if game over or not and end if yes (maybe outside of update?)
 				return
 
 			next = level.level[index-1]

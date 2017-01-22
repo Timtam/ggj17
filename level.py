@@ -1,4 +1,5 @@
 from field import Field
+from enemy import *
 from enemies.ghost import Ghost
 from enemies.skeleton import Skeleton
 from enemies.barrel import Barrel
@@ -115,7 +116,7 @@ class Level:
 				(15, Barrel,1,2),
 				(20, Ghost,1,5),
 				(8, Golem,1)))] #addGolem
-		self.current_lives = 30
+		self.current_lives = 1
 		self.in_wave = False
 
 		for i in range(self.gridsize):
@@ -173,6 +174,7 @@ class Level:
 		self.controls.append(self.tower_select)
 
 		self.paused = False
+		self.show_pause_panel = False
 		self.was_paused = False
 		self.pause_start_time = None
 		self.pause_panel = PanelControl((self.screen.get_width() - 400) / 2, (self.screen.get_height() - 400) / 2, 400, 400)
@@ -226,7 +228,16 @@ class Level:
 
 	def remove_enemy(self, enemy):
 		self.removed_enemies += 1
-		if self.removed_enemies == self.total_enemies:
+		if enemy.die == DIE_DAMAGE:
+			self.killed_enemies += 1
+			self.cash += enemy.drop
+		elif enemy.die == DIE_SUCCESS:
+			self.current_lives -= enemy.damage
+		if self.current_lives == 0:
+			play_sound_fx('assets/sound/common/game_over.ogg')
+			self.paused = True
+			self.show_game_over = True
+		elif self.removed_enemies == self.total_enemies:
 			play_sound_fx('assets/sound/common/level_win.ogg')
 			self.next_wave()
 
@@ -262,6 +273,7 @@ class Level:
 		self.screen.blit(self.wave_icon, (self.field_x + 410, 17))
 		if self.paused:
 			self.screen.blit(self.pause_dim, (0, 0))
+		if self.show_pause_panel:
 			self.pause_panel.draw(self.screen)
 
 	def handle_ev(self, event):
@@ -278,11 +290,14 @@ class Level:
 					self.new_tower_coord = (i, j)
 		if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
 			if self.paused:
-				self.was_paused = True
-				self.paused = False
+				if self.show_pause_panel:
+					self.was_paused = True
+					self.paused = False
+					self.show_pause_panel = False
 			else:
 				self.paused = True
 				self.pause_start_time = time.time()
+				self.show_pause_panel = True
 		if self.tower_select.enabled and self.tower_select.selected_tower != None:
 			self.tower_select.enabled = False
 			i, j = self.new_tower_coord
@@ -328,5 +343,5 @@ class Level:
 			control.update()
 		if not self.in_wave:
 			self.start_wave_button.update()
-		if self.paused:
+		if self.show_pause_panel:
 			self.pause_panel.update()
