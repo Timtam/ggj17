@@ -9,11 +9,27 @@ import pygame
 from controls import *
 from commons import *
 import time
+import random
 
 class Level:
 	def __init__(self, screen):
-		self.decoration = [
-		(1, 14), (14, 3), (14, 4)]
+		self.possibleDecoration = [
+			(1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (8, 1), (9, 1), (10, 1),
+			(1, 2), (10, 2),
+			(11, 10), (11, 11),
+			(1, 3),
+			(1, 4),
+			(1, 5),
+			(1, 6),
+			(1, 7),
+			(1, 8), (2, 8),
+			(6, 5),
+			(6, 12),
+			(5, 13), (6, 13),
+			(3, 14), (4, 14), (5, 14), (6, 14), (7, 14)]
+		self.decoration = []
+		for i in range(random.randint(3, 8)):
+			self.decoration.append(random.choice(self.possibleDecoration))
 		self.level = [
 			(2, 12), (3, 12), (3, 11), (3, 10), (4, 10), (5, 10), (6, 10), (6, 9), (6, 8), (6, 7), (5, 7),
 			(4, 7), (4, 6), (3, 6), (3, 5), (3, 4), (3, 3), (4, 3), (5, 3), (6, 3), (7, 3), (8, 3), (8, 4),
@@ -39,7 +55,8 @@ class Level:
 		self.bgm = None
 		self.waves = [##################BALANCE###############
 			('level1.ogg', (
-				(12, Skeleton, 3),
+				#(12, Skeleton, 3),
+				(12, Golem, 3),
 			)),
 			('level2.ogg', (
 				(15, Skeleton, 2, 2), # spawn 5 ghosts with 1s between each, then wait 5 seconds
@@ -219,14 +236,18 @@ class Level:
 				if self.grid[i][j].type == 2:
 					self.screen.blit(self.grid[i][j].render_deco(), (i * self.spriteSize + self.field_x, j * self.spriteSize + self.field_y))
 
+		self.screen.blit(get_common().get_image('assets/ui/castle.png'), (self.field_x ,64))
+					
 		for j in range(self.gridsize):
 			for i in range(self.gridsize):
 				for enemy in self.grid[i][j].enemies:
 					surf, coord = enemy.render()
-					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y))
+					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y - 6))
 				if self.grid[i][j].tower != None:
 					tmpsprite = self.grid[i][j].render_tower()
 					self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
+		self.screen.blit(get_common().get_image('assets/ui/Trforrest.png'), (self.field_x ,64))
+		
 		for control in self.controls:
 			control.draw(self.screen)
 
