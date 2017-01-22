@@ -11,4 +11,4 @@ class Golem(Enemy):
 		self.setArrivalSound("assets/sound/boss/arrival.ogg")
 		self.setHitSound("assets/sound/boss/hit.ogg")
 		self.setSprite("golem")
-		self.drop    = 60 + randint(-5, 5)
+		self.drop    = 20 + randint(-5, 5)
