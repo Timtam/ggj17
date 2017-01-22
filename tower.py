@@ -2,6 +2,7 @@ from random import randint
 import pygame
 import math
 import time
+import os, os.path
 
 from commons import *
 
@@ -33,11 +34,21 @@ class Tower:
 		self.WillSell=False
 		self.SellPercentage=50
 		self.direction = 'up'
+		self.animation = {}
+		self.animation_data = {'index': 0, 'play': False, 'time': 0, 'direction': 'self', 'attacked_enemy': None}
+		self.animation_repeat = 1
+		self.animation_speed = 1
 
 	def init(self):
 		# setting PendingTransaction to the costs of the tower on first run, so the player needs to pay
 		self.PendingTransaction=self.Cost
 		play_sound_fx(self.PlaceSound)
+		if self.EffectType & EFFECT_TYPE_CIRCLE == EFFECT_TYPE_CIRCLE:
+			self.animation_data['direction'] = 'circle'
+		elif self.EffectType & EFFECT_TYPE_STRAIGHT == EFFECT_TYPE_STRAIGHT:
+			self.animation_data['direction'] = 'self'
+		else:
+			self.animation_data['direction'] = 'line'
 
 	# finds all valid target fields
 	def find_target_fields(self, fields, x, y):
@@ -121,6 +132,16 @@ class Tower:
 			self.PendingTransaction=0
 		valid_targets = self.find_target_fields(level.grid,x,y)
 		valid_targets=self.filter_target_fields(level, valid_targets)
+		if self.animation_data['play']:
+			anim_fraction = (time.time() - self.LastFire) / (self.SpeedMultiplier * self.Speed) * self.animation_speed
+			if anim_fraction >= 1:
+				self.animation_data['play'] = False
+				self.animation_data['index'] = 0
+			elif len(self.animation) > 0:
+				self.animation_data['index'] = int(math.floor(len(self.animation.values()[0]) * ((anim_fraction * self.animation_repeat) %  1)))
+			if self.animation_data['attacked_enemy'] != None:
+				self.animation_data['attacked_enemy_coords'] = self.animation_data['attacked_enemy'].coords
+				self.animation_data['enemy_field_relative'] = (self.animation_data['attacked_enemy'].field[0] - x, self.animation_data['attacked_enemy'].field[1] - y)
 		if len(valid_targets)==0:
 			return
 		if time.time()-self.LastFire<(self.SpeedMultiplier*self.Speed):
@@ -145,6 +166,9 @@ class Tower:
 				if len(enemies)==0:
 					return
 				enemy=enemies[randint(0,len(enemies)-1)]
+				self.animation_data['attacked_enemy'] = enemy
+				self.animation_data['attacked_enemy_coords'] = enemy.coords
+				self.animation_data['enemy_field_relative'] = (valid_targets[i][0] - x, valid_targets[i][1] - y)
 				if self.EffectType&EFFECT_TYPE_DAMAGE==EFFECT_TYPE_DAMAGE:
 					enemy.addHealth(-(self.EffectMultiplier*self.EffectValue))
 				elif self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN:
@@ -152,6 +176,7 @@ class Tower:
 					self.EnemyCache.append(enemy)
 			play_sound_fx(self.AttackSound)
 			self.LastFire=time.time()
+			self.animation_data['play'] = True
 
 	def setSprite(self, path):
 		self.Sprite.append(get_common().get_image("assets/level/towers/" + path + "_up.png"))
@@ -165,6 +190,19 @@ class Tower:
 	def setAttackSound(self, filename):
 		self.AttackSound = filename
 
+	def set_animation(self, path):
+		animation_name = path[(path.rfind('/') + 1):] + '_'
+		for direction in ('left', 'right', 'up', 'down', 'circle', 'line'):
+			dir_path = path + '_' + direction + '/'
+			base_file_name = animation_name + direction + '_'
+			if os.path.exists(dir_path):
+				self.animation[direction] = []
+				self.animation_data[direction] = {'index': 0, 'time': time.time()}
+				files = [f for f in os.listdir(dir_path) if os.path.isfile(dir_path + f) and f.startswith(base_file_name)]
+				files.sort()
+				for f in files:
+					self.animation[direction].append(get_common().get_image(dir_path + f))
+
 	def render(self):
 		if self.direction == 'up':
 			return self.Sprite[0]
@@ -174,6 +212,39 @@ class Tower:
 			return self.Sprite[2]
 		if self.direction == 'right':
 			return self.Sprite[3]
+
+	def render_animation(self):
+		anim_direction = self.animation_data['direction']
+		if anim_direction == 'self':
+			anim_direction = self.direction
+		if anim_direction not in self.animation or not self.animation_data['play']:
+			return pygame.Surface((0, 0), pygame.SRCALPHA), (0, 0)
+
+		animation = self.animation[anim_direction]
+		surf = animation[self.animation_data['index']]
+		if anim_direction == 'up':
+			coords = ((32 - surf.get_width()) / 2, -surf.get_height())
+		elif anim_direction == 'down':
+			coords = ((32 - surf.get_width()) / 2, 32)
+		elif anim_direction == 'left':
+			surf = pygame.transform.scale(surf, (int(32 * self.Range * self.RangeMultiplier), 32))
+			coords = (-surf.get_width(), (32 - surf.get_height()) / 2)
+		elif anim_direction == 'right':
+			surf = pygame.transform.scale(surf, (int(32 * self.Range * self.RangeMultiplier), 32))
+			coords = (32, (32 - surf.get_height()) / 2)
+		elif anim_direction == 'circle':
+			surf = pygame.transform.scale(surf, (32 + int(64 * self.Range * self.RangeMultiplier), 32 + int(64 * self.Range * self.RangeMultiplier)))
+			coords = ((32 - surf.get_width()) / 2, (32 - surf.get_height()) / 2)
+		elif anim_direction == 'line':
+			enemy_coords = self.animation_data['attacked_enemy_coords']
+			field = self.animation_data['enemy_field_relative']
+			target_coords = (field[0] * 32 + enemy_coords[0], field[1] * 32 + enemy_coords[1])
+			angle = (-math.atan2(target_coords[1], target_coords[0])) / math.pi * 180
+			length = math.hypot(*target_coords)
+			surf = pygame.transform.scale(surf, (int(length), surf.get_height()))
+			surf = pygame.transform.rotate(surf, angle)
+			coords = (min(target_coords[0], 0) + 16, min(target_coords[1], 0) + 16)
+		return surf, coords
 
 	def Sell(self):
 		self.WillSell=True

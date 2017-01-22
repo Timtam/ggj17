@@ -94,7 +94,7 @@ class Level:
 				(3, Barrel,1,0.4),
 				(3, Ghost,1,0.4),
 				(3, Skeleton,0.4,0.4),
-				(5, Barrel,1,0.4))), 
+				(5, Barrel,1,0.4))),
 			('level7.ogg', (
 				(3, Golem,1,10),
 				(10, Barrel,0.2,0.4),
@@ -177,7 +177,7 @@ class Level:
 		#TODO
 		self.cash_text_control = TextControl(50, 23, '0')
 		panel.add_child_control(self.cash_text_control)
-		self.enemies_text_control = TextControl(150, 23, '0 / 0')
+		self.enemies_text_control = TextControl(130, 23, '0 / 0')
 		panel.add_child_control(self.enemies_text_control)
 		self.timer_text_control = TextControl(255, 23, '00:00')
 		panel.add_child_control(self.timer_text_control)
@@ -198,6 +198,7 @@ class Level:
 		self.pause_dim = pygame.transform.scale(get_common().get_image('assets/ui/dim.png'), self.screen.get_size())
 
 		self.current_wave = -1
+		self.won = False
 		self.start_wave_button = ButtonControl(self.field_x + panel_width + 50, self.field_y + 150, 'Start wave', self.start_wave_clicked)
 		self.init_wave()
 
@@ -248,7 +249,7 @@ class Level:
 			self.cash += enemy.drop
 		elif enemy.die == DIE_SUCCESS:
 			self.current_lives -= enemy.damage
-		if self.current_lives == 0:
+		if self.current_lives <= 0:
 			if self.bgm != None:
 				self.bgm.Stop()
 			play_sound_fx('assets/sound/common/game_over.ogg')
@@ -256,7 +257,10 @@ class Level:
 			self.show_game_over = True
 		elif self.removed_enemies == self.total_enemies:
 			play_sound_fx('assets/sound/common/level_win.ogg')
-			self.next_wave()
+			if self.current_wave < len(self.waves) - 1:
+				self.next_wave()
+			else:
+				self.won = True
 
 	def render(self):
 		for i in range(self.gridsize):
@@ -272,7 +276,11 @@ class Level:
 				for enemy in self.grid[i][j].enemies:
 					surf, coord = enemy.render()
 					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y))
+		for j in range(self.gridsize):
+			for i in range(self.gridsize):
 				if self.grid[i][j].tower != None:
+					surf, coord = self.grid[i][j].render_tower_animation()
+					self.screen.blit(surf, (coord[0] + self.field_x + i * self.spriteSize, coord[1] + self.field_y + j * self.spriteSize))
 					tmpsprite = self.grid[i][j].render_tower()
 					self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
 		self.screen.blit(get_common().get_image('assets/level/decoration/Trforrest.png'), (self.field_x, self.field_y))
@@ -282,7 +290,7 @@ class Level:
 		if not self.in_wave:
 			self.start_wave_button.draw(self.screen)
 		self.screen.blit(self.cash_icon, (self.field_x + 17, 17))
-		self.screen.blit(self.enemy_icon, (self.field_x + 117, 17))
+		self.screen.blit(self.enemy_icon, (self.field_x + 97, 17))
 		self.screen.blit(self.time_icon, (self.field_x + 217, 17))
 		self.screen.blit(self.health_icon, (self.field_x + 337, 17))
 		#TODO: calculate
@@ -291,6 +299,12 @@ class Level:
 			self.screen.blit(self.pause_dim, (0, 0))
 		if self.show_pause_panel:
 			self.pause_panel.draw(self.screen)
+		if self.show_game_over:
+			# TODO: show game over screen
+			pass
+		if self.won:
+			# TODO: show win screen
+			pass
 
 	def handle_ev(self, event):
 		if event.type == pygame.MOUSEBUTTONUP and not self.tower_select.enabled and not self.paused:
@@ -335,8 +349,11 @@ class Level:
 							enemy.start += time_delta
 			for i in range(self.gridsize):
 				for j in range(self.gridsize):
-					self.grid[i][j].update(self)
-			if self.in_wave:
+					self.grid[i][j].update_enemies(self)
+			for i in range(self.gridsize):
+				for j in range(self.gridsize):
+					self.grid[i][j].update_tower(self)
+			if self.in_wave and not self.won:
 				if time.time() >= self.next_enemy_spawn and len(self.all_enemies) > self.enemy_spawn_index:
 					firstCoord = self.level[-1]
 					enemy = self.all_enemies[self.enemy_spawn_index]

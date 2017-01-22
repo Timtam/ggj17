@@ -13,3 +13,4 @@ class BassTower(tower.Tower):
 		self.setSprite('soundtower')
 		self.setPlaceSound("assets/sound/sound_tower/place.ogg")
 		self.setAttackSound("assets/sound/sound_tower/attack.ogg")
+		self.set_animation('assets/level/towers/bass')
