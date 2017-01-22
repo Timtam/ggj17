@@ -34,9 +34,8 @@ class Level:
 			
 		]
 		self.flowers = []
-		#for i in range(random.randint(10, 20)):
-		#	self.flowers.append(random.choice(self.possibleFlowers))
-		self.flowers = self.possibleFlowers
+		for i in range(random.randint(15, 25)):
+			self.flowers.append(random.choice(self.possibleFlowers))
 		self.possibleDecoration = [
 			(1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (8, 1), (9, 1), (10, 1),
 			(1, 2), (10, 2),
@@ -415,9 +414,8 @@ class Level:
 					if render_above:
 						self.screen.blit(surf, (coord[0] + self.field_x + i * self.spriteSize, coord[1] + self.field_y + j * self.spriteSize))
 		self.screen.blit(get_common().get_image('assets/level/decoration/Trforrest.png'), (self.field_x, self.field_y))
-		
-		#TODO: hier das Holz einfuegen
 
+		self.screen.blit(get_common().get_image('assets/ui/Crystal.png'), (0,0))
 		for control in self.controls:
 			control.draw(self.screen)
 
