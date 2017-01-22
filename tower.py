@@ -324,3 +324,13 @@ class Tower:
 			if self.UpgradeStatus[i] == UPGRADE_TRUE:
 				value+=self.UpgradeCosts[i]*self.SellPercentageUpgrades/100
 		return value
+
+	def canUpgrades(self):
+		upgrades=[False, False, False]
+		if self.UpgradeStatus[UPGRADE_SPEED]==UPGRADE_FALSE and self.UpgradeCosts[UPGRADE_SPEED]>0:
+			upgrades[UPGRADE_SPEED]=True
+		elif self.UpgradeStatus[UPGRADE_RANGE]==UPGRADE_FALSE and self.UpgradeCosts[UPGRADE_RANGE]>0:
+			upgrades[UPGRADE_RANGE]=True
+		elif self.UpgradeStatus[UPGRADE_EFFECT]==UPGRADE_FALSE and self.UpgradeCosts[UPGRADE_EFFECT]>0:
+			upgrades[UPGRADE_EFFECT]=True
+		return upgrades
