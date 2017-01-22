@@ -69,7 +69,6 @@ class Level:
 		self.time_icon = get_common().get_image('assets/ui/time.png')
 		self.health_icon = get_common().get_image('assets/ui/heart.png')
 		self.wave_icon = get_common().get_image('assets/ui/enemywave.png')
-		self.wave_icon = get_common().get_image('assets/ui/heart.png')
 		self.allTotalEnemies = 0
 		self.allTotalEnemiesKilled = 0
 
@@ -413,7 +412,7 @@ class Level:
 						self.screen.blit(surf, (coord[0] + self.field_x + i * self.spriteSize, coord[1] + self.field_y + j * self.spriteSize))
 		self.screen.blit(get_common().get_image('assets/level/decoration/Trforrest.png'), (self.field_x, self.field_y))
 		
-		#TODO: hier das Holz einfügen
+		#TODO: hier das Holz einfuegen
 		
 		for control in self.controls:
 			control.draw(self.screen)
