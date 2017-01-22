@@ -15,7 +15,6 @@ class BassTower(tower.Tower):
 		self.setAttackSound("assets/sound/sound_tower/attack.ogg")
 		self.set_animation('assets/level/towers/bass')
 		self.setUpgradeSound("assets/sound/sound_tower/upgrade.ogg")
-		self.setImpact("barrelguy", 0.8)
 
 		self.SetUpgradeCost(tower.UPGRADE_SPEED, 70)
 		self.SetUpgradeMultiplier(tower.UPGRADE_SPEED, 0.7)
@@ -29,4 +28,5 @@ class BassTower(tower.Tower):
 	def onUpgrade(self, upgrade):
 		if upgrade == tower.UPGRADE_EFFECT:
 			self.setAttackSound("assets/sound/sound_tower/attack_upgrade.ogg")
-			self.setImpact("barrelguy", 0.9)
+			self.setImpact("golem", 0.75)
+			self.setImpact("barrel", 0.8)

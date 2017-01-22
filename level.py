@@ -137,28 +137,29 @@ class Level:
 				(7, Ghost,0.2,0.4),
 				(5, Skeleton,0.2,0.4))),  #addGolem
 			('level8.ogg', (
-				(2, Golem,0.5,15),
-				(3, Golem,0.5,15),
+				(2, Golem,1,15),
+				(3, Golem,1,15),
 				(10, Barrel,0.5,0.4),
 				(10, Ghost,0.5,0.8),
-				(1, Golem,0.5,0.8),
+				(2, Golem,1,0.8),
 				(20, Barrel,0.5,1),
-				(1, Golem,0.5,5),
+				(2, Golem,1,5),
 				(10, Ghost,0.5,2),
 				(5, Skeleton,0.5,0.3),
 				(10, Ghost,0.5,0.3),
 				(10, Barrel,0.4,0.3),
 				(5, Skeleton,0.1,0.1),
-				(1, Golem,0.5,10),
+				(5, Golem,2,10),
 				(10, Skeleton,0.5,2),
 				(10, Barrel,0.7,0.1),
-				(2, Golem,0.2,8),
-				(20, Ghost,0.1,1),
+				(10, Golem,2,8),
+				(10, Ghost,0.5,1),
 				(10, Skeleton,0.1,0.5),
-				(2, Golem,0.2,15),
+				(5, Golem,1,15),
 				(10, Barrel,0.7,1),
 				(20, Skeleton,0.5,2),
-				(10, Ghost,0.5,2))),] #addGolem
+				(10, Ghost,0.5,2),
+				(10, Golem,1,15)))] #addGolem
 		self.current_lives = 20
 		self.in_wave = False
 
