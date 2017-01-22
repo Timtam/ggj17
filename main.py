@@ -6,6 +6,7 @@ from level     import *
 from main_menu import MainMenu
 from options_screen import OptionsScreen
 from splash_screen import SplashScreen
+from Credits import Credits
 
 class Main:
 	def __init__(self, width = 1280, height = 720):
@@ -18,6 +19,7 @@ class Main:
 			'MainMenu': MainMenu,
 			'OptionsScreen': OptionsScreen,
 			'Level': Level,
+			'Credits': Credits,
 		}
 		self.next_view = None
 		self.current_view = None

@@ -118,8 +118,27 @@ class Credits:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					sys.exit()
-			
-			
-#Test
-c = Credits () 
-c.loop()
+					
+		
+	def leave(self):
+		self.channel.Stop()
+
+	def new_game_clicked(self):
+		get_common().get_main().change_view('Level')
+
+	def options_clicked(self):
+		get_common().get_main().change_view('OptionsScreen')
+
+	def exit_clicked(self):
+		get_common().get_main().stop()
+
+	def handle_ev(self, event):
+		pass
+
+	def update(self):
+		for control in self.controls:
+			control.update()
+
+	def render(self):
+		for control in self.controls:
+			control.draw(self.screen)
