@@ -10,6 +10,7 @@ class UI:
 		self.panel_full = []
 		self.button_down = []
 		self.button_up = []
+		self.button_disabled = []
 		self.slider_horizontal = []
 		for x in range(0,3):
 			borders = []
@@ -32,6 +33,9 @@ class UI:
 			slider = pygame.Surface((16, 16), pygame.SRCALPHA)
 			slider.blit(sprite_sheet, (0, 0), pygame.Rect(18 * (3 + x), 18 * 8, 16, 16))
 			self.slider_horizontal.append(pygame.transform.scale(slider, (32, 32)))
+			disabled = pygame.Surface((16, 16), pygame.SRCALPHA)
+			disabled.blit(sprite_sheet, (0, 0), pygame.Rect(18 * (3 + x), 18 * 17, 16, 16))
+			self.button_disabled.append(pygame.transform.scale(disabled, (32, 32)))
 		slider = pygame.Surface((16, 16), pygame.SRCALPHA)
 		slider.blit(sprite_sheet, (0, 0), pygame.Rect(18 * (color_off + 5), 18 * 6, 16, 16))
 		self.slider_horizontal.append(pygame.transform.scale(slider, (32, 32)))
@@ -59,8 +63,10 @@ class UI:
 	def draw_button(self, width, state):
 		if state == 0:
 			sprites = self.button_up
-		else:
+		elif state == 1:
 			sprites = self.button_down
+		elif state == 2:
+			sprites = self.button_disabled
 		surface = pygame.Surface((width, 32), pygame.SRCALPHA)
 		surface.blit(sprites[0], (0,0))
 		surface.blit(sprites[2], (width - 32, 0))

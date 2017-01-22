@@ -192,6 +192,28 @@ class Level:
 		self.tower_select = TowerSelectControl(0, 0, self)
 		self.controls.append(self.tower_select)
 
+		self.show_tower_panel = False
+		self.tower_panel_tower = None
+		self.tower_panel = PanelControl(0, 0, 400, 200)
+		self.tower_panel.add_child_control(TextControl(10, 15, 'Speed'))
+		self.tower_panel.add_child_control(TextControl(10, 55, 'Effect'))
+		self.tower_panel.add_child_control(TextControl(10, 95, 'Range'))
+		self.upgrade_buttons = []
+		self.upgrade_buttons.append(ButtonControl(140, 10, 'Upgrade', self.upgrade_clicked, 100))
+		self.upgrade_buttons.append(ButtonControl(140, 50, 'Upgrade', self.upgrade_clicked, 100))
+		self.upgrade_buttons.append(ButtonControl(140, 90, 'Upgrade', self.upgrade_clicked, 100))
+		self.upgrade_cost_texts = []
+		self.upgrade_cost_texts.append(TextControl(280, 15, '0'))
+		self.upgrade_cost_texts.append(TextControl(280, 55, '0'))
+		self.upgrade_cost_texts.append(TextControl(280, 95, '0'))
+		for i in range(3):
+			self.tower_panel.add_child_control(self.upgrade_buttons[i])
+			self.tower_panel.add_child_control(self.upgrade_cost_texts[i])
+		self.sell_button = ButtonControl(10, 158, 'Sell tower', self.sell_clicked, 120)
+		self.sell_value_text = TextControl(170, 163, '0')
+		self.tower_panel.add_child_control(self.sell_button)
+		self.tower_panel.add_child_control(self.sell_value_text)
+
 		self.paused = False
 		self.show_pause_panel = False
 		self.was_paused = False
@@ -251,6 +273,16 @@ class Level:
 	def restart_game_clicked(self):
 		get_common().get_main().change_view('Level')
 
+	def upgrade_clicked(self, button):
+		upgrade = self.upgrade_buttons.index(button)
+		cost = int(self.tower_panel_tower.UpgradeCosts[upgrade])
+		if cost < self.cash:
+			self.tower_panel_tower.Upgrade(upgrade)
+			self.show_tower_panel = False
+	def sell_clicked(self):
+		self.show_tower_panel = False
+		self.tower_panel_tower.Sell()
+
 	def remove_enemy(self, enemy):
 		self.removed_enemies += 1
 		if enemy.die == DIE_DAMAGE:
@@ -308,6 +340,15 @@ class Level:
 		self.screen.blit(self.health_icon, (self.field_x + 327, 17))
 		#TODO: calculate
 		self.screen.blit(self.wave_icon, (self.field_x + 410, 17))
+		if self.show_tower_panel:
+			self.tower_panel.draw(self.screen)
+			if self.upgrade_buttons[0].enabled:
+				self.screen.blit(self.cash_icon, (self.tower_panel.rect.x + 250, self.tower_panel.rect.y + 10))
+			if self.upgrade_buttons[1].enabled:
+				self.screen.blit(self.cash_icon, (self.tower_panel.rect.x + 250, self.tower_panel.rect.y + 50))
+			if self.upgrade_buttons[2].enabled:
+				self.screen.blit(self.cash_icon, (self.tower_panel.rect.x + 250, self.tower_panel.rect.y + 90))
+			self.screen.blit(self.cash_icon, (self.tower_panel.rect.x + 140, self.tower_panel.rect.y + 158))
 		if self.paused:
 			self.screen.blit(self.pause_dim, (0, 0))
 		if self.show_pause_panel:
@@ -325,16 +366,32 @@ class Level:
 			if event.button == 1:
 				if not ( i < 0 or i > (self.gridsize - 1) or j < 0 or j > (self.gridsize - 1) ):
 					field = self.grid[i][j]
-					if field.getType() == 0 and field.tower == None:
-						self.tower_select.rect.centerx = i * self.spriteSize + self.field_x + self.spriteSize / 2
-						self.tower_select.rect.centery = j * self.spriteSize + self.field_y + self.spriteSize / 2
-						self.tower_select.enable()
-						self.new_tower_coord = (i, j)
-			elif event.button == 3:
-				if not ( i < 0 or i > (self.gridsize - 1) or j < 0 or j > (self.gridsize - 1) ):
-					field = self.grid[i][j]
-					if field.getType() == 0 and field.tower != None:
-						field.tower.Sell()
+					if field.getType() == 0:
+						if field.tower == None and not self.show_tower_panel:
+							self.tower_select.rect.centerx = i * self.spriteSize + self.field_x + self.spriteSize / 2
+							self.tower_select.rect.centery = j * self.spriteSize + self.field_y + self.spriteSize / 2
+							self.tower_select.enable()
+							self.new_tower_coord = (i, j)
+						elif field.tower != None and not self.show_tower_panel:
+							self.tower_panel.reset_child_controls()
+							self.tower_panel.rect.x = i * self.spriteSize + self.field_x
+							self.tower_panel.rect.y = j * self.spriteSize + self.field_y
+							self.tower_panel.transform_child_controls()
+							self.show_tower_panel = True
+							self.tower_panel_tower = field.tower
+							can_upgrade = field.tower.canUpgrades()
+							self.sell_value_text.set_text(str(field.tower.getValue()))
+							for i in range(3):
+								if can_upgrade[i]:
+									self.upgrade_buttons[i].set_text('Upgrade')
+									self.upgrade_buttons[i].enable()
+									self.upgrade_cost_texts[i].set_text(str(field.tower.UpgradeCosts[i]))
+								else:
+									self.upgrade_buttons[i].set_text('Upgraded')
+									self.upgrade_buttons[i].disable()
+									self.upgrade_cost_texts[i].set_text('')
+				if self.show_tower_panel and not self.tower_panel.rect.collidepoint(*pos):
+					self.show_tower_panel = False
 
 		if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
 			if self.paused:
@@ -396,6 +453,8 @@ class Level:
 			self.start_wave_button.update()
 		if self.show_pause_panel:
 			self.pause_panel.update()
+		if self.show_tower_panel:
+			self.tower_panel.update()
 
 		if self.won:
 			line_height_before = 60
