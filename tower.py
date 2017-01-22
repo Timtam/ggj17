@@ -218,10 +218,11 @@ class Tower:
 		if anim_direction == 'self':
 			anim_direction = self.direction
 		if anim_direction not in self.animation or not self.animation_data['play']:
-			return pygame.Surface((0, 0), pygame.SRCALPHA), (0, 0)
+			return pygame.Surface((0, 0), pygame.SRCALPHA), (0, 0), False
 
 		animation = self.animation[anim_direction]
 		surf = animation[self.animation_data['index']]
+		render_above = False
 		if anim_direction == 'up':
 			coords = ((32 - surf.get_width()) / 2, -surf.get_height())
 		elif anim_direction == 'down':
@@ -238,13 +239,16 @@ class Tower:
 		elif anim_direction == 'line':
 			enemy_coords = self.animation_data['attacked_enemy_coords']
 			field = self.animation_data['enemy_field_relative']
-			target_coords = (field[0] * 32 + enemy_coords[0], field[1] * 32 + enemy_coords[1])
-			angle = (-math.atan2(target_coords[1], target_coords[0])) / math.pi * 180
-			length = math.hypot(*target_coords)
+			sprite = self.render()
+			tower_source = (16, 32 - sprite.get_height() + 16)
+			target_coords = (field[0] * 32 + enemy_coords[0] + 16, field[1] * 32 + enemy_coords[1] + 16)
+			angle = (-math.atan2(target_coords[1] - tower_source[1], target_coords[0] - tower_source[0])) / math.pi * 180
+			length = math.hypot(target_coords[0] - tower_source[0], target_coords[1] - tower_source[1])
 			surf = pygame.transform.scale(surf, (int(length), surf.get_height()))
 			surf = pygame.transform.rotate(surf, angle)
-			coords = (min(target_coords[0], 0) + 16, min(target_coords[1], 0) + 16)
-		return surf, coords
+			coords = (min(target_coords[0], tower_source[0]), min(target_coords[1], tower_source[1]))
+			render_above = (target_coords[1] > 0)
+		return surf, coords, render_above
 
 	def Sell(self):
 		self.WillSell=True

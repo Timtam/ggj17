@@ -199,6 +199,7 @@ class Level:
 
 		self.current_wave = -1
 		self.won = False
+		self.game_over = False
 		self.start_wave_button = ButtonControl(self.field_x + panel_width + 50, self.field_y + 150, 'Start wave', self.start_wave_clicked)
 		self.init_wave()
 
@@ -254,7 +255,7 @@ class Level:
 				self.bgm.Stop()
 			play_sound_fx('assets/sound/common/game_over.ogg')
 			self.paused = True
-			self.show_game_over = True
+			self.game_over = True
 		elif self.removed_enemies == self.total_enemies:
 			play_sound_fx('assets/sound/common/level_win.ogg')
 			if self.current_wave < len(self.waves) - 1:
@@ -279,10 +280,13 @@ class Level:
 		for j in range(self.gridsize):
 			for i in range(self.gridsize):
 				if self.grid[i][j].tower != None:
-					surf, coord = self.grid[i][j].render_tower_animation()
-					self.screen.blit(surf, (coord[0] + self.field_x + i * self.spriteSize, coord[1] + self.field_y + j * self.spriteSize))
+					surf, coord, render_above = self.grid[i][j].render_tower_animation()
+					if not render_above:
+						self.screen.blit(surf, (coord[0] + self.field_x + i * self.spriteSize, coord[1] + self.field_y + j * self.spriteSize))
 					tmpsprite = self.grid[i][j].render_tower()
 					self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
+					if render_above:
+						self.screen.blit(surf, (coord[0] + self.field_x + i * self.spriteSize, coord[1] + self.field_y + j * self.spriteSize))
 		self.screen.blit(get_common().get_image('assets/level/decoration/Trforrest.png'), (self.field_x, self.field_y))
 		for control in self.controls:
 			control.draw(self.screen)
@@ -299,7 +303,7 @@ class Level:
 			self.screen.blit(self.pause_dim, (0, 0))
 		if self.show_pause_panel:
 			self.pause_panel.draw(self.screen)
-		if self.show_game_over:
+		if self.game_over:
 			# TODO: show game over screen
 			pass
 		if self.won:
