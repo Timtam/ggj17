@@ -250,7 +250,7 @@ class Level:
 				if self.grid[i][j].type == 2:
 					self.screen.blit(self.grid[i][j].render_deco(), (i * self.spriteSize + self.field_x, j * self.spriteSize + self.field_y))
 
-		self.screen.blit(get_common().get_image('assets/ui/castle.png'), (self.field_x, self.field_y))
+		self.screen.blit(get_common().get_image('assets/level/decoration/castle.png'), (self.field_x, self.field_y))
 
 		for j in range(self.gridsize):
 			for i in range(self.gridsize):
@@ -260,7 +260,7 @@ class Level:
 				if self.grid[i][j].tower != None:
 					tmpsprite = self.grid[i][j].render_tower()
 					self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
-		self.screen.blit(get_common().get_image('assets/ui/Trforrest.png'), (self.field_x, self.field_y))
+		self.screen.blit(get_common().get_image('assets/level/decoration/Trforrest.png'), (self.field_x, self.field_y))
 		for control in self.controls:
 			control.draw(self.screen)
 

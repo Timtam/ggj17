@@ -26,7 +26,7 @@ class Field:
 				self.sprite = get_common().get_image('assets/level/tiles/Maptiles_2.png')
 			elif self.waytype == 1:
 				self.sprite = get_common().get_image('assets/level/tiles/Maptiles_1.png')
-			
+
 			self.sprite = self.rot_center(self.sprite, self.degree)
 		#2 - decoration
 		else:
@@ -37,10 +37,10 @@ class Field:
 				decoitem = 'rock'
 				deconum = randint(1, 10)
 			self.sprite = get_common().get_image('assets/level/decoration/' + decoitem + '_' + str(deconum) + '.png')
-			
+
 		self.tower = None
 		self.enemies=[]
-		
+
 	def rot_center(self, image, angle):
 		orig_rect = image.get_rect()
 		rot_image = pygame.transform.rotate(image, angle)
@@ -67,7 +67,7 @@ class Field:
 			if (self.x, self.y - 1) in everyWay:
 				nearestWay = 'up'
 				break;
-			
+
 		self.tower.setDirection(nearestWay)
 
 	def getType(self):
