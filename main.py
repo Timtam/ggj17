@@ -23,7 +23,7 @@ class Main:
 		}
 		self.next_view = None
 		self.current_view = None
-		self.change_view('MainMenu')
+		self.change_view('SplashScreen')
 		#self.current_view = Level(self.screen)
 		pygame.display.set_caption('Wavomizer')
 
