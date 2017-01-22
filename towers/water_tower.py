@@ -18,3 +18,13 @@ class WaterTower(tower.Tower):
 		self.animation_speed = 1
 		self.animation_scale = tower.ANIMATION_SCALE_TRANSLATE
 		self.Range=16
+		self.setUpgradeSound("assets/sound/water_tower/upgrade.ogg")
+
+		self.setUpgradeCost(tower.UPGRADE_SPEED, 120)
+		self.setUpgradeMultiplier(tower.UPGRADE_SPEED, 0.6)
+
+		self.setUpgradeCost(tower.UPGRADE_RANGE, 0)
+		# if 0, upgrade may not be possible
+
+		self.setUpgradeCost(tower.UPGRADE_EFFECT, 80)
+		self.setUpgradeMultiplier(tower.UPGRADE_EFFECT, 1.4)
