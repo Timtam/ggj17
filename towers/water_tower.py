@@ -7,7 +7,7 @@ class WaterTower(tower.Tower):
 	effect_desc = ("Slows one enemy in a line for ", "[stun]", "%")
 	def __init__(self):
 		tower.Tower.__init__(self)
-		self.EffectValue=30 # percentage
+		self.EffectValue=40 # percentage
 		self.EffectType=tower.EFFECT_TYPE_SLOWDOWN|tower.EFFECT_TYPE_STRAIGHT
 		self.Speed=2 #attc speed
 		self.setSprite('watertower')

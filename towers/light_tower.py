@@ -17,11 +17,11 @@ class LightTower(tower.Tower):
 		self.animation_speed = 4
 		self.setUpgradeSound("assets/sound/light_tower/upgrade.ogg")
 
-		self.SetUpgradeCost(tower.UPGRADE_SPEED, 50)
+		self.SetUpgradeCost(tower.UPGRADE_SPEED, 55)
 		self.SetUpgradeMultiplier(tower.UPGRADE_SPEED, 0.8)
 
-		self.SetUpgradeCost(tower.UPGRADE_RANGE, 70)
+		self.SetUpgradeCost(tower.UPGRADE_RANGE, 65)
 		self.SetUpgradeMultiplier(tower.UPGRADE_RANGE, 2.0)
 
-		self.SetUpgradeCost(tower.UPGRADE_EFFECT, 100)
-		self.SetUpgradeMultiplier(tower.UPGRADE_EFFECT, 2.2)
+		self.SetUpgradeCost(tower.UPGRADE_EFFECT, 75)
+		self.SetUpgradeMultiplier(tower.UPGRADE_EFFECT, 1.5)

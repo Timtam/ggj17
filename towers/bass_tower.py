@@ -19,8 +19,8 @@ class BassTower(tower.Tower):
 		self.SetUpgradeCost(tower.UPGRADE_SPEED, 70)
 		self.SetUpgradeMultiplier(tower.UPGRADE_SPEED, 0.7)
 
-		self.SetUpgradeCost(tower.UPGRADE_EFFECT, 100)
+		self.SetUpgradeCost(tower.UPGRADE_EFFECT, 80)
 		self.SetUpgradeMultiplier(tower.UPGRADE_EFFECT, 1.5)
 
-		self.SetUpgradeCost(tower.UPGRADE_RANGE, 80)
+		self.SetUpgradeCost(tower.UPGRADE_RANGE, 100)
 		self.SetUpgradeMultiplier(tower.UPGRADE_RANGE, 2.0)
