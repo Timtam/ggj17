@@ -26,3 +26,7 @@ class LightTower(tower.Tower):
 
 		self.SetUpgradeCost(tower.UPGRADE_EFFECT, 75)
 		self.SetUpgradeMultiplier(tower.UPGRADE_EFFECT, 1.5)
+
+	def onUpgrade(self, upgrade):
+		if upgrade == tower.UPGRADE_EFFECT:
+			self.setAttackSound("assets/sound/sound_tower/attack_upgrade.ogg")

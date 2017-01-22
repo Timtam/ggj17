@@ -28,3 +28,7 @@ class WaterTower(tower.Tower):
 
 		self.SetUpgradeCost(tower.UPGRADE_EFFECT, 80)
 		self.SetUpgradeMultiplier(tower.UPGRADE_EFFECT, 1.4)
+
+	def onUpgrade(self, upgrade):
+		if upgrade == tower.UPGRADE_EFFECT:
+			self.setAttackSound("assets/sound/sound_tower/attack_upgrade.ogg")
