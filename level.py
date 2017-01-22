@@ -59,41 +59,44 @@ class Level:
 				(12, Skeleton, 3),
 			)),
 			('level2.ogg', (
-				(15, Skeleton, 2, 2), # spawn 5 ghosts with 1s between each, then wait 5 seconds
-				(3, Ghost, 1))),
+				(3, Skeleton, 2, 2), # spawn 5 ghosts with 1s between each, then wait 5 seconds
+				(3, Ghost, 4, 2),
+				(3, Skeleton, 2, 1),
+				(3, Skeleton, 2))),
 			('level3.ogg', (
-				(18, Skeleton, 2, 2),
+				(12, Skeleton, 2, 2),
 				(1, Barrel, 2),
-				(5, Ghost, 1, 5),
-				 (2, Barrel, 1))),
+				(2, Ghost, 2, 2),
+				(2, Barrel, 1))),
 			('level4.ogg', (
 				(18, Skeleton, 2, 0.5),
 				(5, Barrel, 2),
 				(7, Ghost, 1, 3),
-				 (3, Barrel, 1))),
+				(3, Barrel, 1))),
 			('level5.ogg', (
 				(10, Skeleton,1,1),
 				(10, Ghost,1,2),
-				(11, Barrel,1,3),
-				(13, Ghost,3,2),
-				(1, Golem,1))), #addGolem
+				(11, Barrel,1,0.5),
+				(1, Golem,1,0.2),
+				(13, Ghost,1))),
 			('level6.ogg', (
-				(10, Skeleton,0.2,0.2),
+				(10, Skeleton,0.2,0.4),
 				(3, Ghost,1,1),
 				(3, Barrel,1,1),
 				(3, Skeleton,1,1),
 				(3, Barrel,1,1),
 				(3, Skeleton,2,1),
-				(3, Skeleton,0.2,0.2),
-				(3, Barrel,1,0.2),
-				(3, Skeleton,0.2,0.2),
-				(3, Barrel,1,0.2),
-				(3, Skeleton,0.2,0.2),
-				(3, Barrel,1,0.2),
-				(3, Ghost,1,0.2),
-				(3, Skeleton,0.2,0.2),
-				(5, Barrel,1,0.2),
-				(2, Golem,1))), #addGolem
+				(3, Skeleton,0.4,0.4),
+				(3, Barrel,1,0.4),
+				(1, Golem,1),
+				(3, Skeleton,0.4,0.4),
+				(3, Barrel,1,0.4),
+				(3, Skeleton,0.4,0.4),
+				(3, Barrel,1,0.4),
+				(3, Ghost,1,0.4),
+				(3, Skeleton,0.4,0.4),
+				(5, Barrel,1,0.4),
+				(1, Golem,1))), #addGolem
 			('level7.ogg', (
 				(20, Barrel,1,2),
 				(20, Skeleton,1,1),
@@ -115,7 +118,7 @@ class Level:
 				(15, Barrel,1,2),
 				(20, Ghost,1,5),
 				(8, Golem,1)))] #addGolem
-		self.current_lives = 1
+		self.current_lives = 20
 		self.in_wave = False
 
 		for i in range(self.gridsize):
@@ -233,6 +236,8 @@ class Level:
 		elif enemy.die == DIE_SUCCESS:
 			self.current_lives -= enemy.damage
 		if self.current_lives == 0:
+			if self.bgm != None:
+				self.bgm.Stop()
 			play_sound_fx('assets/sound/common/game_over.ogg')
 			self.paused = True
 			self.show_game_over = True
@@ -247,18 +252,17 @@ class Level:
 				if self.grid[i][j].type == 2:
 					self.screen.blit(self.grid[i][j].render_deco(), (i * self.spriteSize + self.field_x, j * self.spriteSize + self.field_y))
 
-		self.screen.blit(get_common().get_image('assets/ui/castle.png'), (self.field_x ,64))
-					
+		self.screen.blit(get_common().get_image('assets/level/decoration/castle.png'), (self.field_x, self.field_y))
+
 		for j in range(self.gridsize):
 			for i in range(self.gridsize):
 				for enemy in self.grid[i][j].enemies:
 					surf, coord = enemy.render()
-					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y - 6))
+					self.screen.blit(surf, (coord[0] + i * self.spriteSize + self.field_x, coord[1] + (j * self.spriteSize) + self.field_y))
 				if self.grid[i][j].tower != None:
 					tmpsprite = self.grid[i][j].render_tower()
 					self.screen.blit(tmpsprite, (i * self.spriteSize + self.field_x - (tmpsprite.get_width() - self.spriteSize) / 2, (j * self.spriteSize) - (tmpsprite.get_height() - self.spriteSize) + self.field_y))
-		self.screen.blit(get_common().get_image('assets/ui/Trforrest.png'), (self.field_x ,64))
-		
+		self.screen.blit(get_common().get_image('assets/level/decoration/Trforrest.png'), (self.field_x, self.field_y))
 		for control in self.controls:
 			control.draw(self.screen)
 
