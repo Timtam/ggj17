@@ -14,6 +14,25 @@ import random
 
 class Level:
 	def __init__(self, screen):
+		self.possibleFlowers = [
+			(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0), (8, 0), (9, 0), (10, 0), (11, 0), (12, 0), (13, 0), (14, 0), (15, 0),
+			(0, 1), (1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (8, 1), (9, 1), (10, 1), (11, 1), (12, 1), (15, 1),
+			(0, 2), (1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2), (7, 2), (8, 2), (9, 2), (10, 2), (11, 2), (12, 2), 
+			(0, 3), (1, 3), (2, 3), (9, 3), (10, 3),
+			(0, 4), (1, 4), (2, 4),
+			(0, 5), (1, 5), (2, 5),
+			(0, 6), (1, 6), (2, 6),
+			(0, 7), (1, 7), (2, 7), (3, 7),
+			(1, 8), (2, 8), (3, 8), (4, 8), (5, 8),
+			(1, 9), (2, 9), (3, 9), (4, 9), (5, 9),
+			(2, 9), (3, 9), (4, 9), (5, 9),
+			(2, 10),
+			(2, 11)
+		]
+		self.flowers = []
+		#for i in range(random.randint(10, 20)):
+		#	self.flowers.append(random.choice(self.possibleFlowers))
+		self.flowers = self.possibleFlowers
 		self.possibleDecoration = [
 			(1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (8, 1), (9, 1), (10, 1),
 			(1, 2), (10, 2),
@@ -179,6 +198,9 @@ class Level:
 
 		for field in self.decoration:
 			self.grid[field[0]][field[1]] = Field(self.screen, 2, field[0], field[1], 0, 0)
+			
+		for flower in self.flowers:
+			self.grid[flower[0]][flower[1]] = Field(self.screen, 3, field[0], field[1], 0, 0)
 
 		panel_width = self.gridsize * self.spriteSize
 		panel = PanelControl((self.screen.get_width() - panel_width) / 2, 0, panel_width, self.field_y)
@@ -389,6 +411,9 @@ class Level:
 					if render_above:
 						self.screen.blit(surf, (coord[0] + self.field_x + i * self.spriteSize, coord[1] + self.field_y + j * self.spriteSize))
 		self.screen.blit(get_common().get_image('assets/level/decoration/Trforrest.png'), (self.field_x, self.field_y))
+		
+		#TODO: hier das Holz einfügen
+		
 		for control in self.controls:
 			control.draw(self.screen)
 
@@ -426,7 +451,7 @@ class Level:
 			if event.button == 1:
 				if not ( i < 0 or i > (self.gridsize - 1) or j < 0 or j > (self.gridsize - 1) ):
 					field = self.grid[i][j]
-					if field.getType() == 0:
+					if field.getType() == 0 or field.getType() == 3:
 						if field.tower == None and not self.show_tower_panel:
 							self.tower_select.rect.centerx = i * self.spriteSize + self.field_x + self.spriteSize / 2
 							self.tower_select.rect.centery = j * self.spriteSize + self.field_y + self.spriteSize / 2
