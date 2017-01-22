@@ -7,7 +7,7 @@ from controls import *
 class SplashScreen:
 	def __init__(self, screen):
 		self.screen = screen
-		self.splash = pygame.transform.scale(pygame.image.load('assets/ui/splash-16by9.png'), self.screen.get_size())
+		self.splash = pygame.transform.scale(get_common().get_image('assets/ui/splash-16by9.png'), self.screen.get_size())
 		self.start_time = time.time()
 
 	def leave(self): pass

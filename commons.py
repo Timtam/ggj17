@@ -5,6 +5,10 @@ from ui import *
 from options import *
 import platform
 
+from script import Script
+
+import os.path
+
 class Commons:
 	def __init__(self):
 		self.image_cache = {}
@@ -18,9 +22,9 @@ class Commons:
 		self.options = Options()
 		self.options.save()
 		if platform.system()=="Windows":
-			basspath=('bass_x64.dll' if sys.maxsize>2**32 else 'bass.dll')
+			basspath=str(os.path.join(Script().Path, ('bass_x64.dll' if sys.maxsize>2**32 else 'bass.dll')))
 		else:
-			basspath=('libbass_x64.so' if sys.maxsize>2**32 else 'libbass.so')
+			basspath=str(os.path.join(Script().Path, ('libbass_x64.so' if sys.maxsize>2**32 else 'libbass.so')))
 		self.bass = BASS(basspath, True)
 		self.bass.Init()
 
