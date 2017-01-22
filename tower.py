@@ -242,14 +242,25 @@ class Tower:
 					self.animation[direction].append(self.animation[direction][-repeat_frames])
 
 	def render(self):
+		surf = pygame.Surface(self.Sprite[0].get_rect().size, pygame.SRCALPHA)
+		
 		if self.direction == 'up':
-			return self.Sprite[0]
+			surf.blit(self.Sprite[0], (0,0))
 		if self.direction == 'down':
-			return self.Sprite[1]
+			surf.blit(self.Sprite[1], (0,0))
 		if self.direction == 'left':
-			return self.Sprite[2]
+			surf.blit(self.Sprite[2], (0,0))
 		if self.direction == 'right':
-			return self.Sprite[3]
+			surf.blit(self.Sprite[3], (0,0))
+		
+		if self.UpgradeStatus[0] == 2:
+			surf.blit(get_common().get_image("assets/level/towers/upgrade_effect.png"), (2, 10))
+		if self.UpgradeStatus[1] == 2:
+			surf.blit(get_common().get_image("assets/level/towers/upgrade_range.png"), (2, 20))
+		if self.UpgradeStatus[2] == 2:
+			surf.blit(get_common().get_image("assets/level/towers/upgrade_speed.png"), (2, 30))
+		
+		return surf
 
 	def render_animation(self):
 		anim_direction = self.animation_data['direction']
