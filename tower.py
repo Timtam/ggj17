@@ -125,6 +125,8 @@ class Tower:
 			level.grid[x][y].tower=None
 			level.cash+=self.Cost*self.SellPercentage/100
 			self.WillSell=False
+			play_sound_fx("assets/sound/common/sell.ogg")
+			play_sound_fx("assets/sound/common/coin.ogg")
 			return
 		if self.PendingTransaction>0:
 			if self.PendingTransaction>level.cash:
