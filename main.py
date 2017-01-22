@@ -23,7 +23,7 @@ class Main:
 		self.current_view = None
 		self.change_view('MainMenu')
 		#self.current_view = Level(self.screen)
-		pygame.display.set_caption('Our awesome tower defense game with waves and shit')
+		pygame.display.set_caption('Wavomizer')
 
 	def button_clicked(self):
 		pass
