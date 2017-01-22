@@ -18,6 +18,14 @@ EFFECT_TYPE_STRAIGHT=0x10 # target only straight forward (obviously not together
 ANIMATION_SCALE_SCALE = 1 # scale animation to correct size
 ANIMATION_SCALE_TRANSLATE = 2 # move animation from start to end instead of scaling
 
+UPGRADE_SPEED = 0
+UPGRADE_EFFECT = 1
+UPGRADE_RANGE=2
+
+UPGRADE_FALSE = 0
+UPGRADE_PENDING = 1
+UPGRADE_TRUE = 2
+
 class Tower:
 	Cost=0
 	def __init__(self):
@@ -36,6 +44,10 @@ class Tower:
 		self.EnemyCache = [] # saves all enemies which shouldn't be attacked again
 		self.WillSell=False
 		self.SellPercentage=50
+		self.UpgradeCosts=[0,0,0]
+		self.UpgradeMultipliers=[0.0,0.0,0.0]
+		self.UpgradeStatus=[UPGRADE_FALSE,UPGRADE_FALSE,UPGRADE_FALSE]
+		self.UpgradeSound = None
 		self.direction = 'up'
 		self.animation = {}
 		self.animation_data = {'index': 0, 'fraction': 0, 'play': False, 'time': 0, 'direction': 'self', 'attacked_enemy': None}
@@ -124,7 +136,6 @@ class Tower:
 		enemies=[]
 		i=0
 		j=0
-		# to pay the crystals required
 		if self.WillSell==True:
 			level.grid[x][y].tower=None
 			level.cash+=self.Cost*self.SellPercentage/100
@@ -132,10 +143,23 @@ class Tower:
 			play_sound_fx("assets/sound/common/sell.ogg")
 			play_sound_fx("assets/sound/common/coin.ogg")
 			return
+		for i in range(len(self.UpgradeStatus)):
+			if self.UpgradeStatus[i]==UPGRADE_PENDING:
+				self.PendingTransaction=self.UpgradeCosts[i]
+				self.UpgradeStatus[i]=UPGRADE_TRUE
+				if i == UPGRADE_SPEED:
+					self.SpeedMultiplier=self.UpgradeMultipliers[i]
+				elif i == UPGRADE_RANGE:
+					self.RangeMultiplier=self.UpgradeMultipliers[i]
+				elif i == UPGRADE_EFFECT:
+					self.EffectMultiplier=self.UpgradeMultipliers[i]
+				play_sound_fx(self.UpgradeSound)
+				break
+		# to pay the crystals required
 		if self.PendingTransaction>0:
 			if self.PendingTransaction>level.cash:
-				raise IOError("User wants to build tower, but doesn't have enough money. Please try again later!")
-			level.cash=level.cash-self.PendingTransaction
+				raise IOError("User wants to build or upgrade tower, but doesn't have enough money. Please try again later!")
+			level.cash-=self.PendingTransaction
 			self.PendingTransaction=0
 		valid_targets = self.find_target_fields(level.grid,x,y)
 		valid_targets=self.filter_target_fields(level, valid_targets)
@@ -277,3 +301,17 @@ class Tower:
 
 	def Sell(self):
 		self.WillSell=True
+
+	def SetUpgradeCost(self, upgrade, cost):
+		self.UpgradeCosts[upgrade]=cost
+
+	def SetUpgradeMultiplier(self, upgrade, multiplier):
+		self.UpgradeMultipliers[upgrade]=multiplier
+
+	def Upgrade(self, upgrade):
+		if self.UpgradeStatus[upgrade]!=UPGRADE_FALSE:
+			raise IOError("This upgrade is already in use on this tower.")
+		self.UpgradeStatus[upgrade]=UPGRADE_PENDING
+
+	def setUpgradeSound(self, filename):
+		self.UpgradeSound = filename

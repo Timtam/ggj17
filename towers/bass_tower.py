@@ -14,3 +14,13 @@ class BassTower(tower.Tower):
 		self.setPlaceSound("assets/sound/sound_tower/place.ogg")
 		self.setAttackSound("assets/sound/sound_tower/attack.ogg")
 		self.set_animation('assets/level/towers/bass')
+		self.setUpgradeSound("assets/sound/sound_tower/upgrade.ogg")
+
+		self.SetUpgradeCost(tower.UPGRADE_SPEED, 70)
+		self.SetUpgradeMultiplier(tower.UPGRADE_SPEED, 0.7)
+
+		self.SetUpgradeCost(tower.UPGRADE_EFFECT, 100)
+		self.SetUpgradeMultiplier(tower.UPGRADE_EFFECT, 1.5)
+
+		self.SetUpgradeCost(tower.UPGRADE_RANGE, 80)
+		self.SetUpgradeMultiplier(tower.UPGRADE_RANGE, 2.0)
