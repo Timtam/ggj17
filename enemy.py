@@ -16,7 +16,7 @@ class Enemy(object):
 		self.health    = None
 		self.speed     = None
 		self.dieSound  = None
-		self.speedMultiplier = 1
+		self.speedMultiplier = 1.0
 		self.arrivalSound = None
 		self.sprite    = []
 		self.drop      = None
