@@ -7,9 +7,9 @@ class WaterTower(tower.Tower):
 	effect_desc = ("Slows one enemy in a line for ", "[stun]", "%")
 	def __init__(self):
 		tower.Tower.__init__(self)
-		self.EffectValue=60 # percentage
+		self.EffectValue=30 # percentage
 		self.EffectType=tower.EFFECT_TYPE_SLOWDOWN|tower.EFFECT_TYPE_STRAIGHT
-		self.Speed=0.5 #attc speed
+		self.Speed=2 #attc speed
 		self.setSprite('watertower')
 		self.setPlaceSound("assets/sound/water_tower/place.ogg")
 		self.setAttackSound("assets/sound/water_tower/attack.ogg")
@@ -20,11 +20,11 @@ class WaterTower(tower.Tower):
 		self.Range=16
 		self.setUpgradeSound("assets/sound/water_tower/upgrade.ogg")
 
-		self.setUpgradeCost(tower.UPGRADE_SPEED, 120)
-		self.setUpgradeMultiplier(tower.UPGRADE_SPEED, 0.6)
+		self.SetUpgradeCost(tower.UPGRADE_SPEED, 120)
+		self.SetUpgradeMultiplier(tower.UPGRADE_SPEED, 0.6)
 
-		self.setUpgradeCost(tower.UPGRADE_RANGE, 0)
+		self.SetUpgradeCost(tower.UPGRADE_RANGE, 0)
 		# if 0, upgrade may not be possible
 
-		self.setUpgradeCost(tower.UPGRADE_EFFECT, 80)
-		self.setUpgradeMultiplier(tower.UPGRADE_EFFECT, 1.4)
+		self.SetUpgradeCost(tower.UPGRADE_EFFECT, 80)
+		self.SetUpgradeMultiplier(tower.UPGRADE_EFFECT, 1.4)
