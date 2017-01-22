@@ -61,7 +61,7 @@ class Tower:
 				if c_x==x and c_y==y:
 					continue
 				if self.EffectType&EFFECT_TYPE_STRAIGHT==EFFECT_TYPE_STRAIGHT:
-					if c_x!=x and c_y!=y:
+					if (self.direction=="up" and (c_x!=x or c_y>=y)) or (self.direction=="right" and (c_x<=x or c_y!=y)) or (self.direction=="down" and (c_x!=x or c_y<=y)) or (self.direction=="left" and (c_x>=x or c_y!=y)):
 						continue
 				valid_targets.append((c_x, c_y, ))
 		return valid_targets
