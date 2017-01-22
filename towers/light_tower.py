@@ -15,6 +15,7 @@ class LightTower(tower.Tower):
 		self.setAttackSound("assets/sound/light_tower/attack.ogg")
 		self.set_animation('assets/level/towers/light')
 		self.animation_speed = 4
+		self.animation_scale = tower.ANIMATION_SCALE_TRANSLATE
 		self.setUpgradeSound("assets/sound/light_tower/upgrade.ogg")
 
 		self.SetUpgradeCost(tower.UPGRADE_SPEED, 55)
