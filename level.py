@@ -195,7 +195,7 @@ class Level:
 
 		self.show_tower_panel = False
 		self.tower_panel_tower = None
-		self.tower_panel = PanelControl(0, 0, 400, 200)
+		self.tower_panel = PanelControl(0, 0, 350, 200)
 		self.tower_panel.add_child_control(TextControl(10, 15, 'Speed'))
 		self.tower_panel.add_child_control(TextControl(10, 55, 'Effect'))
 		self.tower_panel.add_child_control(TextControl(10, 95, 'Range'))

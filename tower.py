@@ -292,11 +292,29 @@ class Tower:
 			sprite = self.render()
 			tower_source = (16, 32 - sprite.get_height() + 16)
 			target_coords = (field[0] * 32 + enemy_coords[0] + 16, field[1] * 32 + enemy_coords[1] + 16)
-			angle = (-math.atan2(target_coords[1] - tower_source[1], target_coords[0] - tower_source[0])) / math.pi * 180
+			angle = (-math.atan2(target_coords[1] - tower_source[1], target_coords[0] - tower_source[0]))
+			deg = angle / math.pi * 180
 			length = math.hypot(target_coords[0] - tower_source[0], target_coords[1] - tower_source[1])
-			surf = pygame.transform.scale(surf, (int(length), surf.get_height()))
-			surf = pygame.transform.rotate(surf, angle)
-			coords = (min(target_coords[0], tower_source[0]), min(target_coords[1], tower_source[1]))
+			if self.animation_scale == ANIMATION_SCALE_SCALE:
+				surf = pygame.transform.scale(surf, (int(length), surf.get_height()))
+				surf = pygame.transform.rotate(surf, deg)
+				coords = (min(target_coords[0], tower_source[0]), min(target_coords[1], tower_source[1]))
+			else:
+				surf = pygame.transform.rotate(surf, deg)
+				surf_length = math.hypot(*surf.get_size())
+				length_pos = self.animation_data['fraction'] * (length - surf_length)
+				x = math.cos(angle) * length_pos
+				y = math.sin(angle) * length_pos
+				if deg >= 90:
+					x -= surf.get_width()
+					y -= surf.get_height()
+				elif deg >= 0:
+					y -= surf.get_height()
+				elif deg >= -90:
+					pass
+				else:
+					x -= surf.get_width()
+				coords = (x, y)
 			render_above = (target_coords[1] > 0)
 		return surf, coords, render_above
 
