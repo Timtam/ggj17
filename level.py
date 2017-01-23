@@ -376,7 +376,7 @@ class Level:
 			for j in range(len(self.waves[i][1])):
 				self.allTotalEnemies += self.waves[i][1][j][0]
 
-		tc = TextControl(155, line_height_before + tc.rect.height, 'and slaid ' + str(self.allTotalEnemiesKilled) + " / " + str(self.allTotalEnemies) + ' enemies.' )
+		tc = TextControl(155, line_height_before + tc.rect.height, 'and slayed ' + str(self.allTotalEnemiesKilled) + " / " + str(self.allTotalEnemies) + ' enemies.' )
 		tc.rect.centerx = 200
 		line_height_before += tc.rect.height
 		me.add_child_control(tc)
