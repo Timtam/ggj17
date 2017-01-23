@@ -1,54 +1,48 @@
 from __future__ import division
 import pygame
 import time
+
 from commons import *
-
-DIRECTION_UP    = 0
-DIRECTION_DOWN  = 1
-DIRECTION_LEFT  = 2
-DIRECTION_RIGHT = 3
-
-DIE_DAMAGE=1
-DIE_SUCCESS=2
+from constants import *
 
 class Enemy(object):
     def __init__(self):
-        self.health    = None
-        self.speed     = None
-        self.dieSound  = None
-        self.speedMultiplier = 1.0
-        self.arrivalSound = None
-        self.hitSound = "assets/sound/common/hit.ogg"
-        self.sprite    = []
-        self.drop      = None
-        self.damage    = 1 # damage done to player's castle
+        self.health = None
+        self.speed = None
+        self.die_sound = None
+        self.speed_multiplier = 1.0
+        self.arrival_sound = None
+        self.hit_sound = "assets/sound/common/hit.ogg"
+        self.sprites = []
+        self.drop = 0
+        self.damage = 1 # damage done to player's castle
         self.direction = DIRECTION_RIGHT
-        self.start     = time.time()
+        self.start = time.time()
         self.die = 0
         self.health_empty = get_common().get_image('assets/ui/health_empty.png')
-        self.health_full = get_common().get_image('assets/ui/health_full.png')
+        # render coords in pixels of the enemy relative to its current field
         self.coords = (0, 0)
+        # coordinates in grid coordinates of the field this enemy is currently on
         self.field = (0, 0)
-        self.name = ""
+        self.name = ''
 
     def init(self):
-        if self.arrivalSound!=None:
-            play_sound_fx(self.arrivalSound)
+        if self.arrival_sound != None:
+            play_sound_fx(self.arrival_sound)
 
-    def setSprite(self, filename):
-        self.sprite.append(get_common().get_image("assets/level/enemies/" + filename + "_up.png"))
-        self.sprite.append(get_common().get_image("assets/level/enemies/" + filename + "_down.png"))
-        self.sprite.append(get_common().get_image("assets/level/enemies/" + filename + "_left.png"))
-        self.sprite.append(get_common().get_image("assets/level/enemies/" + filename + "_right.png"))
+    def set_sprite(self, filename):
+        self.sprites.append(get_common().get_image('assets/level/enemies/' + filename + '_up.png'))
+        self.sprites.append(get_common().get_image('assets/level/enemies/' + filename + '_down.png'))
+        self.sprites.append(get_common().get_image('assets/level/enemies/' + filename + '_left.png'))
+        self.sprites.append(get_common().get_image('assets/level/enemies/' + filename + '_right.png'))
 
     def render(self):
-        spriteHalfw = self.sprite[self.direction].get_width() / 2
-        spriteHalfh = self.sprite[self.direction].get_height() / 2
-        sprite = self.sprite[self.direction]
+        sprite = self.sprites[self.direction]
         coords = (self.coords[0], self.coords[1] - 5)
         surf = pygame.Surface((sprite.get_width(), sprite.get_height() + 5), pygame.SRCALPHA)
         surf.blit(sprite, (0, 5))
-        surf.blit(self.health_empty, (spriteHalfw - 16, 0))
+
+        surf.blit(self.health_empty, (sprite.get_width() / 2 - 16, 0))
         health_fract = max(0, self.health / self.max_health)
         health_full = pygame.Surface((int(health_fract * 30), 2), pygame.SRCALPHA)
         if health_fract > 0.5:
@@ -57,100 +51,86 @@ class Enemy(object):
             health_full.fill(pygame.Color(200, 200, 0, 255))
         else:
             health_full.fill(pygame.Color(255, 0, 0, 255))
-        surf.blit(health_full, (spriteHalfw - 15, 1))
+        surf.blit(health_full, (sprite.get_width() / 2 - 15, 1))
         return surf, coords
 
-    def setDirection(self, direction):
-        self.direction = direction
+    def set_die_sound(self, filename):
+        self.die_sound = filename
 
-    def getHealth(self):
-        return self.health
+    def set_arrival_sound(self, filename):
+        self.arrival_sound = filename
 
-    def getSpeed(self):
-        return (self.speed * self.speedMultiplier)
+    def set_hit_sound(self, filename):
+        self.hit_sound = filename
 
-    def getDieSound(self):
-        return self.dieSound
-
-    def setDieSound(self, filename):
-        self.dieSound = filename
-
-    def setArrivalSound(self, filename):
-        self.arrivalSound = filename
-
-    def setHitSound(self, filename):
-        self.hitSound = filename
-
-    def getDrop(self):
+    def get_drop(self):
         return self.drop
 
-    def setStart(self, start):
-        self.start = start
-
     def update(self, level, x, y):
-        if self.die>0:
-            # enemy is told to die, so do it, now!!!
+        if self.die > 0:
+            # enemy is told to die, so do it now
             del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
             level.remove_enemy(self)
-            if self.die==DIE_DAMAGE:
-                play_sound_fx("assets/sound/common/coin.ogg")
-            elif self.die==DIE_SUCCESS:
-                play_sound_fx(self.hitSound)
+            if self.die == DIE_DAMAGE:
+                play_sound_fx('assets/sound/common/coin.ogg')
+            elif self.die == DIE_SUCCESS:
+                play_sound_fx(self.hit_sound)
             return
         self.field = (x, y)
 
-        newfield = False
+        new_field = False
 
-        if (time.time() - self.start) > (self.speed * self.speedMultiplier):
-            index = level.level.index((x,y))
+        if (time.time() - self.start) > (self.speed * self.speed_multiplier):
+            index = level.way.index((x, y))
             if index == 0:
                 self.die = DIE_SUCCESS
                 return
 
-            next = level.level[index-1]
-            #x bleibt gleich und y erhoeht sich => Nach unten
+            next = level.way[index - 1]
+            # x stays the same, y increases => down
             if x == next[0] and y < next[1]:
-                self.setDirection(DIRECTION_DOWN)
-            #x bleibt gleich und y wird kleiner => Nach oben
+                self.direction = DIRECTION_DOWN
+            # x stays the same, y decreases => up
             if x == next[0] and y > next[1]:
-                self.setDirection(DIRECTION_UP)
-            #y bleibt gleich und x wird kleiner => Nach links
+                self.direction = DIRECTION_UP
+            # y stays the same, x decreases => left
             if y == next[1] and x < next[0]:
-                self.setDirection(DIRECTION_RIGHT)
+                self.direction = DIRECTION_RIGHT
+            # y stays the same, x increases => right
             if y == next[1] and x > next[0]:
-                self.setDirection(DIRECTION_LEFT)
+                self.direction = DIRECTION_LEFT
 
             self.field = (next[0], next[1])
             field = level.grid[next[0]][next[1]]
-            self.setStart(time.time())
+            self.start = time.time()
             self.corner = False
             field.enemies.append(self)
-            newfield = True
+            new_field = True
             del(level.grid[x][y].enemies[level.grid[x][y].enemies.index(self)])
 
         # update render coords
-        spriteHalfw = self.sprite[self.direction].get_width() / 2
-        spriteHalfh = self.sprite[self.direction].get_height() / 2
-        oldCoords = self.coords
+        sprite_half_width = self.sprites[self.direction].get_width() / 2
+        sprite_half_height = self.sprites[self.direction].get_height() / 2
+        old_coords = self.coords
         if self.direction == DIRECTION_RIGHT:
-            self.coords = ((-1) * spriteHalfw + ((time.time() - self.start) * 32 / (self.speed * self.speedMultiplier)) - 16 , 0)
-            if oldCoords[0] > self.coords[0] and newfield:
-                self.coord = oldCoords
+            self.coords = ((-1) * sprite_half_width + ((time.time() - self.start) * 32 / (self.speed * self.speed_multiplier)) - 16 , 0)
+            if old_coords[0] > self.coords[0] and new_field:
+                self.coord = old_coords
         elif self.direction == DIRECTION_LEFT:
-            self.coords = (spriteHalfw - ((time.time() - self.start) * 32 / (self.speed * self.speedMultiplier)) + 16, 0)
-            if oldCoords[0] < self.coords[0] and newfield:
-                self.coord = oldCoords
+            self.coords = (sprite_half_width - ((time.time() - self.start) * 32 / (self.speed * self.speed_multiplier)) + 16, 0)
+            if old_coords[0] < self.coords[0] and new_field:
+                self.coord = old_coords
         elif self.direction == DIRECTION_UP:
-            self.coords = (0, spriteHalfh - ((time.time() - self.start) * 32 / (self.speed * self.speedMultiplier)) + 16)
-            if oldCoords[1] > self.coords[1] and newfield:
-                self.coord = oldCoords
+            self.coords = (0, sprite_half_height - ((time.time() - self.start) * 32 / (self.speed * self.speed_multiplier)) + 16)
+            if old_coords[1] > self.coords[1] and new_field:
+                self.coord = old_coords
         elif self.direction == DIRECTION_DOWN:
-            self.coords = (0, (-1) * spriteHalfh + ((time.time() - self.start) * 32 / (self.speed * self.speedMultiplier)) - 16)
-            if oldCoords[0] < self.coords[0] and newfield:
-                self.coord = oldCoords
+            self.coords = (0, (-1) * sprite_half_height + ((time.time() - self.start) * 32 / (self.speed * self.speed_multiplier)) - 16)
+            if old_coords[0] < self.coords[0] and new_field:
+                self.coord = old_coords
 
-    def addHealth(self, health):
+    def add_health(self, health):
         self.health += health
         if self.health <= 0:
             self.die = DIE_DAMAGE
-            play_sound_fx(self.dieSound)
+            play_sound_fx(self.die_sound)

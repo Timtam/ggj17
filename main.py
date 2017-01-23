@@ -2,7 +2,7 @@
 import sys, time, pygame
 
 from commons   import *
-from level     import *
+from level     import Level
 from main_menu import MainMenu
 from options_screen import OptionsScreen
 from splash_screen import SplashScreen
@@ -23,7 +23,7 @@ class Main:
         }
         self.next_view = None
         self.current_view = None
-        self.change_view('SplashScreen')
+        self.change_view('MainMenu')
         pygame.display.set_caption('Wavomizer')
 
     def button_clicked(self):

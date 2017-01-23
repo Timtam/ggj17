@@ -1,35 +1,39 @@
-import tower
+from tower import Tower
+from constants import *
 
-class WaterTower(tower.Tower):
-    Cost=80
-    name = "TSUNAMI TOWER"
-    description = "Sends out Haitis Nightmare!"
-    effect_desc = ("Slows one enemy in a line for ", "[stun]", "%")
+class WaterTower(Tower):
+    cost = 80
+    name = 'TSUNAMI TOWER'
+    description = 'Sends out Haitis Nightmare!'
+    effect_desc = ('Slows one enemy in a line for ', '[stun]', '%')
+
     def __init__(self):
-        tower.Tower.__init__(self)
-        self.EffectValue=40 # percentage
-        self.EffectType=tower.EFFECT_TYPE_SLOWDOWN|tower.EFFECT_TYPE_STRAIGHT
-        self.Speed=2 #attc speed
-        self.setSprite('watertower')
-        self.setPlaceSound("assets/sound/water_tower/place.ogg")
-        self.setAttackSound("assets/sound/water_tower/attack.ogg")
+        super(WaterTower, self).__init__()
+        self.effect_type = EFFECT_TYPE_SLOWDOWN | EFFECT_TYPE_STRAIGHT
+        self.effect_value = 40 # slowdown percentage
+        self.attack_timeout = 2 # in seconds
+        self.range = 16
+        self.set_sprite('watertower')
+        self.set_place_sound('assets/sound/water_tower/place.ogg')
+        self.set_attack_sound('assets/sound/water_tower/attack.ogg')
+        self.set_upgrade_sound('assets/sound/water_tower/upgrade.ogg')
+
         self.set_animation('assets/level/towers/wave', 2, 5)
         self.animation_repeat = 1
         self.animation_speed = 1
-        self.animation_scale = tower.ANIMATION_SCALE_TRANSLATE
-        self.Range=16
-        self.setUpgradeSound("assets/sound/water_tower/upgrade.ogg")
-        self.setImpact("golem", 1.2)
+        self.animation_type = ANIMATION_TYPE_TRANSLATE
 
-        self.SetUpgradeCost(tower.UPGRADE_SPEED, 120)
-        self.SetUpgradeMultiplier(tower.UPGRADE_SPEED, 0.6)
+        self.set_impact('golem', 1.2)
 
-        self.SetUpgradeCost(tower.UPGRADE_RANGE, 0)
-        # if 0, upgrade may not be possible
+        self.set_upgrade_cost(UPGRADE_SPEED, 120)
+        self.set_upgrade_multiplier(UPGRADE_SPEED, 0.6)
 
-        self.SetUpgradeCost(tower.UPGRADE_EFFECT, 80)
-        self.SetUpgradeMultiplier(tower.UPGRADE_EFFECT, 1.4)
+        # if 0, upgrade is not possible
+        self.set_upgrade_cost(UPGRADE_RANGE, 0)
 
-    def onUpgrade(self, upgrade):
-        if upgrade == tower.UPGRADE_EFFECT:
-            self.setAttackSound("assets/sound/sound_tower/attack_upgrade.ogg")
+        self.set_upgrade_cost(UPGRADE_EFFECT, 80)
+        self.set_upgrade_multiplier(UPGRADE_EFFECT, 1.4)
+
+    def on_upgrade(self, upgrade):
+        if upgrade == UPGRADE_EFFECT:
+            self.set_attack_sound('assets/sound/sound_tower/attack_upgrade.ogg')

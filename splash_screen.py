@@ -2,7 +2,6 @@ import pygame
 
 from commons import *
 from controls import *
-from Bass4Py.Bass4Py.constants import BASS_ACTIVE_PLAYING
 
 class SplashScreen:
     def __init__(self, screen):
@@ -13,7 +12,7 @@ class SplashScreen:
     def leave(self): pass
     def handle_ev(self, event): pass
     def update(self):
-        if self.sound.Active==BASS_ACTIVE_PLAYING:
+        if self.sound.Active == BASS_ACTIVE_PLAYING:
             return
         get_common().get_main().change_view('MainMenu')
     def render(self):

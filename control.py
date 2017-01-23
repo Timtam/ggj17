@@ -31,13 +31,15 @@ class Control(object):
         for control in self.child_controls:
             self.transform_child_control(control, control.relative_center)
 
-    def _update(self): pass
+    def _update(self):
+        pass
     def update(self):
         self._update()
         for control in self.child_controls:
             control.update()
 
-    def _draw(self, screen): pass
+    def _draw(self, screen):
+        pass
     def draw(self, screen):
         if self.surface != None:
             screen.blit(self.surface, self.rect)

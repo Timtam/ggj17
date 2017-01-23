@@ -5,370 +5,398 @@ import time
 import os, os.path
 
 from commons import *
+from constants import *
+import field
 
-# some constants
-# effect types can be combined (e.g. to deal damage and stop enemies)
-EFFECT_TYPE_NONE=0x0 # no effect at all
-EFFECT_TYPE_DAMAGE=0x1 # tower will deal damage to one single opponent, EffectValue equals real damage
-EFFECT_TYPE_SLOWDOWN=0x2 # slow down opponents, EffectValue equals percentage of slowdown (compared to enemy speed)
-EFFECT_TYPE_ALL=0x4 # all targets on best field
-EFFECT_TYPE_CIRCLE=0x8 # all enemies in range
-EFFECT_TYPE_STRAIGHT=0x10 # target only straight forward (obviously not together with circle^^)
+class Tower(object):
+    cost=0
 
-ANIMATION_SCALE_SCALE = 1 # scale animation to correct size
-ANIMATION_SCALE_TRANSLATE = 2 # move animation from start to end instead of scaling
-
-UPGRADE_SPEED = 0
-UPGRADE_EFFECT = 1
-UPGRADE_RANGE=2
-
-UPGRADE_FALSE = 0
-UPGRADE_PENDING = 1
-UPGRADE_TRUE = 2
-
-class Tower:
-    Cost=0
     def __init__(self):
-        self.EffectType=EFFECT_TYPE_NONE
-        self.EffectMultiplier=1.0
-        self.EffectValue=0
-        self.Speed=10.0 # in seconds
-        self.SpeedMultiplier=1.0
-        self.Range=1 # one tile radius
-        self.RangeMultiplier=1.0
-        self.Sprite=[]
-        self.PlaceSound=None
-        self.AttackSound=None
-        self.PendingTransaction=0
-        self.LastFire=0
-        self.EnemyCache = [] # saves all enemies which shouldn't be attacked again
-        self.WillSell=False
-        self.SellPercentage=50
-        self.SellPercentageUpgrades = 30
-        self.UpgradeCosts=[0,0,0]
-        self.UpgradeMultipliers=[0.0,0.0,0.0]
-        self.UpgradeStatus=[UPGRADE_FALSE,UPGRADE_FALSE,UPGRADE_FALSE]
-        self.UpgradeSound = None
-        self.Impacts={}
-        self.direction = 'up'
-        self.animation = {}
-        self.animation_data = {'index': 0, 'fraction': 0, 'play': False, 'time': 0, 'direction': 'self', 'attacked_enemy': None}
+        self.effect_type = EFFECT_TYPE_NONE
+        self.effect_multiplier = 1.0
+        self.effect_value = 0
+        self.attack_timeout = 10.0 # in seconds
+        self.attack_timeout_multiplier = 1.0
+        self.range = 1 # one tile radius
+        self.range_multiplier = 1.0
+        self.sprites = []
+        self.place_sound = None
+        self.attack_sound = None
+        self.pending_transaction = 0
+        self.last_fire = 0
+        self.enemy_cache = [] # saves all enemies which shouldn't be attacked again
+        self.will_sell = False
+        self.sell_percentage = 50
+        self.sell_percentage_upgrades = 30
+        self.upgrade_costs = [0, 0, 0]
+        self.upgrade_multipliers = [0.0, 0.0, 0.0]
+        self.upgrade_status = [UPGRADE_FALSE, UPGRADE_FALSE, UPGRADE_FALSE]
+        self.upgrade_sound = None
+        self.impacts = {}
+        self.direction = DIRECTION_UP
+        self.animations = {}
+        self.animation_fraction = 0
+        self.animation_playing = False
+        self.animation_direction = ANIMATION_DIRECTION_SELF
+        self.animation_target_enemy = None
+        self.animation_target_enemy_field_coords = (0, 0)
+        self.animation_target_enemy_relative_pixels = (0, 0)
         self.animation_repeat = 1
         self.animation_speed = 1
-        self.animation_scale = ANIMATION_SCALE_SCALE
+        self.animation_type = ANIMATION_TYPE_SCALE
 
-    def init(self):
-        # setting PendingTransaction to the costs of the tower on first run, so the player needs to pay
-        self.PendingTransaction=self.Cost
-        play_sound_fx(self.PlaceSound)
-        if self.EffectType & EFFECT_TYPE_CIRCLE == EFFECT_TYPE_CIRCLE:
-            self.animation_data['direction'] = 'circle'
-        elif self.EffectType & EFFECT_TYPE_STRAIGHT == EFFECT_TYPE_STRAIGHT:
-            self.animation_data['direction'] = 'self'
+    def init(self, pay = True):
+        if pay:
+            # setting pending_transaction to the costs of the tower on first run, so the player needs to pay
+            self.pending_transaction = self.cost
+            play_sound_fx(self.place_sound)
+
+        # set animation direction
+        if self.effect_type & EFFECT_TYPE_CIRCLE == EFFECT_TYPE_CIRCLE:
+            # circle effect uses circle animation
+            self.animation_direction = ANIMATION_DIRECTION_CIRCLE
+        elif self.effect_type & EFFECT_TYPE_STRAIGHT == EFFECT_TYPE_STRAIGHT:
+            # straight effect uses tower's direction for animation
+            self.animation_direction = ANIMATION_DIRECTION_SELF
         else:
-            self.animation_data['direction'] = 'line'
+            # targeted effect uses straight line for animation
+            self.animation_direction = ANIMATION_DIRECTION_LINE
 
     # finds all valid target fields
     def find_target_fields(self, fields, x, y):
-        c_x=0
-        c_y=0
-        i_x1=x-(int(self.Range*self.RangeMultiplier))
-        i_x2=x+(int(self.Range*self.RangeMultiplier))
-        i_y1=y-(int(self.Range*self.RangeMultiplier))
-        i_y2=y+(int(self.Range*self.RangeMultiplier))
-        if i_x1<0:
-            i_x1=0
-        if i_x2>=len(fields):
-            i_x2=len(fields)-1
-        if i_y1<0:
-            i_y1=0
-        if i_y2>=len(fields[0]):
-            i_y2=len(fields[0])-1
+        # range to search for valid target fields
+        # clamped to the size of the 2d fields array
+        min_x = max(0, x - int(self.range * self.range_multiplier))
+        max_x = min(len(fields) - 1, x + int(self.range * self.range_multiplier))
+        min_y = max(0, y - int(self.range * self.range_multiplier))
+        max_y = min(len(fields[0]) - 1, y + int(self.range * self.range_multiplier))
+
         valid_targets = [] # contains x and y tuples
-        if math.floor(self.Range*self.RangeMultiplier)!=self.Range*self.RangeMultiplier:
-            raise IOError("Range * RangeMultiplier = %f, but only integers allowed"%(self.Range*self.RangeMultiplier))
-        for c_x in range(i_x1,i_x2+1):
-            for c_y in range(i_y1, i_y2+1):
-                if c_x==x and c_y==y:
+        if math.floor(self.range * self.range_multiplier) != self.range * self.range_multiplier:
+            raise IOError('range * range_multiplier = {0}, but only integers are allowed'.format(str(self.range * self.range_multiplier)))
+        for field_x in range(min_x, max_x + 1):
+            for field_y in range(min_y, max_y + 1):
+                if field_x == x and field_y == y:
                     continue
-                if self.EffectType&EFFECT_TYPE_STRAIGHT==EFFECT_TYPE_STRAIGHT:
-                    if (self.direction=="up" and (c_x!=x or c_y>=y)) or (self.direction=="right" and (c_x<=x or c_y!=y)) or (self.direction=="down" and (c_x!=x or c_y<=y)) or (self.direction=="left" and (c_x>=x or c_y!=y)):
-                        continue
-                valid_targets.append((c_x, c_y, ))
+                if self.effect_type & EFFECT_TYPE_STRAIGHT == EFFECT_TYPE_STRAIGHT and (
+                    (self.direction == DIRECTION_UP and (field_x != x or field_y >= y)) or
+                    (self.direction == DIRECTION_RIGHT and (field_x <= x or field_y != y)) or
+                    (self.direction == DIRECTION_DOWN and (field_x != x or field_y <= y)) or
+                    (self.direction == DIRECTION_LEFT and (field_x >= x or field_y != y))):
+                    continue
+                valid_targets.append((field_x, field_y))
         return valid_targets
 
     # needs all valid target fields as tuple array, as returned by find_target_fields
     # returns all actual targets (deal damage here) as tuple-array
     def filter_target_fields(self, level, valid_targets):
-        enemies=[]
-        j=0
-        nearest_field=None
-        targets=[]
-        i=0
+        enemies = []
+        nearest_field = None
+        targets = []
         # filter all fields without enemies
         for i in range(len(valid_targets)):
-            enemies=[]
-            if level.grid[valid_targets[i][0]][valid_targets[i][1]].getType()!=1:
+            enemies = []
+            target_field = level.grid[valid_targets[i][0]][valid_targets[i][1]]
+            if target_field.get_type() != field.FIELDTYPE_WAY:
                 continue
-            for j in range(len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)):
-                if self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN and level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j] in self.EnemyCache:
+            for j in range(len(target_field.enemies)):
+                enemy = target_field.enemies[j]
+                if self.effect_type & EFFECT_TYPE_SLOWDOWN == EFFECT_TYPE_SLOWDOWN and enemy in self.enemy_cache:
                     continue
-                enemies.append(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j])
-            if len(enemies)==0:
+                enemies.append(enemy)
+            if len(enemies) == 0:
                 continue
             targets.append(valid_targets[i])
         # no targets left?
-        if len(targets)==0:
+        if len(targets) == 0:
             return []
-        if self.EffectType&EFFECT_TYPE_CIRCLE!=EFFECT_TYPE_CIRCLE:
+        if self.effect_type & EFFECT_TYPE_CIRCLE != EFFECT_TYPE_CIRCLE:
             # filtering down to just one valid field, only one field should be attacked
             # per definition (Henry) this should be the field with the lowest distance to the target
-            nearest_field=targets[0]
-            for i in range(1,len(targets)):
-                if level.level.index((targets[i][0], targets[i][1], ))<level.level.index((nearest_field[0], nearest_field[1], )):
-                    nearest_field=targets[i]
-            targets=[nearest_field]
+            nearest_field = targets[0]
+            for i in range(1, len(targets)):
+                if level.way.index((targets[i][0], targets[i][1])) < level.way.index((nearest_field[0], nearest_field[1])):
+                    nearest_field = targets[i]
+            targets = [nearest_field]
         return targets
 
-    def setDirection(self, nearestWay):
+    def set_direction(self, nearestWay):
         self.direction = nearestWay
 
-    def update(self,level,x,y):
-        enemy=None
-        enemies=[]
-        i=0
-        j=0
-        if self.WillSell==True:
-            level.grid[x][y].tower=None
-            level.cash+=self.getValue()
-            self.WillSell=False
-            play_sound_fx("assets/sound/common/sell.ogg")
-            play_sound_fx("assets/sound/common/coin.ogg")
-            return
-        for i in range(len(self.UpgradeStatus)):
-            if self.UpgradeStatus[i]==UPGRADE_PENDING:
-                self.PendingTransaction=self.UpgradeCosts[i]
-                self.UpgradeStatus[i]=UPGRADE_TRUE
+    def update_transactions(self, level, x, y):
+        if self.will_sell == True:
+            level.grid[x][y].tower = None
+            level.cash += self.get_value()
+            self.will_sell = False
+            play_sound_fx('assets/sound/common/sell.ogg')
+            play_sound_fx('assets/sound/common/coin.ogg')
+            return True
+        for i in range(len(self.upgrade_status)):
+            if self.upgrade_status[i] == UPGRADE_PENDING:
+                self.pending_transaction += self.upgrade_costs[i]
+                self.upgrade_status[i] = UPGRADE_TRUE
                 if i == UPGRADE_SPEED:
-                    self.SpeedMultiplier=self.UpgradeMultipliers[i]
+                    self.attack_timeout_multiplier = self.upgrade_multipliers[i]
                 elif i == UPGRADE_RANGE:
-                    self.RangeMultiplier=self.UpgradeMultipliers[i]
+                    self.range_multiplier = self.upgrade_multipliers[i]
                 elif i == UPGRADE_EFFECT:
-                    self.EffectMultiplier=self.UpgradeMultipliers[i]
-                play_sound_fx(self.UpgradeSound)
-                self.onUpgrade(i)
-                break
-        # to pay the crystals required
-        if self.PendingTransaction>0:
-            if self.PendingTransaction>level.cash:
-                raise IOError("User wants to build or upgrade tower, but doesn't have enough money. Please try again later!")
-            level.cash-=self.PendingTransaction
-            self.PendingTransaction=0
-        valid_targets = self.find_target_fields(level.grid,x,y)
-        valid_targets=self.filter_target_fields(level, valid_targets)
-        if self.animation_data['play']:
-            anim_fraction = (time.time() - self.LastFire) / (self.SpeedMultiplier * self.Speed) * self.animation_speed
+                    self.effect_multiplier = self.upgrade_multipliers[i]
+                if self.upgrade_sound != None:
+                    play_sound_fx(self.upgrade_sound)
+                self.on_upgrade(i)
+        # pay the crystals required for buying or upgrading this tower
+        if self.pending_transaction > 0:
+            if self.pending_transaction > level.cash:
+                raise IOError('User wants to build or upgrade tower, but doesn\'t have enough money. Please try again later!')
+            level.cash -= self.pending_transaction
+            self.pending_transaction = 0
+
+    def update_animation(self, level, x, y):
+        if self.animation_playing:
+            anim_fraction = (time.time() - self.last_fire) / (self.attack_timeout_multiplier * self.attack_timeout) * self.animation_speed
             if anim_fraction >= 1:
-                self.animation_data['play'] = False
-                self.animation_data['index'] = 0
-                self.animation_data['fraction'] = 0
-            elif len(self.animation) > 0:
-                self.animation_data['fraction'] = (anim_fraction * self.animation_repeat) %  1
-                self.animation_data['index'] = int(math.floor(len(self.animation.values()[0]) * self.animation_data['fraction']))
-            if self.animation_data['attacked_enemy'] != None:
-                self.animation_data['attacked_enemy_coords'] = self.animation_data['attacked_enemy'].coords
-                self.animation_data['enemy_field_relative'] = (self.animation_data['attacked_enemy'].field[0] - x, self.animation_data['attacked_enemy'].field[1] - y)
+                self.animation_playing = False
+                self.animation_fraction = 0
+            else:
+                self.animation_fraction = (anim_fraction * self.animation_repeat) %  1
+            if self.animation_target_enemy != None:
+                self.animation_target_enemy_pixel_coords = self.animation_target_enemy.coords
+                self.animation_target_enemy_field_relative = (self.animation_target_enemy.field[0] - x, self.animation_target_enemy.field[1] - y)
+
+    def update_attack(self, level, x, y):
+        if (time.time() - self.last_fire) < (self.attack_timeout_multiplier * self.attack_timeout):
+            return
+        valid_targets = self.find_target_fields(level.grid, x, y)
+        valid_targets = self.filter_target_fields(level, valid_targets)
         if len(valid_targets)==0:
             return
-        if time.time()-self.LastFire<(self.SpeedMultiplier*self.Speed):
-            return
         for i in range(len(valid_targets)):
-            if self.EffectType&EFFECT_TYPE_ALL==EFFECT_TYPE_ALL:
-                for j in range(len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)):
-                    enemy=level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j]
-                    if self.EffectType&EFFECT_TYPE_DAMAGE==EFFECT_TYPE_DAMAGE:
-                        enemy.addHealth(-self.getImpact(enemy.name)*(self.EffectMultiplier*self.EffectValue))
-                    elif self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN:
-                        if enemy in self.EnemyCache:
+            target_field = level.grid[valid_targets[i][0]][valid_targets[i][1]]
+            if self.effect_type & EFFECT_TYPE_ALL == EFFECT_TYPE_ALL:
+                for j in range(len(target_field.enemies)):
+                    enemy = target_field.enemies[j]
+                    if self.effect_type & EFFECT_TYPE_DAMAGE == EFFECT_TYPE_DAMAGE:
+                        enemy.add_health(-self.get_impact(enemy.name) * self.effect_multiplier * self.effect_value)
+                    elif self.effect_type & EFFECT_TYPE_SLOWDOWN == EFFECT_TYPE_SLOWDOWN:
+                        if enemy in self.enemy_cache:
                             continue
-                        enemy.speedMultiplier+=self.getImpact(enemy.name)*(self.EffectValue*enemy.speedMultiplier/100.0)
-                        self.EnemyCache.append(enemy)
+                        enemy.speed_multiplier += self.get_impact(enemy.name) * self.effect_multiplier * self.effect_value * enemy.speed_multiplier / 100.0
+                        self.enemy_cache.append(enemy)
             else:
-                enemies=[]
-                for j in range(len(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies)):
-                    if self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN and level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j] in self.EnemyCache:
+                enemies = []
+                for j in range(len(target_field.enemies)):
+                    if self.effect_type & EFFECT_TYPE_SLOWDOWN == EFFECT_TYPE_SLOWDOWN and target_field.enemies[j] in self.enemy_cache:
                         continue
-                    enemies.append(level.grid[valid_targets[i][0]][valid_targets[i][1]].enemies[j])
-                if len(enemies)==0:
+                    enemies.append(target_field.enemies[j])
+                if len(enemies) == 0:
                     return
-                enemy=enemies[randint(0,len(enemies)-1)]
-                self.animation_data['attacked_enemy'] = enemy
-                self.animation_data['attacked_enemy_coords'] = enemy.coords
-                self.animation_data['enemy_field_relative'] = (valid_targets[i][0] - x, valid_targets[i][1] - y)
-                if self.EffectType&EFFECT_TYPE_DAMAGE==EFFECT_TYPE_DAMAGE:
-                    enemy.addHealth(-self.getImpact(enemy.name)*(self.EffectMultiplier*self.EffectValue))
-                elif self.EffectType&EFFECT_TYPE_SLOWDOWN==EFFECT_TYPE_SLOWDOWN:
-                    enemy.speedMultiplier+=self.getImpact(enemy.name)*(self.EffectValue*enemy.speedMultiplier/100.0)
-                    self.EnemyCache.append(enemy)
-            play_sound_fx(self.AttackSound)
-            self.LastFire=time.time()
-            self.animation_data['play'] = True
+                enemy = enemies[randint(0, len(enemies) - 1)]
+                self.animation_target_enemy = enemy
+                if self.effect_type & EFFECT_TYPE_DAMAGE == EFFECT_TYPE_DAMAGE:
+                    enemy.add_health(-self.get_impact(enemy.name) * self.effect_multiplier * self.effect_value)
+                elif self.effect_type & EFFECT_TYPE_SLOWDOWN == EFFECT_TYPE_SLOWDOWN:
+                    enemy.speed_multiplier += self.get_impact(enemy.name) * self.effect_multiplier * self.effect_value * enemy.speed_multiplier / 100.0
+                    self.enemy_cache.append(enemy)
+            if self.attack_sound != None:
+                play_sound_fx(self.attack_sound)
+            self.last_fire = time.time()
+            self.animation_playing = True
 
-    def setSprite(self, path):
-        self.Sprite.append(get_common().get_image("assets/level/towers/" + path + "_up.png"))
-        self.Sprite.append(get_common().get_image("assets/level/towers/" + path + "_down.png"))
-        self.Sprite.append(get_common().get_image("assets/level/towers/" + path + "_left.png"))
-        self.Sprite.append(get_common().get_image("assets/level/towers/" + path + "_right.png"))
+    def update(self, level, x, y):
+        if self.update_transactions(level, x, y): return
+        if self.update_attack(level, x, y): return
+        if self.update_animation(level, x, y): return
 
-    def setPlaceSound(self,filename):
-        self.PlaceSound=filename
+    def set_sprite(self, path):
+        self.sprites.append(get_common().get_image('assets/level/towers/' + path + '_up.png'))
+        self.sprites.append(get_common().get_image('assets/level/towers/' + path + '_down.png'))
+        self.sprites.append(get_common().get_image('assets/level/towers/' + path + '_left.png'))
+        self.sprites.append(get_common().get_image('assets/level/towers/' + path + '_right.png'))
 
-    def setAttackSound(self, filename):
-        self.AttackSound = filename
+    def set_place_sound(self, filename):
+        self.place_sound = filename
+
+    def set_attack_sound(self, filename):
+        self.attack_sound = filename
 
     def set_animation(self, path, repeat_frames = 0, repeat_count = 0):
         animation_name = path[(path.rfind('/') + 1):] + '_'
-        for direction in ('left', 'right', 'up', 'down', 'circle', 'line'):
-            dir_path = path + '_' + direction + '/'
-            base_file_name = animation_name + direction + '_'
+        animation_directions = {ANIMATION_DIRECTION_UP: 'up', ANIMATION_DIRECTION_DOWN: 'down', ANIMATION_DIRECTION_LEFT: 'left', ANIMATION_DIRECTION_RIGHT: 'right', ANIMATION_DIRECTION_CIRCLE: 'circle', ANIMATION_DIRECTION_LINE: 'line'}
+        for direction in animation_directions.keys():
+            text_direction = animation_directions[direction]
+            dir_path = path + '_' + text_direction + '/'
+            base_file_name = animation_name + text_direction + '_'
             if os.path.exists(dir_path):
-                self.animation[direction] = []
-                self.animation_data[direction] = {'index': 0, 'time': time.time()}
+                self.animations[direction] = []
                 files = [f for f in os.listdir(dir_path) if os.path.isfile(dir_path + f) and f.startswith(base_file_name)]
                 files.sort()
                 for f in files:
-                    self.animation[direction].append(get_common().get_image(dir_path + f))
+                    self.animations[direction].append(get_common().get_image(dir_path + f))
                 for i in range(repeat_count * repeat_frames):
-                    self.animation[direction].append(self.animation[direction][-repeat_frames])
+                    self.animations[direction].append(self.animations[direction][-repeat_frames])
 
-    def render(self):
-        surf = pygame.Surface(self.Sprite[0].get_rect().size, pygame.SRCALPHA)
+    def get_sprite(self):
+        return self.sprites[self.direction]
 
-        if self.direction == 'up':
-            surf.blit(self.Sprite[0], (0,0))
-        if self.direction == 'down':
-            surf.blit(self.Sprite[1], (0,0))
-        if self.direction == 'left':
-            surf.blit(self.Sprite[2], (0,0))
-        if self.direction == 'right':
-            surf.blit(self.Sprite[3], (0,0))
+    def render_tower(self):
+        sprite = self.get_sprite()
+        surf = pygame.Surface(sprite.get_size(), pygame.SRCALPHA)
+        surf.blit(sprite, (0, 0))
 
-        if self.UpgradeStatus[0] == 2:
-            surf.blit(get_common().get_image("assets/level/towers/upgrade_effect.png"), (2, 10))
-        if self.UpgradeStatus[1] == 2:
-            surf.blit(get_common().get_image("assets/level/towers/upgrade_range.png"), (2, 20))
-        if self.UpgradeStatus[2] == 2:
-            surf.blit(get_common().get_image("assets/level/towers/upgrade_speed.png"), (2, 30))
+        if self.upgrade_status[UPGRADE_EFFECT] == UPGRADE_TRUE:
+            surf.blit(get_common().get_image('assets/level/towers/upgrade_effect.png'), (2, 10))
+        if self.upgrade_status[UPGRADE_RANGE] == UPGRADE_TRUE:
+            surf.blit(get_common().get_image('assets/level/towers/upgrade_range.png'), (2, 20))
+        if self.upgrade_status[UPGRADE_SPEED] == UPGRADE_TRUE:
+            surf.blit(get_common().get_image('assets/level/towers/upgrade_speed.png'), (2, 30))
 
         return surf
 
     def render_animation(self):
-        anim_direction = self.animation_data['direction']
-        if anim_direction == 'self':
+        anim_direction = self.animation_direction
+        if anim_direction == ANIMATION_DIRECTION_SELF:
             anim_direction = self.direction
-        if anim_direction not in self.animation or not self.animation_data['play']:
+        if anim_direction not in self.animations or not self.animation_playing:
             return pygame.Surface((0, 0), pygame.SRCALPHA), (0, 0), False
 
-        animation = self.animation[anim_direction]
-        surf = animation[self.animation_data['index']]
+        animation = self.animations[anim_direction]
+        animation_index = int(math.floor(len(animation) * self.animation_fraction))
+        surf = animation[animation_index]
         render_above = False
-        if anim_direction == 'up':
-            if self.animation_scale == ANIMATION_SCALE_SCALE:
-                surf = pygame.transform.scale(surf, (32, int(32 * self.Range * self.RangeMultiplier)))
-                coords = ((32 - surf.get_width()) / 2, -surf.get_height())
+
+        field_size = 32
+
+        # calculate animation coords and render animation
+        # animation coords are relative to the top left corner of the field the tower is on
+        if anim_direction == ANIMATION_DIRECTION_UP:
+            y = 0 # y coord of animation's bottom
+            if self.animation_type == ANIMATION_TYPE_SCALE:
+                # scale animation to full range
+                surf = pygame.transform.scale(surf, (surf.get_width(), int(field_size * self.range * self.range_multiplier)))
             else:
-                coords = ((32 - surf.get_width()) / 2, -surf.get_height() - self.animation_data['fraction'] * 32 * (self.Range * self.RangeMultiplier - 1))
-        elif anim_direction == 'down':
-            if self.animation_scale == ANIMATION_SCALE_SCALE:
-                surf = pygame.transform.scale(surf, (32, int(32 * self.Range * self.RangeMultiplier)))
-                coords = ((32 - surf.get_width()) / 2, 32)
+                # move animation to correct position
+                total_length = field_size * self.range * self.range_multiplier - surf.get_height()
+                y = - self.animation_fraction * total_length
+            coords = ((field_size - surf.get_width()) / 2, y - surf.get_height())
+
+        elif anim_direction == ANIMATION_DIRECTION_DOWN:
+            y = 0 # y coord of animation's top
+            if self.animation_type == ANIMATION_TYPE_SCALE:
+                # scale animation to full range
+                surf = pygame.transform.scale(surf, (surf.get_width(), int(field_size * self.range * self.range_multiplier)))
             else:
-                coords = ((32 - surf.get_width()) / 2, 32 + self.animation_data['fraction'] * 32 * (self.Range * self.RangeMultiplier - 1))
-        elif anim_direction == 'left':
-            if self.animation_scale == ANIMATION_SCALE_SCALE:
-                surf = pygame.transform.scale(surf, (int(32 * self.Range * self.RangeMultiplier), 32))
-                coords = (-surf.get_width(), (32 - surf.get_height()) / 2)
-            else:
-                coords = (-surf.get_width() - self.animation_data['fraction'] * 32 * (self.Range * self.RangeMultiplier - 1), (32 - surf.get_height()) / 2)
-        elif anim_direction == 'right':
-            if self.animation_scale == ANIMATION_SCALE_SCALE:
-                surf = pygame.transform.scale(surf, (int(32 * self.Range * self.RangeMultiplier), 32))
-                coords = (32, (32 - surf.get_height()) / 2)
-            else:
-                coords = (32 + self.animation_data['fraction'] * 32 * (self.Range * self.RangeMultiplier - 1), (32 - surf.get_height()) / 2)
-        elif anim_direction == 'circle':
-            surf = pygame.transform.scale(surf, (32 + int(64 * self.Range * self.RangeMultiplier), 32 + int(64 * self.Range * self.RangeMultiplier)))
-            coords = ((32 - surf.get_width()) / 2, (32 - surf.get_height()) / 2)
-        elif anim_direction == 'line':
-            enemy_coords = self.animation_data['attacked_enemy_coords']
-            field = self.animation_data['enemy_field_relative']
-            sprite = self.render()
-            tower_source = (16, 32 - sprite.get_height() + 16)
-            target_coords = (field[0] * 32 + enemy_coords[0] + 16, field[1] * 32 + enemy_coords[1] + 16)
+                # move animation to correct position
+                total_length = field_size * self.range * self.range_multiplier - surf.get_height()
+                y = self.animation_fraction * total_length
+            coords = ((field_size - surf.get_width()) / 2, y + field_size)
+
+        elif anim_direction == ANIMATION_DIRECTION_LEFT:
+            x = 0
+            if self.animation_type == ANIMATION_TYPE_SCALE:
+                surf = pygame.transform.scale(surf, (int(field_size * self.range * self.range_multiplier), surf.get_height()))
+            elif self.animation_type == ANIMATION_TYPE_TRANSLATE:
+                total_length = field_size * self.range * self.range_multiplier - surf.get_width()
+                x = - self.animation_fraction * total_length
+            coords = (x - surf.get_width(), (field_size - surf.get_height()) / 2)
+
+        elif anim_direction == ANIMATION_DIRECTION_RIGHT:
+            x = 0
+            if self.animation_type == ANIMATION_TYPE_SCALE:
+                surf = pygame.transform.scale(surf, (int(field_size * self.range * self.range_multiplier), surf.get_height()))
+            elif self.animation_type == ANIMATION_TYPE_TRANSLATE:
+                total_length = field_size * self.range * self.range_multiplier - surf.get_width()
+                x = self.animation_fraction * total_length
+            coords = (x + field_size, (field_size - surf.get_height()) / 2)
+
+        elif anim_direction == ANIMATION_DIRECTION_CIRCLE:
+            # scale animation to full range of the tower, translating doesn't make sense here
+            size = field_size + int(field_size * 2 * self.range * self.range_multiplier)
+            surf = pygame.transform.scale(surf, (size, size))
+            coords = ((field_size - surf.get_width()) / 2, (field_size - surf.get_height()) / 2)
+
+        elif anim_direction == ANIMATION_DIRECTION_LINE:
+            enemy_coords = self.animation_target_enemy_pixel_coords
+            field = self.animation_target_enemy_field_relative
+            sprite = self.get_sprite()
+            # coords where the line starts (still relative to top left corner of field)
+            tower_source = (field_size / 2, field_size - sprite.get_height() + 16)
+            # coords where the line ends
+            target_coords = (field[0] * field_size + enemy_coords[0] + field_size / 2, field[1] * field_size + enemy_coords[1] + field_size / 2)
+            # angle of the line
             angle = math.atan2(target_coords[1] - tower_source[1], target_coords[0] - tower_source[0])
             deg = angle / math.pi * 180
+            # length of the line
             length = math.hypot(target_coords[0] - tower_source[0], target_coords[1] - tower_source[1])
-            if self.animation_scale == ANIMATION_SCALE_SCALE:
+            if self.animation_type == ANIMATION_TYPE_SCALE:
+                # scale animation to correct length
                 surf = pygame.transform.scale(surf, (int(length), surf.get_height()))
-                surf = pygame.transform.rotate(surf, deg)
-                coords = (min(target_coords[0], tower_source[0]), min(target_coords[1], tower_source[1]))
-            else:
-                w, h = surf.get_size()
+                # rotate animation
                 surf = pygame.transform.rotate(surf, -deg)
+                coords = (min(target_coords[0], tower_source[0]), min(target_coords[1], tower_source[1]))
+            elif self.animation_type == ANIMATION_TYPE_TRANSLATE:
+                w, h = surf.get_size()
+                # rotate animation
+                surf = pygame.transform.rotate(surf, -deg)
+                # get length of rotated animation
                 surf_length = math.hypot(*surf.get_size())
-                length_pos = self.animation_data['fraction'] * (length - surf_length)
+                # position of the animation along the line
+                length_pos = self.animation_fraction * (length - surf_length)
+                # move animation back when the length to move is negative
                 if length < surf_length:
                     length_pos =  length - surf_length - length_pos
+                # coords of animation on the line relative to start of the line
                 x = math.cos(angle) * length_pos
                 y = math.sin(angle) * length_pos
+                # coords of the middle of the left side of the animation after the rotation
+                # these coords allow animation with a significant height to be aligned correctly
                 y_off = (surf.get_height() - math.sin(angle) * w) / 2
                 x_off = (surf.get_width() - math.cos(angle) * w) / 2
+                # calculate final render coords
                 coords = (x - x_off + tower_source[0], y - y_off + tower_source[1])
             render_above = (target_coords[1] > 0)
         return surf, coords, render_above
 
-    def Sell(self):
-        self.WillSell=True
+    def sell(self):
+        self.will_sell=True
 
-    def SetUpgradeCost(self, upgrade, cost):
-        self.UpgradeCosts[upgrade]=cost
+    def set_upgrade_cost(self, upgrade, cost):
+        self.upgrade_costs[upgrade] = cost
 
-    def SetUpgradeMultiplier(self, upgrade, multiplier):
-        self.UpgradeMultipliers[upgrade]=multiplier
+    def set_upgrade_multiplier(self, upgrade, multiplier):
+        self.upgrade_multipliers[upgrade] = multiplier
 
-    def Upgrade(self, upgrade):
-        if self.UpgradeStatus[upgrade]!=UPGRADE_FALSE:
+    def upgrade(self, upgrade):
+        if self.upgrade_status[upgrade] != UPGRADE_FALSE:
             raise IOError("This upgrade is already in use on this tower.")
-        self.UpgradeStatus[upgrade]=UPGRADE_PENDING
+        self.upgrade_status[upgrade] = UPGRADE_PENDING
 
-    def setUpgradeSound(self, filename):
-        self.UpgradeSound = filename
+    def set_upgrade_sound(self, filename):
+        self.upgrade_sound = filename
 
-    def getValue(self):
-        i=0
-        value=self.Cost*self.SellPercentage/100
-        for i in range(len(self.UpgradeStatus)):
-            if self.UpgradeStatus[i] == UPGRADE_TRUE:
-                value+=self.UpgradeCosts[i]*self.SellPercentageUpgrades/100
-        return value
+    def get_value(self):
+        value = self.cost * self.sell_percentage / 100
+        for i in range(len(self.upgrade_status)):
+            if self.upgrade_status[i] == UPGRADE_TRUE:
+                value += self.upgrade_costs[i] * self.sell_percentage_upgrades / 100
+        return int(value)
 
-    def canUpgrades(self):
-        upgrades=[False, False, False]
-        if self.UpgradeStatus[UPGRADE_SPEED]==UPGRADE_FALSE and self.UpgradeCosts[UPGRADE_SPEED]>0:
-            upgrades[UPGRADE_SPEED]=True
-        if self.UpgradeStatus[UPGRADE_RANGE]==UPGRADE_FALSE and self.UpgradeCosts[UPGRADE_RANGE]>0:
-            upgrades[UPGRADE_RANGE]=True
-        if self.UpgradeStatus[UPGRADE_EFFECT]==UPGRADE_FALSE and self.UpgradeCosts[UPGRADE_EFFECT]>0:
-            upgrades[UPGRADE_EFFECT]=True
+    def can_upgrades(self):
+        upgrades = [False, False, False]
+        if self.upgrade_status[UPGRADE_SPEED] == UPGRADE_FALSE and self.upgrade_costs[UPGRADE_SPEED] > 0:
+            upgrades[UPGRADE_SPEED] = True
+        if self.upgrade_status[UPGRADE_RANGE] == UPGRADE_FALSE and self.upgrade_costs[UPGRADE_RANGE] > 0:
+            upgrades[UPGRADE_RANGE] = True
+        if self.upgrade_status[UPGRADE_EFFECT] == UPGRADE_FALSE and self.upgrade_costs[UPGRADE_EFFECT] > 0:
+            upgrades[UPGRADE_EFFECT] = True
         return upgrades
 
-    def onUpgrade(self, upgrade):
+    def on_upgrade(self, upgrade):
         pass
 
-    def setImpact(self, target, multiplier):
-        self.Impacts[target]=multiplier
+    def set_impact(self, target, multiplier):
+        self.impacts[target] = multiplier
 
-    def getImpact(self, target):
-        if target in self.Impacts:
-            return float(self.Impacts[target])
+    def get_impact(self, target):
+        if target in self.impacts:
+            return float(self.impacts[target])
         return 1.0

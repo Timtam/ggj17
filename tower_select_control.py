@@ -3,7 +3,7 @@ import pygame
 from commons import *
 from control import Control
 from towers.water_tower import WaterTower
-from towers.bass_tower import BassTower
+from towers.sound_tower import SoundTower
 from towers.light_tower import LightTower
 
 class TowerSelectControl(Control):
@@ -20,7 +20,7 @@ class TowerSelectControl(Control):
         self.current_panel = None
         self.ui = get_common().get_ui()
         self.cash_icon = get_common().get_image('assets/ui/crystal.png')
-        self.tower_classes = [WaterTower, BassTower, LightTower]
+        self.tower_classes = [WaterTower, SoundTower, LightTower]
         self.tooltip_panels = []
         font = get_common().get_font()
         font_small = get_common().get_font_small()
@@ -43,7 +43,7 @@ class TowerSelectControl(Control):
             for part in tc.effect_desc:
                 color = (0, 0, 0)
                 if part[0] == '[':
-                    part = str(tc().EffectValue)
+                    part = str(tc().effect_value)
                     color = (0, 127, 127)
                 tw, th = font_small.size(part)
                 if x + tw >= 430:
@@ -51,7 +51,7 @@ class TowerSelectControl(Control):
                     y += th
                 panel.blit(font_small.render(part, 0, color), (x, y))
                 x += tw
-            self.tooltip_panels.append((panel, cost_x, tc.Cost))
+            self.tooltip_panels.append((panel, cost_x, tc.cost))
         self.lmb_down = False
 
     def enable(self):
@@ -93,7 +93,7 @@ class TowerSelectControl(Control):
         if lmb:
             for i in range(3):
                 if self.tower_rects[i].collidepoint(mx, my):
-                    if self.tower_classes[i].Cost <= self.level.cash:
+                    if self.tower_classes[i].cost <= self.level.cash:
                         self.selected_tower = self.tower_classes[i]()
             if not self.rect.collidepoint(mx, my):
                 self.lmb_down = True

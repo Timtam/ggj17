@@ -35,7 +35,6 @@ class OptionsScreen:
     def fx_slider_release(self):
         play_sound_fx('assets/sound/ui/click.ogg', self.fx_slider.slider_pos)
 
-
     def handle_ev(self, event):
         pass
 
