@@ -1,0 +1,14 @@
+artifacts:
+- Wavomizer-1.0.zip
+build: 'off'
+environment:
+  matrix:
+    PYTHON: C:\\python27
+install:
+- '%PYTHON%\\python.exe -m pip install -r requirements.txt'
+platform:
+- x86
+skip_tags: true
+test_script:
+- '%PYTHON%\\python.exe setup.py'
+version: '1.0'
