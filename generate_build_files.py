@@ -16,9 +16,11 @@ appveyor_configuration={
     "%PYTHON%\\\\python.exe -m pip install -r requirements.txt"
   ],
   "environment": {
-    "matrix": {
-      "PYTHON": "C:\\\\python27"
-    }
+    "matrix": [
+      {
+        "PYTHON": "C:\\\\python27"
+      }
+    ]
   },
   "platform": ["x86"],
   "test_script": ["%PYTHON%\\\\python.exe setup.py"],

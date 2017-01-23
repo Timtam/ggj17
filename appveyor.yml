@@ -3,7 +3,7 @@ artifacts:
 build: 'off'
 environment:
   matrix:
-    PYTHON: C:\\python27
+  - PYTHON: C:\\python27
 install:
 - '%PYTHON%\\python.exe -m pip install -r requirements.txt'
 platform:
