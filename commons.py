@@ -1,13 +1,12 @@
 import pygame
 from Bass4Py.Bass4Py import *
-
-from ui import *
-from options import *
+import os.path
 import platform
 
 from script import Script
 
-import os.path
+from ui import *
+from options import *
 
 class Commons:
     def __init__(self):
@@ -21,10 +20,10 @@ class Commons:
         self.ui = UI()
         self.options = Options()
         self.options.save()
-        if platform.system()=="Windows":
-            basspath=str(os.path.join(Script().Path, ('bass_x64.dll' if sys.maxsize>2**32 else 'bass.dll')))
+        if platform.system() == 'Windows':
+            basspath = str(os.path.join(Script().Path, ('bass_x64.dll' if sys.maxsize > 2 ** 32 else 'bass.dll')))
         else:
-            basspath=str(os.path.join(Script().Path, ('libbass_x64.so' if sys.maxsize>2**32 else 'libbass.so')))
+            basspath = str(os.path.join(Script().Path, ('libbass_x64.so' if sys.maxsize > 2 ** 32 else 'libbass.so')))
         self.bass = BASS(basspath, True)
         self.bass.Init()
 
@@ -47,13 +46,13 @@ class Commons:
             asset = pygame.image.load(filename)
             self.image_cache[filename] = asset
             return asset
-
     def get_sound(self, filename, music=False):
         if filename in self.sound_cache:
             return self.sound_cache[filename]
-        channel = self.bass.StreamCreateFile(False, filename, 0, 0, BASS_SAMPLE_LOOP if music==True else 0).Channel
-        self.sound_cache[filename] = channel
-        return channel
+        else:
+            channel = self.bass.StreamCreateFile(False, filename, 0, 0, BASS_SAMPLE_LOOP if music == True else 0).Channel
+            self.sound_cache[filename] = channel
+            return channel
 
 instance = None
 def get_common():
