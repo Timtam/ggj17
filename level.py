@@ -31,7 +31,7 @@ class Level:
 			(2, 13), (3, 13), (4, 13), (5, 13), (6, 13), (7, 13), (8, 13), (14, 13), (15, 13),
 			(2, 14), (3, 14), (4, 14), (5, 14), (6, 14), (7, 14), (8, 14), (9, 14), (10, 14), (11, 14), (12, 14), (13, 14), (14,14), (15,14),
 			(2, 15), (3, 15), (4, 15), (5, 15), (6, 15), (7, 15), (8, 15), (9, 15), (10, 15), (11, 15), (12, 15), (13, 15), (14,15), (15,15)
-			
+
 		]
 		self.flowers = []
 		for i in range(random.randint(15, 25)):
@@ -376,7 +376,7 @@ class Level:
 			for j in range(len(self.waves[i][1])):
 				self.allTotalEnemies += self.waves[i][1][j][0]
 
-		tc = TextControl(155, line_height_before + tc.rect.height, 'and slained ' + str(self.allTotalEnemiesKilled) + " / " + str(self.total_enemies) + ' enemies.' )
+		tc = TextControl(155, line_height_before + tc.rect.height, 'and slaid ' + str(self.allTotalEnemiesKilled) + " / " + str(self.allTotalEnemies) + ' enemies.' )
 		tc.rect.centerx = 200
 		line_height_before += tc.rect.height
 		me.add_child_control(tc)
