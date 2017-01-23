@@ -460,23 +460,28 @@ class Level:
 							self.tower_select.enable()
 							self.new_tower_coord = (i, j)
 						elif field.tower != None and not self.show_tower_panel:
-							for i in range(3):
-								self.upgrade_buttons[i].set_text('Upgrade')
-								self.upgrade_buttons[i].enable()
-								self.upgrade_cost_texts[i].set_text(str(field.tower.UpgradeCosts[i]))
+							for u in range(3):
+								self.upgrade_buttons[u].set_text('Upgrade')
+								self.upgrade_buttons[u].enable()
+								self.upgrade_cost_texts[u].set_text(str(field.tower.UpgradeCosts[u]))
 							self.tower_panel.reset_child_controls()
 							self.tower_panel.rect.x = i * self.spriteSize + self.field_x
 							self.tower_panel.rect.y = j * self.spriteSize + self.field_y
+							size = self.gridsize * self.spriteSize
+							if self.tower_panel.rect.right > size + self.field_x:
+								self.tower_panel.rect.right = size + self.field_x
+							if self.tower_panel.rect.bottom > size + self.field_y:
+								self.tower_panel.rect.bottom = size + self.field_y
 							self.tower_panel.transform_child_controls()
 							self.show_tower_panel = True
 							self.tower_panel_tower = field.tower
 							can_upgrade = field.tower.canUpgrades()
 							self.sell_value_text.set_text(str(field.tower.getValue()))
-							for i in range(3):
-								if not can_upgrade[i]:
-									self.upgrade_buttons[i].set_text('Upgraded')
-									self.upgrade_buttons[i].disable()
-									self.upgrade_cost_texts[i].set_text('')
+							for u in range(3):
+								if not can_upgrade[u]:
+									self.upgrade_buttons[u].set_text('Upgraded')
+									self.upgrade_buttons[u].disable()
+									self.upgrade_cost_texts[u].set_text('')
 				if self.show_tower_panel and not self.tower_panel.rect.collidepoint(*pos):
 					self.show_tower_panel = False
 
