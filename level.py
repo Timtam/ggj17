@@ -372,7 +372,7 @@ class Level:
 		me.add_child_control(tc)
 
 		self.allTotalEnemies = 0
-		for i in range(len(self.waves)):
+		for i in range(self.current_wave + 1):
 			for j in range(len(self.waves[i][1])):
 				self.allTotalEnemies += self.waves[i][1][j][0]
 
