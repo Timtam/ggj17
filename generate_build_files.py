@@ -22,7 +22,9 @@ appveyor_configuration={
   },
   "platform": ["x86"],
   "test_script": ["%PYTHON%\\\\python.exe setup.py"],
-  "artifacts": [this.Name+"-"+this.Version+".zip"],
+  "artifacts": {
+    "path": this.Name+"-"+this.Version+".zip"
+  },
   "skip_tags": True
 }
 

@@ -1,5 +1,5 @@
 artifacts:
-- Wavomizer-1.0.zip
+  path: Wavomizer-1.0.zip
 build: 'off'
 environment:
   matrix:
