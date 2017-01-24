@@ -7,7 +7,7 @@
 # "build" and "dist".  The .dll or .exe in dist is what you are looking for.
 ##############################################################################
 import shutil
-import script
+from wavomizer import script
 import sys
 import os
 import os.path
