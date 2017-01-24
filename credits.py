@@ -21,7 +21,7 @@ class Credits:
         label = font.render('---CREDITS---', 1, (255, 255, 255))
         self.surface.blit(label, ((self.surface.get_width() / 2 - 50), self.surface.get_height() * 0.06))
 
-        #BALANCE-BEGIN
+        #GAME PERFORMANCE-BEGIN
         label = font.render('---GAME PERFORMANCE---', 1, (255, 255, 255))
         self.surface.blit(label, (self.surface.get_width() * 0.111, self.surface.get_height() * 0.15))
 
@@ -33,6 +33,7 @@ class Credits:
 
         label = font.render('Moritz Bloch', 1, (255, 255, 255))
         self.surface.blit(label, (self.surface.get_width() * 0.154, self.surface.get_height() * 0.3))
+        #GAME PERFORMANCE-END
 
         #SOUND-BEGIN
         label = font.render('---SOUND---', 1, (255, 255, 255))
@@ -78,7 +79,6 @@ class Credits:
         label = font.render('---LICENSES---', 1, (255, 255, 255))
         self.surface.blit(label, (self.surface.get_width() * 0.453, self.surface.get_height() * 0.65))
 
-
         label = font.render('Kevin McLeod: http://www.incompetech.com', 1, (255, 255, 255))
         self.surface.blit(label, (self.surface.get_width() * 0.366, self.surface.get_height() * 0.7))
 
@@ -99,17 +99,12 @@ class Credits:
 
         label = font.render('Prof. Dr. Schlechtweg-Dorendorf', 1, (255, 255, 255))
         self.surface.blit(label, (self.surface.get_width() * 0.734, self.surface.get_height() * 0.955))
-
-
         #Licenses-END
 
         #pics-Begin
         self.surface.blit(pygame.transform.scale(get_common().get_image('assets/level/enemies/skeleton_left.png'), (200, 200)), (self.surface.get_width() * 0.75, self.surface.get_height() * 0.65))
-
         self.surface.blit(pygame.transform.scale(get_common().get_image('assets/level/towers/watertower.png'), (120, 220)), (self.surface.get_width() * 0.13, self.surface.get_height() * 0.65))
-
         self.surface.blit(pygame.transform.scale(get_common().get_image('assets/credits/ggj_pix.png'), (450, 250)), (self.surface.get_width() * 0.335, self.surface.get_height() * 0.199))
-
         #pics-end
 
     def render(self):
