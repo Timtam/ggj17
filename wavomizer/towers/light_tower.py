@@ -1,4 +1,4 @@
-from ..tower import Tower
+from ..engine.tower import Tower
 from ..constants import *
 
 class LightTower(Tower):

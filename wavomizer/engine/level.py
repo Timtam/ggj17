@@ -4,14 +4,14 @@ import random
 
 from .field import Field
 from .enemy import Enemy
-from .enemies.ghost import Ghost
-from .enemies.skeleton import Skeleton
-from .enemies.barrel import Barrel
-from .enemies.golem import Golem
+from ..enemies.ghost import Ghost
+from ..enemies.skeleton import Skeleton
+from ..enemies.barrel import Barrel
+from ..enemies.golem import Golem
 import tower
-from .ui.controls import *
-from .commons import *
-from .constants import *
+from ..ui.controls import *
+from ..commons import *
+from ..constants import *
 
 class Level:
     def __init__(self, screen):

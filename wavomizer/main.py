@@ -1,7 +1,7 @@
 import sys, time, pygame
 
 from .commons   import *
-from .level     import Level
+from .engine.level     import Level
 from .ui.main_menu import MainMenu
 from .ui.options_screen import OptionsScreen
 from .ui.splash_screen import SplashScreen

@@ -4,8 +4,8 @@ import math
 import time
 import os, os.path
 
-from .commons import *
-from .constants import *
+from ..commons import *
+from ..constants import *
 import field
 
 class Tower(object):

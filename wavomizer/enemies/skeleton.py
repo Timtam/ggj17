@@ -1,6 +1,6 @@
 from random import randint
 
-from ..enemy import Enemy
+from ..engine.enemy import Enemy
 
 class Skeleton(Enemy):
     def __init__(self):
