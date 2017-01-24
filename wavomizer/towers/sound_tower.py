@@ -1,5 +1,5 @@
-from wavomizer.tower import Tower
-from wavomizer.constants import *
+from ..tower import Tower
+from ..constants import *
 
 class SoundTower(Tower):
     cost = 100

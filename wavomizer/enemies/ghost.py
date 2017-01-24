@@ -1,6 +1,6 @@
 from random import randint
 
-from wavomizer.enemy import Enemy
+from ..enemy import Enemy
 
 class Ghost(Enemy):
     def __init__(self):

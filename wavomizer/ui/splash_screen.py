@@ -1,7 +1,7 @@
 import pygame
 
-from wavomizer.commons import *
-from wavomizer.ui.controls import *
+from ..commons import *
+from .controls import *
 
 class SplashScreen:
     def __init__(self, screen):

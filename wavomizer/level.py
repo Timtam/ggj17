@@ -2,16 +2,16 @@ import pygame
 import time
 import random
 
-from wavomizer.field import Field
-from wavomizer.enemy import Enemy
-from wavomizer.enemies.ghost import Ghost
-from wavomizer.enemies.skeleton import Skeleton
-from wavomizer.enemies.barrel import Barrel
-from wavomizer.enemies.golem import Golem
-import wavomizer.tower
-from wavomizer.ui.controls import *
-from wavomizer.commons import *
-from wavomizer.constants import *
+from .field import Field
+from .enemy import Enemy
+from .enemies.ghost import Ghost
+from .enemies.skeleton import Skeleton
+from .enemies.barrel import Barrel
+from .enemies.golem import Golem
+import tower
+from .ui.controls import *
+from .commons import *
+from .constants import *
 
 class Level:
     def __init__(self, screen):

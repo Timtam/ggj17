@@ -1,7 +1,7 @@
 import pygame
 
-from wavomizer.commons import *
-from wavomizer.ui.control import Control
+from ..commons import *
+from .control import Control
 
 class TextControl(Control):
     def __init__(self, left, top, text):

@@ -2,8 +2,8 @@ from __future__ import division
 import pygame
 import time
 
-from wavomizer.commons import *
-from wavomizer.constants import *
+from .commons import *
+from .constants import *
 
 class Enemy(object):
     def __init__(self):

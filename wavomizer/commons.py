@@ -3,10 +3,10 @@ from Bass4Py.Bass4Py import *
 import os.path
 import platform
 
-from wavomizer.script import Script
+from .script import Script
 
-from wavomizer.ui.ui import *
-from wavomizer.options import *
+from .ui.ui import *
+from .options import *
 
 class Commons:
     def __init__(self):

@@ -1,11 +1,11 @@
 import sys, time, pygame
 
-from wavomizer.commons   import *
-from wavomizer.level     import Level
-from wavomizer.ui.main_menu import MainMenu
-from wavomizer.ui.options_screen import OptionsScreen
-from wavomizer.ui.splash_screen import SplashScreen
-from wavomizer.ui.credits_screen import CreditsScreen
+from .commons   import *
+from .level     import Level
+from .ui.main_menu import MainMenu
+from .ui.options_screen import OptionsScreen
+from .ui.splash_screen import SplashScreen
+from .ui.credits_screen import CreditsScreen
 
 class Main:
     def __init__(self, width = 1280, height = 720):

@@ -1,8 +1,8 @@
 import pygame
 from random import randint
 
-from wavomizer.commons import *
-from wavomizer.constants import *
+from .commons import *
+from .constants import *
 
 class Field:
     def __init__(self, screen, ftype, x, y, waytype, degree):
