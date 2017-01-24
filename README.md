@@ -19,11 +19,16 @@ Each tower can be upgraded in strength, speed and shooting range respectively. E
 
 This game supports Windows and Linux, both by using Python 2.7 and pygame libraries, as well as Bass4Py, a wrapper for the BASS library from un4seen.com. All those libraries are fully usable under Linux and Windows, maybe we could even try porting it for Mac OS, but you've guessed it, we only got 48 hours to finish...
 
-By using py2exe, the setup.py script in this repository generates a fully working executable including all related files and packs the whole game into a zip file, absolutely made to share with your friends or upload to globalgamejam.org ;).
+By using cx_Freeze, the setup.py script in this repository generates a fully working executable including all related files and packs the whole game into a compressed file, absolutely made to share with your friends or upload to globalgamejam.org ;).
 
 ## Free to play
 
 Since all games developed for, and while, the Global Game Jam fall under the Creative Commons License, you aren't just free of charge playing this game, I highly recommend you doing it, since it's really catchy and we really dripped some of our best swet into this piece of code.
 Not to mention the loads of hours drawing the tiles and other pictures, or designing the sound effects or music.
 
-What else to say? Yeah, absolutely: nothing. Have fun, and share this gem with all your friends. Let's find out who's the master of waves!
+## Development continues
+
+After finishing the final version for the Global Game Jam competition, we decided to try and evolve this project into something bigger, something with more enemies, more towers, more maps and loads more fun.
+Our designer wants to take more time to design all the small and big graphics included in our project, and at least there are several small bugs which want to be fixed, and many parts of the game aren't as flawless as we want them to be.
+We're currently fixing up all these small things, adding an automated build system, and as soon as we think this game is ready for launch, you'll find a release for version 1.0 right here on this github page. Just stay tuned and expect much more content than in the GGJ Release, which can be found on globalgamejam.org.
+
