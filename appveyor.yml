@@ -10,5 +10,5 @@ platform:
 - x86
 skip_tags: true
 test_script:
-- '%PYTHON%\\python.exe setup.py -c -o=2'
+- '%PYTHON%\\python.exe setup.py build -c -o=2'
 version: 1.0-{build}
