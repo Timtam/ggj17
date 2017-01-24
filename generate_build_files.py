@@ -10,7 +10,7 @@ import yaml
 
 this = Script()
 appveyor_configuration = {
-    'version': this.version,
+    'version': this.version + '-{build}',
     'build': 'off',
     'install': [
         '%PYTHON%\\\\python.exe -m pip install -r requirements.txt'
@@ -23,7 +23,7 @@ appveyor_configuration = {
         ]
     },
     'platform': ['x86'],
-    'test_script': ['%PYTHON%\\\\python.exe setup.py'],
+    'test_script': ['%PYTHON%\\\\python.exe setup.py build -c -o=2'],
     'artifacts': {
         'path': this.name + '-' + this.version + '.zip'
     },
