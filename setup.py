@@ -80,7 +80,7 @@ setupparameters={
  'description':Script.Description,
  'author':Script.Author,
  'author_email':Script.Email,
- 'windows':[{'script':'main.py','other_resources':Script.Resources()}]}
+ 'windows':[{'script':'wavomizer.py','other_resources':Script.Resources()}]}
 setup(**setupparameters)
 zip=zipfile.ZipFile(os.path.join(ScriptDir,"%s-%s.zip"%(Script.Name,Script.Version)),"w")
 for file in ListAllFiles(DistDir):

@@ -1,4 +1,4 @@
-from commons import *
+from wavomizer.commons import *
 
 class Control(object):
     def __init__(self, rect):

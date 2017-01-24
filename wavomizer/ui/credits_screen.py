@@ -1,9 +1,9 @@
 import pygame
 
-from commons import *
-from controls import *
+from wavomizer.commons import *
+from wavomizer.ui.controls import *
 
-class Credits:
+class CreditsScreen:
     def __init__(self, screen):
         self.screen = screen
         self.bgm = play_sound_bgm('assets/sound/bgm/credits.ogg')

@@ -1,5 +1,5 @@
-from tower import Tower
-from constants import *
+from wavomizer.tower import Tower
+from wavomizer.constants import *
 
 class WaterTower(Tower):
     cost = 80

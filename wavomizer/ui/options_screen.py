@@ -1,7 +1,7 @@
 import pygame
 
-from commons import *
-from controls import *
+from wavomizer.commons import *
+from wavomizer.ui.controls import *
 
 class OptionsScreen:
     def __init__(self, screen):

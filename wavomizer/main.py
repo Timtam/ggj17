@@ -1,12 +1,11 @@
-#/usr/bin/env python2
 import sys, time, pygame
 
-from commons   import *
-from level     import Level
-from main_menu import MainMenu
-from options_screen import OptionsScreen
-from splash_screen import SplashScreen
-from credits import Credits
+from wavomizer.commons   import *
+from wavomizer.level     import Level
+from wavomizer.ui.main_menu import MainMenu
+from wavomizer.ui.options_screen import OptionsScreen
+from wavomizer.ui.splash_screen import SplashScreen
+from wavomizer.ui.credits_screen import CreditsScreen
 
 class Main:
     def __init__(self, width = 1280, height = 720):
@@ -19,7 +18,7 @@ class Main:
             'MainMenu': MainMenu,
             'OptionsScreen': OptionsScreen,
             'Level': Level,
-            'Credits': Credits,
+            'Credits': CreditsScreen,
         }
         self.next_view = None
         self.current_view = None
@@ -61,8 +60,3 @@ class Main:
         self.screen.fill((0,0,0))
         self.current_view.render()
         pygame.display.flip()
-
-if __name__ == '__main__':
-    pygame.init()
-    main = Main()
-    main.main_loop()

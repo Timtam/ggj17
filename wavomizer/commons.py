@@ -3,27 +3,28 @@ from Bass4Py.Bass4Py import *
 import os.path
 import platform
 
-from script import Script
+from wavomizer.script import Script
 
-from ui import *
-from options import *
+from wavomizer.ui.ui import *
+from wavomizer.options import *
 
 class Commons:
     def __init__(self):
+        self.script = Script()
         self.image_cache = {}
         self.sound_cache = {}
 
     def load(self, main):
         self.main = main
-        self.font = pygame.font.Font('assets/font/KenPixel.ttf', 14)
-        self.font_small = pygame.font.Font('assets/font/KenPixel Nova.ttf', 25)
+        self.font = pygame.font.Font(os.path.join(self.script.Path, "assets", "font", "KenPixel.ttf"), 14)
+        self.font_small = pygame.font.Font(os.path.join(self.script.Path, "assets", "font", "KenPixel Nova.ttf"), 25)
         self.ui = UI()
         self.options = Options()
         self.options.save()
         if platform.system() == 'Windows':
-            basspath = str(os.path.join(Script().Path, ('bass_x64.dll' if sys.maxsize > 2 ** 32 else 'bass.dll')))
+            basspath = str(os.path.join(self.script.Path, ('bass_x64.dll' if sys.maxsize > 2 ** 32 else 'bass.dll')))
         else:
-            basspath = str(os.path.join(Script().Path, ('libbass_x64.so' if sys.maxsize > 2 ** 32 else 'libbass.so')))
+            basspath = str(os.path.join(self.script.Path, ('libbass_x64.so' if sys.maxsize > 2 ** 32 else 'libbass.so')))
         self.bass = BASS(basspath, True)
         self.bass.Init()
 

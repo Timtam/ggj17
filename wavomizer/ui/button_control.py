@@ -1,9 +1,9 @@
 import pygame
 import inspect
 
-from commons import *
-from control import Control
-from text_control import TextControl
+from wavomizer.commons import *
+from wavomizer.ui.control import Control
+from wavomizer.ui.text_control import TextControl
 
 class ButtonControl(Control):
     def __init__(self, left, top, text, callback, width = 190):

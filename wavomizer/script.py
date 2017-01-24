@@ -24,7 +24,7 @@ class Script:
   if hasattr(sys, "frozen") and sys.frozen in ["console_exe", "windows_exe"]:
    Path=unicode(os.path.dirname(sys.executable))
   else:
-   Path = os.path.dirname(unicode(os.path.abspath(__file__)))
+   Path = os.path.dirname(unicode(os.path.abspath(sys.argv[0])))
   bdir=os.path.isdir(Path)
   while not bdir:
    Path=os.path.abspath(Path+'/..')

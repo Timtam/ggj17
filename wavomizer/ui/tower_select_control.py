@@ -1,10 +1,10 @@
 import pygame
 
-from commons import *
-from control import Control
-from towers.water_tower import WaterTower
-from towers.sound_tower import SoundTower
-from towers.light_tower import LightTower
+from wavomizer.commons import *
+from wavomizer.ui.control import Control
+from wavomizer.towers.water_tower import WaterTower
+from wavomizer.towers.sound_tower import SoundTower
+from wavomizer.towers.light_tower import LightTower
 
 class TowerSelectControl(Control):
     def __init__(self, centerx, centery, level):
