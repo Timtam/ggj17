@@ -4,7 +4,7 @@ from ..constants import *
 class LightTower(Tower):
     cost = 90
     name = 'LIGHTWAVE TOWER'
-    description = 'Lumos Maxima! Deals damage to single targets with high\n concentrated power of will.'
+    description = 'Lumos Maxima! Deals damage to single targets with\n high concentrated power of will.'
     effect_desc = ('Deals damage to the target enemy by ', '[slow]', 'dps')
 
     def __init__(self):
