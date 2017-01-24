@@ -55,18 +55,6 @@ class Enemy(object):
         surface.blit(health_full, (coords[0] + (sprite.get_width() - self.health_empty.get_width()) / 2 + 1, coords[1] + 1))
         return
 
-        surf.blit(self.health_empty, ((sprite.get_width() - self.health_empty.get_width()) / 2, 0))
-        health_fract = max(0, self.health / self.max_health)
-        health_full = pygame.Surface((int(health_fract * 30), 2), pygame.SRCALPHA)
-        if health_fract > 0.5:
-            health_full.fill(pygame.Color(0, 170, 0, 255))
-        elif health_fract > 0.25:
-            health_full.fill(pygame.Color(200, 200, 0, 255))
-        else:
-            health_full.fill(pygame.Color(255, 0, 0, 255))
-        surf.blit(health_full, ((sprite.get_width() - self.health_empty.get_width()) / 2 + 1, 1))
-        return surf, coords
-
     def set_die_sound(self, filename):
         self.die_sound = filename
 
