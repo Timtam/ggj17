@@ -27,7 +27,23 @@ appveyor_configuration = {
     'artifacts': {
         'path': this.name + '-' + this.version + '.zip'
     },
-    'skip_tags': True
+    'skip_tags': True,
+    'deploy':
+    {
+        "release": this.name + ' V' + this.version,
+        'description': 'Version '+this.version + ' of ' + this.name,
+        'provider': 'GitHub',
+        'auth_token':
+        {
+            'secure': 'lKxqxmyyGVjSnQ80D+2XAJSraeM4DAtYvLwO+mm5DWtRWB0j6CS1sPITAOBIp7Ix'
+        },
+        'artifact': this.name + '-' + this.version + '.zip',
+        'on':
+        {
+            'branch': 'stable',
+            'appveyor_repo_tag': False
+        }
+    }
 }
 
 # this will finally just drop a file with the given name, constructed from this stuff above
