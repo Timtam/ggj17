@@ -34,7 +34,7 @@ appveyor_configuration={
     "provider": "GitHub",
     "auth_token":
     {
-      "secret": "lKxqxmyyGVjSnQ80D+2XAJSraeM4DAtYvLwO+mm5DWtRWB0j6CS1sPITAOBIp7Ix"
+      "secure": "lKxqxmyyGVjSnQ80D+2XAJSraeM4DAtYvLwO+mm5DWtRWB0j6CS1sPITAOBIp7Ix"
     },
     "artifact": this.Name+"-"+this.Version+".zip",
     "on":

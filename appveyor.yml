@@ -4,7 +4,7 @@ build: 'off'
 deploy:
   artifact: Wavomizer-1.0.zip
   auth_token:
-    secret: lKxqxmyyGVjSnQ80D+2XAJSraeM4DAtYvLwO+mm5DWtRWB0j6CS1sPITAOBIp7Ix
+    secure: lKxqxmyyGVjSnQ80D+2XAJSraeM4DAtYvLwO+mm5DWtRWB0j6CS1sPITAOBIp7Ix
   description: Version 1.0 of Wavomizer
   'on':
     appveyor_repo_tag: false
