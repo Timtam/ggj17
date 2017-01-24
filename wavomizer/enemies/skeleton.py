@@ -3,8 +3,8 @@ from random import randint
 from ..engine.enemy import Enemy
 
 class Skeleton(Enemy):
-    def __init__(self):
-        super(Skeleton,self).__init__()
+    def __init__(self, level):
+        super(Skeleton,self).__init__(level)
         self.health = self.max_health = 175
         self.speed = 1.25
         self.set_die_sound('assets/sound/skeleton/die.ogg')

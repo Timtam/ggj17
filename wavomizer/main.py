@@ -1,7 +1,8 @@
 import sys, time, pygame
 
 from .commons   import *
-from .engine.level     import Level
+from .engine import game_time
+from .engine.game_screen import GameScreen
 from .ui.main_menu import MainMenu
 from .ui.options_screen import OptionsScreen
 from .ui.splash_screen import SplashScreen
@@ -17,7 +18,7 @@ class Main:
             'SplashScreen': SplashScreen,
             'MainMenu': MainMenu,
             'OptionsScreen': OptionsScreen,
-            'Level': Level,
+            'GameScreen': GameScreen,
             'Credits': CreditsScreen,
         }
         self.next_view = None
@@ -25,11 +26,9 @@ class Main:
         self.change_view('MainMenu')
         pygame.display.set_caption('Wavomizer')
 
-    def button_clicked(self):
-        pass
-
     def main_loop(self):
         while True:
+            game_time.start_frame()
             if self.next_view != None:
                 if self.current_view != None:
                     self.current_view.leave()
@@ -49,6 +48,7 @@ class Main:
 
     def change_view(self, view):
         self.next_view = self.views[view](self.screen)
+        game_time.resume_time()
 
     def handle_ev(self, event):
         self.current_view.handle_ev(event)
@@ -57,6 +57,6 @@ class Main:
         self.current_view.update()
 
     def render(self):
-        self.screen.fill((0,0,0))
+        self.screen.fill((0, 0, 0))
         self.current_view.render()
         pygame.display.flip()

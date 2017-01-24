@@ -3,8 +3,8 @@ from random import randint
 from ..engine.enemy import Enemy
 
 class Golem(Enemy):
-    def __init__(self):
-        super(Golem,self).__init__()
+    def __init__(self, level):
+        super(Golem,self).__init__(level)
         self.health = self.max_health = 1200
         self.speed = 1.75
         self.damage = 5

@@ -3,16 +3,16 @@ from ..constants import *
 
 class WaterTower(Tower):
     cost = 80
+    effect_type = EFFECT_TYPE_SLOWDOWN | EFFECT_TYPE_STRAIGHT
+    effect_value = 40
+    attack_timeout = 2
+    range = 16
     name = 'TSUNAMI TOWER'
     description = 'Sends out Haitis Nightmare!'
     effect_desc = ('Slows one enemy in a line for ', '[stun]', '%')
 
-    def __init__(self):
-        super(WaterTower, self).__init__()
-        self.effect_type = EFFECT_TYPE_SLOWDOWN | EFFECT_TYPE_STRAIGHT
-        self.effect_value = 40 # slowdown percentage
-        self.attack_timeout = 2 # in seconds
-        self.range = 16
+    def __init__(self, level):
+        super(WaterTower, self).__init__(level)
         self.set_sprite('watertower')
         self.set_place_sound('assets/sound/water_tower/place.ogg')
         self.set_attack_sound('assets/sound/water_tower/attack.ogg')

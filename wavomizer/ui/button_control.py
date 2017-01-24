@@ -10,7 +10,8 @@ class ButtonControl(Control):
         super(ButtonControl, self).__init__(pygame.Rect(left, top, width, 32))
         self.state = 0
         self.enabled = True
-        if len(inspect.getargspec(callback).args) == 2:
+        arg_num = len(inspect.getargspec(callback).args)
+        if arg_num == 2:
             self.callback = callback
         else:
             def c(s):

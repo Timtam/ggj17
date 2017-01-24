@@ -40,3 +40,10 @@ FIELDTYPE_FLOWERS = 3
 
 WAYTYPE_STRAIGHT = 0
 WAYTYPE_CURVE = 1
+
+# size of a single tile of the level in pixels
+TILE_SIZE = 32
+# size of the level grid in tiles
+GRID_SIZE = 16
+# size of the level grid in pixels
+GRID_PIXEL_SIZE = GRID_SIZE * TILE_SIZE

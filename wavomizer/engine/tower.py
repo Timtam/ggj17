@@ -1,23 +1,27 @@
 from random import randint
 import pygame
 import math
-import time
 import os, os.path
 
 from ..commons import *
 from ..constants import *
 import field
+from . import game_time
 
 class Tower(object):
-    cost=0
+    cost = 0
+    effect_type = EFFECT_TYPE_NONE
+    effect_value = 1.0
+    attack_timeout = 10.0
+    range = 1
+    name = ''
+    description = ''
+    effect_desc = ''
 
-    def __init__(self):
-        self.effect_type = EFFECT_TYPE_NONE
+    def __init__(self, level):
+        self.level = level
         self.effect_multiplier = 1.0
-        self.effect_value = 0
-        self.attack_timeout = 10.0 # in seconds
         self.attack_timeout_multiplier = 1.0
-        self.range = 1 # one tile radius
         self.range_multiplier = 1.0
         self.sprites = []
         self.place_sound = None
@@ -44,8 +48,25 @@ class Tower(object):
         self.animation_repeat = 1
         self.animation_speed = 1
         self.animation_type = ANIMATION_TYPE_SCALE
+        self.tile = (0, 0)
 
-    def init(self, pay = True):
+    def init(self, tile_x, tile_y, pay = True):
+        self.tile = (tile_x, tile_y)
+        for i in range(16):
+            if (tile_x + i, tile_y) in self.level.get_way():
+                nearest_way = DIRECTION_RIGHT
+                break
+            if (tile_x - i, tile_y) in self.level.get_way():
+                nearest_way = DIRECTION_LEFT
+                break
+            if (tile_x, tile_y + i) in self.level.get_way():
+                nearest_way = DIRECTION_DOWN
+                break
+            if (tile_x, tile_y - i) in self.level.get_way():
+                nearest_way = DIRECTION_UP
+                break
+        self.direction = nearest_way
+
         if pay:
             # setting pending_transaction to the costs of the tower on first run, so the player needs to pay
             self.pending_transaction = self.cost
@@ -63,13 +84,14 @@ class Tower(object):
             self.animation_direction = ANIMATION_DIRECTION_LINE
 
     # finds all valid target fields
-    def find_target_fields(self, fields, x, y):
+    def find_target_fields(self):
         # range to search for valid target fields
         # clamped to the size of the 2d fields array
+        x, y = self.tile
         min_x = max(0, x - int(self.range * self.range_multiplier))
-        max_x = min(len(fields) - 1, x + int(self.range * self.range_multiplier))
+        max_x = min(GRID_SIZE - 1, x + int(self.range * self.range_multiplier))
         min_y = max(0, y - int(self.range * self.range_multiplier))
-        max_y = min(len(fields[0]) - 1, y + int(self.range * self.range_multiplier))
+        max_y = min(GRID_SIZE - 1, y + int(self.range * self.range_multiplier))
 
         valid_targets = [] # contains x and y tuples
         if math.floor(self.range * self.range_multiplier) != self.range * self.range_multiplier:
@@ -89,18 +111,19 @@ class Tower(object):
 
     # needs all valid target fields as tuple array, as returned by find_target_fields
     # returns all actual targets (deal damage here) as tuple-array
-    def filter_target_fields(self, level, valid_targets):
+    def filter_target_fields(self, valid_targets):
         enemies = []
         nearest_field = None
         targets = []
         # filter all fields without enemies
         for i in range(len(valid_targets)):
             enemies = []
-            target_field = level.grid[valid_targets[i][0]][valid_targets[i][1]]
+            target_field = self.level.get_grid()[valid_targets[i][0]][valid_targets[i][1]]
             if target_field.get_type() != field.FIELDTYPE_WAY:
                 continue
-            for j in range(len(target_field.enemies)):
-                enemy = target_field.enemies[j]
+            field_enemies = self.level.get_enemies_on_tile(valid_targets[i][0], valid_targets[i][1])
+            for j in range(len(field_enemies)):
+                enemy = field_enemies[j]
                 if self.effect_type & EFFECT_TYPE_SLOWDOWN == EFFECT_TYPE_SLOWDOWN and enemy in self.enemy_cache:
                     continue
                 enemies.append(enemy)
@@ -115,7 +138,7 @@ class Tower(object):
             # per definition (Henry) this should be the field with the lowest distance to the target
             nearest_field = targets[0]
             for i in range(1, len(targets)):
-                if level.way.index((targets[i][0], targets[i][1])) < level.way.index((nearest_field[0], nearest_field[1])):
+                if self.level.get_way().index((targets[i][0], targets[i][1])) < self.level.get_way().index((nearest_field[0], nearest_field[1])):
                     nearest_field = targets[i]
             targets = [nearest_field]
         return targets
@@ -123,10 +146,10 @@ class Tower(object):
     def set_direction(self, nearestWay):
         self.direction = nearestWay
 
-    def update_transactions(self, level, x, y):
+    def update_transactions(self, game_screen):
         if self.will_sell == True:
-            level.grid[x][y].tower = None
-            level.cash += self.get_value()
+            level.remove_tower(self)
+            game_screen.cash += self.get_value()
             self.will_sell = False
             play_sound_fx('assets/sound/common/sell.ogg')
             play_sound_fx('assets/sound/common/coin.ogg')
@@ -146,14 +169,14 @@ class Tower(object):
                 self.on_upgrade(i)
         # pay the crystals required for buying or upgrading this tower
         if self.pending_transaction > 0:
-            if self.pending_transaction > level.cash:
+            if self.pending_transaction > game_screen.cash:
                 raise IOError('User wants to build or upgrade tower, but doesn\'t have enough money. Please try again later!')
-            level.cash -= self.pending_transaction
+            game_screen.cash -= self.pending_transaction
             self.pending_transaction = 0
 
-    def update_animation(self, level, x, y):
+    def update_animation(self):
         if self.animation_playing:
-            anim_fraction = (time.time() - self.last_fire) / (self.attack_timeout_multiplier * self.attack_timeout) * self.animation_speed
+            anim_fraction = (game_time.time() - self.last_fire) / (self.attack_timeout_multiplier * self.attack_timeout) * self.animation_speed
             if anim_fraction >= 1:
                 self.animation_playing = False
                 self.animation_fraction = 0
@@ -161,20 +184,21 @@ class Tower(object):
                 self.animation_fraction = (anim_fraction * self.animation_repeat) %  1
             if self.animation_target_enemy != None:
                 self.animation_target_enemy_pixel_coords = self.animation_target_enemy.coords
-                self.animation_target_enemy_field_relative = (self.animation_target_enemy.field[0] - x, self.animation_target_enemy.field[1] - y)
+                self.animation_target_enemy_field_relative = (self.animation_target_enemy.tile[0] - self.tile[0], self.animation_target_enemy.tile[1] - self.tile[1])
 
-    def update_attack(self, level, x, y):
-        if (time.time() - self.last_fire) < (self.attack_timeout_multiplier * self.attack_timeout):
+    def update_attack(self):
+        if (game_time.time() - self.last_fire) < (self.attack_timeout_multiplier * self.attack_timeout):
             return
-        valid_targets = self.find_target_fields(level.grid, x, y)
-        valid_targets = self.filter_target_fields(level, valid_targets)
-        if len(valid_targets)==0:
+        valid_targets = self.find_target_fields()
+        valid_targets = self.filter_target_fields(valid_targets)
+        if len(valid_targets) == 0:
             return
         for i in range(len(valid_targets)):
-            target_field = level.grid[valid_targets[i][0]][valid_targets[i][1]]
+            target_field = self.level.get_grid()[valid_targets[i][0]][valid_targets[i][1]]
+            target_enemies = self.level.get_enemies_on_tile(*valid_targets[i])
             if self.effect_type & EFFECT_TYPE_ALL == EFFECT_TYPE_ALL:
-                for j in range(len(target_field.enemies)):
-                    enemy = target_field.enemies[j]
+                for j in range(len(target_enemies)):
+                    enemy = target_enemies[j]
                     if self.effect_type & EFFECT_TYPE_DAMAGE == EFFECT_TYPE_DAMAGE:
                         enemy.add_health(-self.get_impact(enemy.name) * self.effect_multiplier * self.effect_value)
                     elif self.effect_type & EFFECT_TYPE_SLOWDOWN == EFFECT_TYPE_SLOWDOWN:
@@ -184,10 +208,10 @@ class Tower(object):
                         self.enemy_cache.append(enemy)
             else:
                 enemies = []
-                for j in range(len(target_field.enemies)):
-                    if self.effect_type & EFFECT_TYPE_SLOWDOWN == EFFECT_TYPE_SLOWDOWN and target_field.enemies[j] in self.enemy_cache:
+                for j in range(len(target_enemies)):
+                    if self.effect_type & EFFECT_TYPE_SLOWDOWN == EFFECT_TYPE_SLOWDOWN and target_enemies[j] in self.enemy_cache:
                         continue
-                    enemies.append(target_field.enemies[j])
+                    enemies.append(target_enemies[j])
                 if len(enemies) == 0:
                     return
                 enemy = enemies[randint(0, len(enemies) - 1)]
@@ -199,13 +223,13 @@ class Tower(object):
                     self.enemy_cache.append(enemy)
             if self.attack_sound != None:
                 play_sound_fx(self.attack_sound)
-            self.last_fire = time.time()
+            self.last_fire = game_time.time()
             self.animation_playing = True
 
-    def update(self, level, x, y):
-        if self.update_transactions(level, x, y): return
-        if self.update_attack(level, x, y): return
-        if self.update_animation(level, x, y): return
+    def update(self, game_screen):
+        if self.update_transactions(game_screen): return
+        if self.update_attack(): return
+        if self.update_animation(): return
 
     def set_sprite(self, path):
         self.sprites.append(get_common().get_image('assets/level/towers/' + path + '_up.png'))
@@ -238,19 +262,22 @@ class Tower(object):
     def get_sprite(self):
         return self.sprites[self.direction]
 
-    def render_tower(self):
+    def render(self, surface):
         sprite = self.get_sprite()
-        surf = pygame.Surface(sprite.get_size(), pygame.SRCALPHA)
-        surf.blit(sprite, (0, 0))
+        coords = (self.tile[0] * TILE_SIZE + (TILE_SIZE - sprite.get_width()) / 2, self.tile[1] * TILE_SIZE + TILE_SIZE - sprite.get_height())
+        anim_surf, anim_coord, anim_on_top = self.render_animation()
+        if not anim_on_top:
+            surface.blit(anim_surf, (self.tile[0] * TILE_SIZE + anim_coord[0], self.tile[1] * TILE_SIZE + anim_coord[1]))
+        surface.blit(sprite, coords)
+        if anim_on_top:
+            surface.blit(anim_surf, (self.tile[0] * TILE_SIZE + anim_coord[0], self.tile[1] * TILE_SIZE + anim_coord[1]))
 
         if self.upgrade_status[UPGRADE_EFFECT] == UPGRADE_TRUE:
-            surf.blit(get_common().get_image('assets/level/towers/upgrade_effect.png'), (2, 10))
+            surface.blit(get_common().get_image('assets/level/towers/upgrade_effect.png'), (self.tile[0] * TILE_SIZE + 2, coords[1] + 10))
         if self.upgrade_status[UPGRADE_RANGE] == UPGRADE_TRUE:
-            surf.blit(get_common().get_image('assets/level/towers/upgrade_range.png'), (2, 20))
+            surface.blit(get_common().get_image('assets/level/towers/upgrade_range.png'), (self.tile[0] * TILE_SIZE + 2, coords[1] + 20))
         if self.upgrade_status[UPGRADE_SPEED] == UPGRADE_TRUE:
-            surf.blit(get_common().get_image('assets/level/towers/upgrade_speed.png'), (2, 30))
-
-        return surf
+            surface.blit(get_common().get_image('assets/level/towers/upgrade_speed.png'), (self.tile[0] * TILE_SIZE + 2, coords[1] + 30))
 
     def render_animation(self):
         anim_direction = self.animation_direction

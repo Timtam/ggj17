@@ -24,34 +24,40 @@ class TowerSelectControl(Control):
         self.tooltip_panels = []
         font = get_common().get_font()
         font_small = get_common().get_font_small()
+        small_space_width,_ = font_small.size(' ')
         for i in range(3):
             panel = self.ui.draw_panel_border(440, 120)
-            tc = self.tower_classes[i]
-            tw, th = font.size(tc.name)
-            cost_x = tw + 52
-            panel.blit(font.render(tc.name, 0, (0, 0, 0)), (10, 10))
-            panel.blit(self.cash_icon, (20 + tw, 4))
-            y = 30
-            for line in tc.description.split('\n'):
-                panel.blit(font_small.render(line.strip(), 0, (0, 0, 0)), (10, y))
-                y += 20
-            y += 10
-            tw, th = font_small.size('Effect: ')
+            tower = self.tower_classes[i]
+            text_width, text_height = font.size(tower.name)
+            cost_x = text_width + 52
+            panel.blit(font.render(tower.name, 0, (0, 0, 0)), (10, 10))
+            panel.blit(self.cash_icon, (20 + text_width, 4))
+            y = 10 + text_height
             x = 10
-            panel.blit(font_small.render('Effect: ', 0, (0, 0, 0)), (x, y))
-            x += tw
-            for part in tc.effect_desc:
+            text_height = 0
+            for word in tower.description.split(' '):
+                text_width, text_height = font_small.size(word)
+                if x + text_width >= 430:
+                    x = 10
+                    y += text_height
+                panel.blit(font_small.render(word + ' ', 0, (0, 0, 0)), (x, y))
+                x += text_width + small_space_width
+            y += text_height
+            text_width, text_height = font_small.size('Effect: ')
+            panel.blit(font_small.render('Effect: ', 0, (0, 0, 0)), (10, y))
+            x = 10 + text_width
+            for part in tower.effect_desc:
                 color = (0, 0, 0)
                 if part[0] == '[':
-                    part = str(tc().effect_value)
+                    part = str(tower.effect_value)
                     color = (0, 127, 127)
-                tw, th = font_small.size(part)
-                if x + tw >= 430:
+                text_width, text_height = font_small.size(part)
+                if x + text_width >= 430:
                     x = 10
-                    y += th
+                    y += text_height
                 panel.blit(font_small.render(part, 0, color), (x, y))
-                x += tw
-            self.tooltip_panels.append((panel, cost_x, tc.cost))
+                x += text_width
+            self.tooltip_panels.append((panel, cost_x, tower.cost))
         self.lmb_down = False
 
     def enable(self):
@@ -94,7 +100,7 @@ class TowerSelectControl(Control):
             for i in range(3):
                 if self.tower_rects[i].collidepoint(mx, my):
                     if self.tower_classes[i].cost <= self.level.cash:
-                        self.selected_tower = self.tower_classes[i]()
+                        self.selected_tower = self.tower_classes[i]
             if not self.rect.collidepoint(mx, my):
                 self.lmb_down = True
         elif self.lmb_down:
