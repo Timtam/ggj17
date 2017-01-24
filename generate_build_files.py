@@ -10,7 +10,7 @@ import yaml
 
 this=Script()
 appveyor_configuration={
-  "version": this.Version,
+  "version": this.Version + "-{build}",
   "build": "off",
   "install": [
     "%PYTHON%\\\\python.exe -m pip install -r requirements.txt"
