@@ -1,5 +1,7 @@
 import pygame
 
+from .. import constants
+
 class UI:
     def __init__(self):
         sprite_sheet = pygame.image.load('assets/ui/ui.png')
@@ -12,6 +14,7 @@ class UI:
         self.button_up = []
         self.button_disabled = []
         self.slider_horizontal = []
+        self.checkbox = []
         for x in range(0,3):
             borders = []
             full = []
@@ -36,6 +39,9 @@ class UI:
             disabled = pygame.Surface((16, 16), pygame.SRCALPHA)
             disabled.blit(sprite_sheet, (0, 0), pygame.Rect(18 * (3 + x), 18 * 17, 16, 16))
             self.button_disabled.append(pygame.transform.scale(disabled, (32, 32)))
+            checkbox = pygame.Surface((16, 16), pygame.SRCALPHA)
+            checkbox.blit(sprite_sheet, (0, 0), pygame.Rect(18 * (color_off + 3), 18 * (5 + x), 16, 16))
+            self.checkbox.append(pygame.transform.scale(checkbox, (32, 32)))
         slider = pygame.Surface((16, 16), pygame.SRCALPHA)
         slider.blit(sprite_sheet, (0, 0), pygame.Rect(18 * (color_off + 5), 18 * 6, 16, 16))
         self.slider_horizontal.append(pygame.transform.scale(slider, (32, 32)))
@@ -81,3 +87,6 @@ class UI:
         return surface
     def draw_slider(self):
         return self.slider_horizontal[3]
+
+    def draw_checkbox(self, state):
+        return self.checkbox[state]

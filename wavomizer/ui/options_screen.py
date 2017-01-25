@@ -1,6 +1,7 @@
 import pygame
 
 from ..commons import *
+from ..constants import *
 from .controls import *
 
 class OptionsScreen:
@@ -17,6 +18,11 @@ class OptionsScreen:
         panel.add_child_control(TextControl(20, 100, 'Sound effects'))
         self.fx_slider = SliderControl(20, 130, 310, self.fx_slider_release, options.get('vol_fx'))
         panel.add_child_control(self.fx_slider)
+        self.splash_checkbox = CheckboxControl(20, 180)
+        if options.get('skip_splash_screen'):
+            self.splash_checkbox.set_state(CHECKBOX_CHECKED)
+        panel.add_child_control(self.splash_checkbox)
+        panel.add_child_control(TextControl(60, 185, 'Skip splash screen'))
         panel.add_child_control(ButtonControl(20, 300, 'Cancel', self.cancel_clicked, 150))
         panel.add_child_control(ButtonControl(180, 300, 'Save', self.save_clicked, 150))
 
@@ -29,6 +35,10 @@ class OptionsScreen:
         options = get_common().get_options()
         options.set('vol_fx', self.fx_slider.slider_pos)
         options.set('vol_bgm', self.bgm_slider.slider_pos)
+        if self.splash_checkbox.get_state() == CHECKBOX_CHECKED:
+            options.set('skip_splash_screen', True)
+        else:
+            options.set('skip_splash_screen', False)
         options.save()
         get_common().get_main().change_view('MainMenu')
 
