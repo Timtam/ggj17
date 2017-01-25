@@ -3,15 +3,15 @@ from ..constants import *
 
 class LightTower(Tower):
     cost = 90
+    effect_type = EFFECT_TYPE_DAMAGE
+    effect_value = 10.5
+    attack_timeout = 0.5
     name = 'LIGHTWAVE TOWER'
     description = 'Lumos Maxima! Deals damage to single targets with high concentrated power of will.'
     effect_desc = ('Deals damage to the target enemy by ', '[slow]', 'dps')
 
-    def __init__(self):
-        super(LightTower, self).__init__()
-        self.effect_type = EFFECT_TYPE_DAMAGE
-        self.effect_value = 10.5 # damage
-        self.attack_timeout = 0.5 # in seconds
+    def __init__(self, level):
+        super(LightTower, self).__init__(level)
         self.set_sprite('lighttower')
         self.set_place_sound('assets/sound/light_tower/place.ogg')
         self.set_attack_sound('assets/sound/light_tower/attack.ogg')
