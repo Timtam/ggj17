@@ -12,8 +12,13 @@ class SplashScreen:
     def leave(self): pass
     def handle_ev(self, event): pass
     def update(self):
-        if self.sound.Active == BASS_ACTIVE_PLAYING:
+        if self.sound.Active == BASS_ACTIVE_PLAYING and get_common().get_options().get('skip_splash_screen')==False:
             return
+
+        if self.sound.Active==BASS_ACTIVE_PLAYING:
+            self.sound.Stop()
+
         get_common().get_main().change_view('MainMenu')
+
     def render(self):
         self.screen.blit(self.splash, (0, 0))

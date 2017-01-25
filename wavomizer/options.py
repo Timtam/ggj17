@@ -8,6 +8,7 @@ class DataSafe(object):
     def __init__(self):
         self.vol_fx = 1.0
         self.vol_bgm = 1.0
+        self.skip_splash_screen = False
 
 class Options:
     def __init__(self):
