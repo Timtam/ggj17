@@ -6,11 +6,16 @@ import cPickle
 # not containing all methods, but instead properties which will be pickled and saved
 class DataSafe(object):
     def __init__(self):
-        self.vol_fx = 1.0
-        self.vol_bgm = 1.0
-        self.skip_splash_screen = False
+        pass
 
 class Options:
+
+    options = {
+        'skip_splash_screen': False,
+        'vol_bgm': 1.0,
+        'vol_fx': 1.0
+    }
+
     def __init__(self):
         self.script= Script()
         self.save_path = os.path.join(self.script.path, SAVE_FILENAME)
@@ -19,6 +24,17 @@ class Options:
                 self.__save = cPickle.loads(f.read())
         else:
             self.__save = DataSafe()
+        self.init()
+
+    def init(self):
+        # this function initializes all options
+        # this will be needed if we load an old save file which doesn't contain some new options
+        # in this case we will add them with some default value
+        # if no save file exists, we'll just add all values brand new
+
+        for key in self.options.keys():
+            if not key in self.__save.__dict__:
+                self.__save.__dict__[key]=self.options[key]
 
     def save(self):
         with open(self.save_path, 'wb') as f:
