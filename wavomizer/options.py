@@ -1,19 +1,30 @@
 import os.path
+from .constants import SAVE_FILENAME
 from .script import Script
+import cPickle
+
+# not containing all methods, but instead properties which will be pickled and saved
+class DataSafe(object):
+    def __init__(self):
+        self.vol_fx = 1.0
+        self.vol_bgm = 1.0
 
 class Options:
     def __init__(self):
-        self.vol_fx = 1
-        self.vol_bgm = 1
         self.script= Script()
-        if os.path.isfile(os.path.join(self.script.path, 'options.txt')):
-            with open(os.path.join(self.script.path, 'options.txt'), 'r') as f:
-                for line in f:
-                    if line.startswith('vol_fx='):
-                        self.vol_fx = float(line[7:])
-                    elif line.startswith('vol_bgm='):
-                        self.vol_bgm = float(line[8:])
+        self.save_path = os.path.join(self.script.path, SAVE_FILENAME)
+        if os.path.isfile(self.save_path):
+            with open(self.save_path, 'rb') as f:
+                self.__save = cPickle.loads(f.read())
+        else:
+            self.__save = DataSafe()
+
     def save(self):
-        with open(os.path.join(self.script.path, 'options.txt'), 'w') as f:
-            f.write('vol_fx=' + str(self.vol_fx) + '\n')
-            f.write('vol_bgm=' + str(self.vol_bgm) + '\n')
+        with open(self.save_path, 'wb') as f:
+            f.write(cPickle.dumps(self.__save, cPickle.HIGHEST_PROTOCOL))
+
+    def set(self, option, value):
+        self.__save.__dict__[option] = value
+
+    def get(self, option):
+        return self.__save.__dict__[option]

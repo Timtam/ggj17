@@ -12,10 +12,10 @@ class OptionsScreen:
         self.controls.append(panel)
         panel.add_child_control(TextControl(20, 20, 'Music'))
         options = get_common().get_options();
-        self.bgm_slider = SliderControl(20, 50, 310, None, options.vol_bgm)
+        self.bgm_slider = SliderControl(20, 50, 310, None, options.get('vol_bgm'))
         panel.add_child_control(self.bgm_slider)
         panel.add_child_control(TextControl(20, 100, 'Sound effects'))
-        self.fx_slider = SliderControl(20, 130, 310, self.fx_slider_release, options.vol_fx)
+        self.fx_slider = SliderControl(20, 130, 310, self.fx_slider_release, options.get('vol_fx'))
         panel.add_child_control(self.fx_slider)
         panel.add_child_control(ButtonControl(20, 300, 'Cancel', self.cancel_clicked, 150))
         panel.add_child_control(ButtonControl(180, 300, 'Save', self.save_clicked, 150))
@@ -27,8 +27,8 @@ class OptionsScreen:
         get_common().get_main().change_view('MainMenu')
     def save_clicked(self):
         options = get_common().get_options()
-        options.vol_fx = self.fx_slider.slider_pos
-        options.vol_bgm = self.bgm_slider.slider_pos
+        options.set('vol_fx', self.fx_slider.slider_pos)
+        options.set('vol_bgm', self.bgm_slider.slider_pos)
         options.save()
         get_common().get_main().change_view('MainMenu')
 

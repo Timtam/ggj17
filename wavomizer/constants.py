@@ -47,3 +47,6 @@ TILE_SIZE = 32
 GRID_SIZE = 16
 # size of the level grid in pixels
 GRID_PIXEL_SIZE = GRID_SIZE * TILE_SIZE
+
+# filename for the save file
+SAVE_FILENAME = 'savefile.dat'
