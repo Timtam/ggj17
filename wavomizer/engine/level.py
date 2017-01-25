@@ -25,9 +25,9 @@ class Level(object):
         self.towers = []
         self.way.reverse()
         self.ground_layer = pygame.Surface((GRID_PIXEL_SIZE, GRID_PIXEL_SIZE), pygame.SRCALPHA).convert()
-        self.full_size_decoration_images = []
+        self.deco_layer = pygame.Surface((GRID_PIXEL_SIZE, GRID_PIXEL_SIZE), pygame.SRCALPHA).convert_alpha()
         for decoration in self.full_size_decoration:
-            self.full_size_decoration_images.append(get_common().get_image(decoration).convert_alpha(self.ground_layer))
+            self.deco_layer.blit(get_common().get_image(decoration), (0, 0))
 
     def get_way(self):
         return self.way
@@ -68,21 +68,17 @@ class Level(object):
                 else:
                     field = Field(self, FIELDTYPE_GRASS, x, y, None, 0)
                 self.grid[x].append(field)
+                self.ground_layer.blit(field.draw(), (x * TILE_SIZE, y * TILE_SIZE))
         return self.grid
 
     def draw(self):
-        # drawing enemies and towers onto different layers and blitting them together in the end is very expensive
-        grid = self.get_grid()
-        for y in range(GRID_SIZE):
-            for x in range(GRID_SIZE):
-                self.ground_layer.blit(grid[x][y].draw(), (x * TILE_SIZE, y * TILE_SIZE))
+        surface = self.ground_layer.copy()
         for enemy in self.get_enemies():
-            enemy.render(self.ground_layer)
+            enemy.render(surface)
         for tower in self.get_towers():
-            tower.render(self.ground_layer)
-        for decoration in self.full_size_decoration_images:
-            self.ground_layer.blit(decoration, (0, 0))
-        return self.ground_layer
+            tower.render(surface)
+        surface.blit(self.deco_layer, (0, 0))
+        return surface
 
     def update(self, game_screen):
         self.enemy_search_dict.clear()
