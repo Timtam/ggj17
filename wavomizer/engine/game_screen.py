@@ -153,7 +153,6 @@ class GameScreen:
             self.total_enemies_killed += 1
             self.killed_enemies += 1
             self.cash += enemy.drop
-            play_sound_fx("assets/sound/common/coin.ogg")
         elif enemy.die == DIE_SUCCESS:
             self.current_lives -= enemy.damage
         if self.current_lives <= 0:
