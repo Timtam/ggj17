@@ -87,6 +87,9 @@ class GameScreen:
 
         self.pause_dim = pygame.transform.scale(get_common().get_image('assets/ui/dim.png'), self.screen.get_size())
 
+        # convert frame to non-alpha surface to speed up blitting (this single blit takes about 0.02 seconds if frame is a surface with transparency)
+        self.frame = get_common().get_image('assets/ui/frame.png').convert()
+
         self.current_wave = -1
         self.won = False
         self.game_over = False
@@ -210,7 +213,7 @@ class GameScreen:
             self.game_won_panel = me
 
     def render(self):
-        self.screen.blit(get_common().get_image('assets/ui/frame.png'), (0, 0))
+        self.screen.blit(self.frame, (0, 0))
         self.screen.blit(self.level.draw(), (self.field_x, self.field_y))
 
         for control in self.controls:

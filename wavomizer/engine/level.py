@@ -21,8 +21,13 @@ class Level(object):
             self.decoration.append(random.choice(self.possible_decoration))
         self.grid = None
         self.enemies = []
+        self.enemy_search_dict = {}
         self.towers = []
         self.way.reverse()
+        self.ground_layer = pygame.Surface((GRID_PIXEL_SIZE, GRID_PIXEL_SIZE), pygame.SRCALPHA).convert()
+        self.full_size_decoration_images = []
+        for decoration in self.full_size_decoration:
+            self.full_size_decoration_images.append(get_common().get_image(decoration).convert_alpha(self.ground_layer))
 
     def get_way(self):
         return self.way
@@ -66,26 +71,27 @@ class Level(object):
         return self.grid
 
     def draw(self):
-        ground_layer = pygame.Surface((GRID_PIXEL_SIZE, GRID_PIXEL_SIZE), pygame.SRCALPHA)
-        enemy_layer = pygame.Surface((GRID_PIXEL_SIZE, GRID_PIXEL_SIZE), pygame.SRCALPHA)
-        tower_layer = pygame.Surface((GRID_PIXEL_SIZE, GRID_PIXEL_SIZE), pygame.SRCALPHA)
+        # drawing enemies and towers onto different layers and blitting them together in the end is very expensive
         grid = self.get_grid()
         for y in range(GRID_SIZE):
             for x in range(GRID_SIZE):
-                ground_layer.blit(grid[x][y].draw(), (x * TILE_SIZE, y * TILE_SIZE))
+                self.ground_layer.blit(grid[x][y].draw(), (x * TILE_SIZE, y * TILE_SIZE))
         for enemy in self.get_enemies():
-            enemy.render(enemy_layer)
+            enemy.render(self.ground_layer)
         for tower in self.get_towers():
-            tower.render(tower_layer)
-        ground_layer.blit(enemy_layer, (0, 0))
-        ground_layer.blit(tower_layer, (0, 0))
-        for decoration in self.full_size_decoration:
-            ground_layer.blit(get_common().get_image(decoration), (0, 0))
-        return ground_layer
+            tower.render(self.ground_layer)
+        for decoration in self.full_size_decoration_images:
+            self.ground_layer.blit(decoration, (0, 0))
+        return self.ground_layer
 
     def update(self, game_screen):
+        self.enemy_search_dict.clear()
         for enemy in self.get_enemies():
             enemy.update(game_screen)
+            if not enemy.tile in self.enemy_search_dict:
+                self.enemy_search_dict[enemy.tile] = [enemy]
+            else:
+                self.enemy_search_dict[enemy.tile].append(enemy)
         for tower in self.get_towers():
             tower.update(game_screen)
 
@@ -106,11 +112,11 @@ class Level(object):
     def remove_enemy(self, enemy):
         self.enemies.remove(enemy)
     def get_enemies_on_tile(self, tile_x, tile_y):
-        enemies = []
-        for enemy in self.get_enemies():
-            if enemy.tile == (tile_x, tile_y):
-                enemies.append(enemy)
-        return enemies
+        tile = (tile_x, tile_y)
+        if tile in self.enemy_search_dict:
+            return self.enemy_search_dict[(tile_x, tile_y)]
+        else:
+            return []
 
     def create_way_field(self, x, y):
         way = self.get_way()
