@@ -11,6 +11,7 @@ class DataSafe(object):
 class Options:
 
     options = {
+        'debug': False,
         'skip_splash_screen': False,
         'vol_bgm': 1.0,
         'vol_fx': 1.0
