@@ -1,34 +1,29 @@
 import shutil
-import script
+from wavomizer import script
 import sys
 import os
 import os.path
 import platform
 from cx_Freeze import setup,Executable
-def ListAllFiles(path):
- entrylist=os.listdir(path)
- flist=[]
- for entry in entrylist:
-  fentry=os.path.join(path,entry)
-  if os.path.isdir(fentry):
-   nflist=ListAllFiles(fentry)
-   flist=flist+nflist
-  else:
-   flist.append(fentry)
- return flist
-def listdlls(folder):
- fileslist=[]
- files=os.listdir(folder)
- for file in files:
-  if os.path.isfile(os.path.join(folder,file)):
-   ext=os.path.splitext(file)[1]
-   if ext.lower()=='.dll':
-    fileslist.append(file)
- return fileslist
-Script=script.Script()
-ScriptDir=Script.Path
-build_exe_options={
-    "excludes":['email',
+
+def list_all_files(path):
+    entrylist = os.listdir(path)
+    flist = []
+    for entry in entrylist:
+        fentry = os.path.join(path, entry)
+        if os.path.isdir(fentry):
+            nflist = list_all_files(fentry)
+            flist = flist + nflist
+        else:
+            flist.append(fentry)
+    return flist
+
+script = script.Script()
+
+build_exe_options = {
+    "excludes":
+    [
+        'email',
         'pygit2',
         'distutils',
         'calendar',
@@ -49,40 +44,40 @@ build_exe_options={
 }
 
 setup(
-    name = Script.Name,
-    version = Script.Version,
-    description = Script.Description,
-    options={
-        "build_exe":build_exe_options
+    name = script.name,
+    version = script.version,
+    description = script.description,
+    options = {
+        'build_exe' : build_exe_options
     },
-    executables=[
+    executables = [
         Executable(
-            "main.py",
-            base=(None if platform.system()!="Windows" else "Win32GUI")
+            'wavomizer.py',
+            base=(None if platform.system() != 'Windows' else 'Win32GUI')
         )
     ]
 )
 
-BuildDir=os.path.join(ScriptDir, "build", os.listdir(os.path.join(ScriptDir, "build"))[0])
+build_dir = os.path.join(script.path, 'build', os.listdir(os.path.join(script.path, 'build'))[0])
 
-shutil.copytree(os.path.join(ScriptDir,"assets"),os.path.join(BuildDir, "assets"))
-bassfile=""
-if platform.system()=="Windows":
-    bassfile="bass%s.dll"
-elif platform.system()=="Linux":
-    bassfile = "libbass%s.so"
-bassfile=bassfile%("_x64" if sys.maxsize>2**32 else "")
-shutil.copyfile(os.path.join(ScriptDir, bassfile), os.path.join(BuildDir, bassfile))
+shutil.copytree(os.path.join(script.path, 'assets'), os.path.join(build_dir, 'assets'))
+bass_file=''
+if platform.system()=='Windows':
+    bass_file='bass%s.dll'
+elif platform.system()=='Linux':
+    bass_file = 'libbass%s.so'
+bass_file=bass_file%('_x64' if sys.maxsize > 2**32 else '')
+shutil.copyfile(os.path.join(script.path, bass_file), os.path.join(build_dir, bass_file))
 
-if platform.system()=="Windows":
+if platform.system()=='Windows':
     import zipfile
-    zip=zipfile.ZipFile(os.path.join(ScriptDir,"%s-%s.zip"%(Script.Name,Script.Version)),"w")
-    for file in ListAllFiles(BuildDir):
-        zip.write(file,'%s-%s\\%s'%(Script.Name,Script.Version,os.path.relpath(file,BuildDir)),zipfile.ZIP_DEFLATED)
+    zip=zipfile.ZipFile(os.path.join(script.path, '%s-%s.zip'%(script.name, script.version)), "w")
+    for file in list_all_files(build_dir):
+        zip.write(file,'%s-%s\\%s'%(script.name, script.version, os.path.relpath(file,build_dir)), zipfile.ZIP_DEFLATED)
     zip.close()
 else:
     import tarfile
-    tar=tarfile.open('%s-%s.tar.gz'%(Script.Name,Script.Version),'w:gz')
-    tar.add(BuildDir,'%s-%s'%(Script.Name,Script.Version))
+    tar=tarfile.open('%s-%s.tar.gz'%(script.name, script.version),'w:gz')
+    tar.add(build_dir, '%s-%s'%(script.name, script.version))
     tar.close()
-shutil.rmtree(BuildDir)
+shutil.rmtree(os.path.join(script.path, "build"))

@@ -1,19 +1,19 @@
 artifacts:
-  path: Wavomizer-1.0.zip
+    path: Wavomizer-1.0.zip
 build: 'off'
 deploy:
-  artifact: Wavomizer-1.0.zip
-  auth_token:
-    secure: lKxqxmyyGVjSnQ80D+2XAJSraeM4DAtYvLwO+mm5DWtRWB0j6CS1sPITAOBIp7Ix
-  description: Version 1.0 of Wavomizer
-  'on':
-    appveyor_repo_tag: false
-    branch: stable
-  provider: GitHub
-  release: Wavomizer V1.0
+    artifact: Wavomizer-1.0.zip
+    auth_token:
+        secure: lKxqxmyyGVjSnQ80D+2XAJSraeM4DAtYvLwO+mm5DWtRWB0j6CS1sPITAOBIp7Ix
+    description: Version 1.0 of Wavomizer
+    'on':
+        appveyor_repo_tag: false
+        branch: stable
+    provider: GitHub
+    release: Wavomizer V1.0
 environment:
-  matrix:
-  - PYTHON: C:\\python27
+    matrix:
+    -   PYTHON: C:\\python27
 install:
 - '%PYTHON%\\python.exe -m pip install -r requirements.txt'
 platform:
