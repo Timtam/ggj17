@@ -6,23 +6,26 @@ from ..constants import *
 from .field import Field
 
 class Level(object):
-    way = []
-    waves = []
-    possible_flowers = []
-    possible_decoration = []
-    full_size_decoration = []
-
     def __init__(self):
+        self.grid = None
+        self.enemies = []
+        self.enemy_search_dict = {}
+        self.towers = []
+
+        self.way = []
+        self.possible_flowers = []
+        self.possible_decoration = []
+        self.waves = []
+        self.full_size_decoration = []
+
+        self.init()
+
         self.flowers = []
         for i in range(random.randint(15, 25)):
             self.flowers.append(random.choice(self.possible_flowers))
         self.decoration = []
         for i in range(random.randint(3, 8)):
             self.decoration.append(random.choice(self.possible_decoration))
-        self.grid = None
-        self.enemies = []
-        self.enemy_search_dict = {}
-        self.towers = []
         self.way.reverse()
         self.ground_layer = pygame.Surface((GRID_PIXEL_SIZE, GRID_PIXEL_SIZE), pygame.SRCALPHA).convert()
         self.deco_layer = pygame.Surface((GRID_PIXEL_SIZE, GRID_PIXEL_SIZE), pygame.SRCALPHA).convert_alpha()
