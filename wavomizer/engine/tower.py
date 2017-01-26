@@ -148,7 +148,7 @@ class Tower(object):
 
     def update_transactions(self, game_screen):
         if self.will_sell == True:
-            level.remove_tower(self)
+            self.level.remove_tower(self)
             game_screen.cash += self.get_value()
             self.will_sell = False
             play_sound_fx('assets/sound/common/sell.ogg')
