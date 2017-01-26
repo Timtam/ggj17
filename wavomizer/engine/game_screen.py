@@ -186,7 +186,7 @@ class GameScreen:
         tc.rect.centerx = 200
         me.add_child_control(tc)
 
-        tower_counter = len(self.level.get_towers())
+        tower_counter = self.level.count_towers()
 
         tc = TextControl(155, line_height_before + tc.rect.height, 'You reached wave ' + str(self.current_wave + 1) + ' of ' + str(len(self.level.waves)) + '.' )
         tc.rect.centerx = 200

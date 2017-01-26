@@ -134,3 +134,12 @@ class Level(object):
 
     def get_towerless_fields(self):
         return self.towerless_fields
+
+    def count_towers(self):
+        count=0
+        for x in range(GRID_SIZE):
+            for y in range(GRID_SIZE):
+                if self.grid[x][y].tower != None:
+                    count+=1
+
+        return count
