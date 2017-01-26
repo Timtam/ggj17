@@ -12,19 +12,15 @@ class Field:
         self.type  = ftype
         self.waytype = waytype
         self.degree = degree
-        #0 - grass
         if self.type == FIELDTYPE_GRASS:
             self.sprite = get_common().get_image('assets/level/tiles/Maptiles_0.png')
-        #1 - way
         elif self.type == FIELDTYPE_WAY:
-            #0 - straight way
             if self.waytype == WAYTYPE_STRAIGHT:
                 self.sprite = get_common().get_image('assets/level/tiles/Maptiles_2.png')
             elif self.waytype == WAYTYPE_CURVE:
                 self.sprite = get_common().get_image('assets/level/tiles/Maptiles_1.png')
 
             self.sprite = self.rot_center(self.sprite, self.degree)
-        #2 - decoration
         elif self.type == FIELDTYPE_DECORATION:
             if randint(1, 2) == 1:
                 decoitem = 'wood'
@@ -34,10 +30,10 @@ class Field:
                 deconum = randint(1, 10)
             self.sprite = get_common().get_image('assets/level/tiles/Maptiles_0.png').copy()
             self.sprite.blit(get_common().get_image('assets/level/decoration/' + decoitem + '_' + str(deconum) + '.png'), (0, 0))
-        #3 - flowers
         elif self.type == FIELDTYPE_FLOWERS:
             self.sprite = get_common().get_image('assets/level/tiles/Maptiles_0.png').copy()
             self.sprite.blit(get_common().get_image('assets/level/decoration/' + 'Deko' + str(randint(1, 6)) + '.png'), (0, 0))
+        self.allow_tower = True
 
     def rot_center(self, image, angle):
         orig_rect = image.get_rect()
@@ -52,3 +48,9 @@ class Field:
 
     def draw(self):
         return self.sprite
+
+    def forbid_tower(self):
+        self.allow_tower = False
+
+    def tower_allowed(self):
+        return self.allow_tower

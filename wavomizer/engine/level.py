@@ -17,6 +17,7 @@ class Level(object):
         self.possible_decoration = []
         self.waves = []
         self.full_size_decoration = []
+        self.towerless_fields = []
 
         self.init()
 
@@ -70,6 +71,9 @@ class Level(object):
                     field = Field(self, FIELDTYPE_FLOWERS, x, y, None, 0)
                 else:
                     field = Field(self, FIELDTYPE_GRASS, x, y, None, 0)
+                if (x, y) in self.get_towerless_fields():
+                    field.forbid_tower()
+
                 self.grid[x].append(field)
                 self.ground_layer.blit(field.draw(), (x * TILE_SIZE, y * TILE_SIZE))
         return self.grid
@@ -131,3 +135,6 @@ class Level(object):
             return Field(self, FIELDTYPE_WAY, x, y, WAYTYPE_STRAIGHT, 90)
         elif (x, y - 1) in way or (x, y + 1) in way: # up, down
             return Field(self, FIELDTYPE_WAY, x, y, WAYTYPE_STRAIGHT, 0)
+
+    def get_towerless_fields(self):
+        return self.towerless_fields

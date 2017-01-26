@@ -6,8 +6,6 @@ from ..constants import *
 from ..ui.controls import *
 from ..levels.level1 import Level1
 from .field import Field
-from .tower import Tower
-from .enemy import Enemy
 from ..enemies.ghost import Ghost
 from ..enemies.skeleton import Skeleton
 from ..enemies.barrel import Barrel
