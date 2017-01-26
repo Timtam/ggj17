@@ -19,8 +19,7 @@ class Level(object):
         self.full_size_decoration = []
         self.towerless_fields = []
 
-        self.init()
-
+    def init(self):
         self.flowers = []
         for i in range(random.randint(15, 25)):
             self.flowers.append(random.choice(self.possible_flowers))

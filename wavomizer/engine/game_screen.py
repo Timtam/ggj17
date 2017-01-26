@@ -16,6 +16,7 @@ class GameScreen:
     def __init__(self, screen):
         self.screen = screen
         self.level = Level1()
+        self.level.init()
         self.grid = self.level.generate_grid()
         self.field_x = (self.screen.get_width() - GRID_PIXEL_SIZE) / 2
         self.field_y = 64
