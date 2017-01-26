@@ -50,7 +50,7 @@ class Tower(object):
         self.animation_type = ANIMATION_TYPE_SCALE
         self.tile = (0, 0)
 
-    def init(self, tile_x, tile_y, pay = True):
+    def set_tile(self, tile_x, tile_y):
         self.tile = (tile_x, tile_y)
         for i in range(16):
             if (tile_x + i, tile_y) in self.level.get_way():
@@ -67,6 +67,7 @@ class Tower(object):
                 break
         self.direction = nearest_way
 
+    def init(self, pay = True):
         if pay:
             # setting pending_transaction to the costs of the tower on first run, so the player needs to pay
             self.pending_transaction = self.cost

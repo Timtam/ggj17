@@ -10,7 +10,6 @@ class Level(object):
         self.grid = None
         self.enemies = []
         self.enemy_search_dict = {}
-        self.towers = []
 
         self.way = []
         self.possible_flowers = []
@@ -54,8 +53,6 @@ class Level(object):
 
     def get_enemies(self):
         return self.enemies
-    def get_towers(self):
-        return self.towers
 
     def generate_grid(self):
         self.grid = []
@@ -81,8 +78,11 @@ class Level(object):
         surface = self.ground_layer.copy()
         for enemy in self.get_enemies():
             enemy.render(surface)
-        for tower in self.get_towers():
-            tower.render(surface)
+        for x in range(GRID_SIZE):
+            for y in range(GRID_SIZE):
+                field = self.grid[x][y]
+                if field.tower != None:
+                    field.tower.render(surface)
         surface.blit(self.deco_layer, (0, 0))
         return surface
 
@@ -94,20 +94,17 @@ class Level(object):
                 self.enemy_search_dict[enemy.tile] = [enemy]
             else:
                 self.enemy_search_dict[enemy.tile].append(enemy)
-        for tower in self.get_towers():
-            tower.update(game_screen)
+        for x in range(GRID_SIZE):
+            for y in range(GRID_SIZE):
+                field = self.grid[x][y]
+                if field.tower != None:
+                    field.tower.update(game_screen)
 
-    def add_tower(self, tower):
-        self.towers.append(tower)
-        # sort by y coordinate for rendering
-        self.towers.sort(key = lambda tower: tower.tile[1])
+    def add_tower(self, tower, x, y):
+        tower.set_tile(x, y)
+        self.get_grid()[x][y].tower = tower
     def remove_tower(self, tower):
-        self.towers.remove(tower)
-    def get_tower_on_tile(self, tile_x, tile_y):
-        for tower in self.get_towers():
-            if tower.tile == (tile_x, tile_y):
-                return tower
-        return None
+        self.get_grid()[tower.tile[0]][tower.tile[1]].tower = None
 
     def add_enemy(self, enemy):
         self.enemies.append(enemy)

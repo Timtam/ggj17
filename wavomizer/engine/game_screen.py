@@ -250,7 +250,7 @@ class GameScreen:
             if event.button == 1:
                 if not ( i < 0 or i > (GRID_SIZE - 1) or j < 0 or j > (GRID_SIZE - 1) ):
                     tile = self.level.get_grid()[i][j]
-                    tower = self.level.get_tower_on_tile(i, j)
+                    tower = tile.tower
                     if tile.get_type() == FIELDTYPE_GRASS or tile.get_type() == FIELDTYPE_FLOWERS:
                         if tower == None and not self.show_tower_panel:
                             self.tower_select.rect.centerx = i * TILE_SIZE + self.field_x + TILE_SIZE / 2
@@ -294,11 +294,11 @@ class GameScreen:
                 self.show_pause_panel = True
         if self.tower_select.enabled and self.tower_select.selected_tower != None:
             self.tower_select.enabled = False
-            i, j = self.new_tower_coord
+            x, y = self.new_tower_coord
             tower = self.tower_select.selected_tower
             tower = tower(self.level)
-            tower.init(i, j)
-            self.level.add_tower(tower)
+            tower.init()
+            self.level.add_tower(tower, x, y)
 
     def update(self):
         if not self.paused:

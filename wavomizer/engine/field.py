@@ -9,6 +9,7 @@ class Field:
         self.level = level
         self.x = x
         self.y = y
+        self.tower = None
         self.type  = ftype
         self.waytype = waytype
         self.degree = degree
